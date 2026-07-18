@@ -1,6 +1,6 @@
-# @fifthbell/brokaw
+# @modoitaliano/giorgia
 
-Server-side renderer and Handlebars template bundle for fifthbell pages.
+Server-side renderer and Handlebars template bundle for ModoItaliano pages.
 
 ## What it does
 
@@ -11,13 +11,13 @@ Server-side renderer and Handlebars template bundle for fifthbell pages.
 ## Installation
 
 ```bash
-npm install @fifthbell/brokaw
+npm install @modoitaliano/giorgia
 ```
 
 ## Basic usage
 
 ```ts
-import { render } from '@fifthbell/brokaw';
+import { render } from '@modoitaliano/giorgia';
 
 const html = render(doc);
 ```
@@ -26,8 +26,8 @@ const html = render(doc);
 
 ## Exports
 
-- `@fifthbell/brokaw` -> renderer entrypoint
-- `@fifthbell/brokaw/partial-deps.json` -> partial-to-layout dependency map
+- `@modoitaliano/giorgia` -> renderer entrypoint
+- `@modoitaliano/giorgia/partial-deps.json` -> partial-to-layout dependency map
 
 ## Development
 

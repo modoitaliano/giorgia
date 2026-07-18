@@ -6,11 +6,11 @@
   "author": "ModoItaliano",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/modoitaliano/giorgia.git"
+    "url": "git+https://github.com/gaulatti/giorgia.git"
   },
-  "homepage": "https://github.com/modoitaliano/giorgia#readme",
+  "homepage": "https://github.com/gaulatti/giorgia#readme",
   "bugs": {
-    "url": "https://github.com/modoitaliano/giorgia/issues"
+    "url": "https://github.com/gaulatti/giorgia/issues"
   },
   "keywords": [
     "handlebars",
