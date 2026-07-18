@@ -26,6 +26,7 @@
   "blocks/x": ["article-page"],
   "blocks/instagram": ["article-page"],
   "blocks/tiktok": ["article-page"],
+  "blocks/spotify": ["article-page"],
   "blocks/pull-quote": ["article-page"],
   "components/home/landing": ["homepage"],
   "components/home/must-read": ["homepage"],

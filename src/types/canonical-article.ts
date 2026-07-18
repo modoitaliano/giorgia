@@ -102,6 +102,10 @@ const bodyBlockSchema = z.discriminatedUnion('type', [
     url: z.string().url()
   }),
   z.object({
+    type: z.literal('spotify'),
+    url: z.string().url()
+  }),
+  z.object({
     type: z.literal('pullQuote'),
     text: z.string(),
     attribution: z.string().optional()

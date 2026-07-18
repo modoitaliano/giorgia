@@ -30,6 +30,7 @@ import blockYoutubeHbs from './templates/partials/blocks/youtube.hbs?raw';
 import blockXHbs from './templates/partials/blocks/x.hbs?raw';
 import blockInstagramHbs from './templates/partials/blocks/instagram.hbs?raw';
 import blockTikTokHbs from './templates/partials/blocks/tiktok.hbs?raw';
+import blockSpotifyHbs from './templates/partials/blocks/spotify.hbs?raw';
 import blockPullQuoteHbs from './templates/partials/blocks/pull-quote.hbs?raw';
 
 import componentArticleMainHbs from './templates/partials/components/article-main.hbs?raw';
@@ -101,6 +102,7 @@ const assets: RendererAssets = {
     'blocks/x': blockXHbs,
     'blocks/instagram': blockInstagramHbs,
     'blocks/tiktok': blockTikTokHbs,
+    'blocks/spotify': blockSpotifyHbs,
     'blocks/pull-quote': blockPullQuoteHbs,
     'components/article-main': componentArticleMainHbs,
     'components/breaking-news': componentBreakingNewsHbs,

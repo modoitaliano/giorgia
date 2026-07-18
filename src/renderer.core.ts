@@ -238,6 +238,20 @@ function registerHelpers(): void {
     if (!match) return url;
     return `https://www.tiktok.com/embed/v2/${match[1]}`;
   });
+  Handlebars.registerHelper('spotifyEmbedUrl', (url: string) => {
+    if (!url) return '';
+
+    try {
+      const parsed = new URL(url);
+      if (parsed.hostname.replace(/^www\./, '') !== 'open.spotify.com') return url;
+      if (parsed.pathname.startsWith('/embed/')) return url;
+
+      parsed.pathname = `/embed${parsed.pathname}`;
+      return parsed.toString();
+    } catch {
+      return url;
+    }
+  });
   Handlebars.registerHelper('sofascoreWidgetUrl', (id: unknown) => buildSofascoreAttackMomentumUrl(id));
   Handlebars.registerHelper('sofascoreMatchUrl', (id: unknown) => buildSofascoreMatchUrl(id));
   Handlebars.registerHelper('jsonString', (value: unknown) => {
@@ -326,6 +340,7 @@ function registerPartials(partials: Record<string, string>): void {
     x: 'blocks/x',
     instagram: 'blocks/instagram',
     tiktok: 'blocks/tiktok',
+    spotify: 'blocks/spotify',
     pullQuote: 'blocks/pull-quote'
   };
 

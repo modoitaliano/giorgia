@@ -1,4 +1,4 @@
-# @modoitaliano/giorgia
+# @gaulatti/giorgia
 
 Server-side renderer and Handlebars template bundle for ModoItaliano pages.
 
@@ -11,13 +11,13 @@ Server-side renderer and Handlebars template bundle for ModoItaliano pages.
 ## Installation
 
 ```bash
-npm install @modoitaliano/giorgia
+npm install @gaulatti/giorgia
 ```
 
 ## Basic usage
 
 ```ts
-import { render } from '@modoitaliano/giorgia';
+import { render } from '@gaulatti/giorgia';
 
 const html = render(doc);
 ```
@@ -26,8 +26,8 @@ const html = render(doc);
 
 ## Exports
 
-- `@modoitaliano/giorgia` -> renderer entrypoint
-- `@modoitaliano/giorgia/partial-deps.json` -> partial-to-layout dependency map
+- `@gaulatti/giorgia` -> renderer entrypoint
+- `@gaulatti/giorgia/partial-deps.json` -> partial-to-layout dependency map
 
 ## Development
 
