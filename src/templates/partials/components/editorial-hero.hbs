@@ -1,0 +1,73 @@
+<section class='border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pb-8 mb-8 font-sans' data-nosnippet data-carousel='editorial'>
+  <div class='container mx-auto px-4 pt-8'>
+    <div class='grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch'>
+      <div class='lg:col-span-12 xl:col-span-5 flex flex-col justify-center space-y-4 pt-2 order-2 lg:order-1'>
+        <span class='kicker text-[#8f0d00] dark:text-[#ff2e1a] text-xs font-bold uppercase tracking-widest mb-1 block relative pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[#b21100] before:rounded-sm'>
+          Lead Story
+        </span>
+
+        <h1 class='headline text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-[1] font-serif'>
+          <a href='{{articleUrl slug=slug categories=categories language=@root.language}}' class='hover:underline decoration-4 decoration-[#b21100]/20 underline-offset-4'>{{title}}</a>
+        </h1>
+
+        <p class='deck text-lg md:text-xl text-slate-600 dark:text-slate-400 font-serif leading-relaxed mt-4'>{{excerpt}}</p>
+
+        <div class='flex items-center space-x-4 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4'>
+          <span class='text-xs font-bold uppercase tracking-wider text-slate-500'>{{#with (lookup categories 0)}}{{name}}{{else}}Top Stories{{/with}}</span>
+          <span class='text-xs text-slate-400'>•</span>
+          <a href='{{articleUrl slug=slug categories=categories language=@root.language}}' class='text-xs font-bold uppercase tracking-wider text-black dark:text-white hover:text-[#8f0d00] transition-colors'>Read Now &rarr;</a>
+        </div>
+
+        {{#if related.[0]}}
+          <div class='grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4'>
+            {{#each (slice related 0 4)}}
+              {{> components/headline
+                url=url
+                title=title
+                time=(formatDate (coalesce updatedAt publishedAt))
+                timestamp=(coalesce updatedAt publishedAt)
+                image=image
+                featuredImage=featuredImage
+                titleClass='text-sm lg:text-base leading-tight lg:leading-[22px] font-medium text-slate-900 dark:text-slate-100 font-sans'
+              }}
+            {{/each}}
+          </div>
+        {{/if}}
+      </div>
+
+      <div class='lg:col-span-12 xl:col-span-7 relative order-1 lg:order-2 flex flex-col'>
+        <div class='carousel-background flex-1 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 relative shadow-sm'>
+          {{#if slides}}
+            {{#each slides}}
+              <div class='carousel-slide {{#if @first}}active opacity-100{{else}}hidden opacity-0{{/if}} absolute inset-0 bg-cover bg-center transition-opacity duration-700' style='background-image: url({{image}});'></div>
+            {{/each}}
+          {{else}}
+            {{#if hero.url}}
+              <div class='carousel-slide active opacity-100 absolute inset-0 bg-cover bg-center transition-opacity duration-700' style='background-image: url({{hero.url}});'></div>
+            {{else}}
+              <div class='carousel-slide active opacity-100 absolute inset-0 bg-cover bg-center transition-opacity duration-700' style='background-image: url(https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=1440&h=882&fit=crop);'></div>
+            {{/if}}
+          {{/if}}
+        </div>
+
+        <div class='flex justify-between items-center mt-2 text-xs text-slate-500 font-sans border-t border-slate-100 dark:border-slate-800 pt-2'>
+          <div class='flex items-center gap-2'>
+            {{#if slides}}
+              {{#each slides}}
+                <button class='carousel-dot w-2 h-2 rounded-full {{#if @first}}active{{/if}}' data-slide='{{@index}}' aria-label='Go to slide {{add @index 1}}'></button>
+              {{/each}}
+            {{else}}
+              <button class='carousel-dot w-2 h-2 rounded-full active' data-slide='0' aria-label='Go to slide 1'></button>
+            {{/if}}
+            <button class='carousel-next w-7 h-7 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-[#8f0d00] dark:hover:text-[#ff2e1a] transition-colors' aria-label='Next slide'>
+              <svg width='14' height='14' viewBox='0 0 15 27' fill='none'>
+                <path d='M1.5 1.5L13.5 13.5L1.5 25.5' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'></path>
+              </svg>
+            </button>
+          </div>
+          <span class='italic text-slate-400'>Photo: Agency/Wire</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

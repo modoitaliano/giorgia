@@ -1,0 +1,53 @@
+name: Publish Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: brokaw
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.14.0'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@fifthbell'
+
+      - name: Upgrade npm CLI for trusted publishing
+        run: npm install --global npm@^11.5.1
+
+      - name: Show tool versions
+        run: |
+          node --version
+          npm --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish
+        run: npm publish --access public --provenance
+
+      - name: Summary
+        run: |
+          echo "## Publish Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: @fifthbell/brokaw" >> $GITHUB_STEP_SUMMARY
+          VERSION=$(node -p 'require("./package.json").version')
+          echo "- **Version**: ${VERSION}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Registry**: npmjs" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ✅ Published" >> $GITHUB_STEP_SUMMARY

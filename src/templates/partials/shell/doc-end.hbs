@@ -1,0 +1,282 @@
+    </div>
+    <script>
+      (function () {
+        function getLocale() {
+          var lang = document.documentElement.getAttribute('lang') || 'en';
+          if (lang === 'es') return 'es';
+          if (lang === 'it') return 'it';
+          return 'en';
+        }
+
+        function formatRelativeTimestamp(isoString) {
+          if (!isoString) return '';
+
+          var date = new Date(isoString);
+          if (Number.isNaN(date.getTime())) return '';
+
+          var locale = getLocale();
+          var rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+          var diffMs = Date.now() - date.getTime();
+          var diffMinutes = Math.max(1, Math.floor(diffMs / 60000));
+
+          if (diffMinutes < 60) {
+            return rtf.format(-diffMinutes, 'minute');
+          }
+
+          var diffHours = Math.max(1, Math.floor(diffMinutes / 60));
+          if (diffHours < 24) {
+            return rtf.format(-diffHours, 'hour');
+          }
+
+          var diffDays = Math.max(1, Math.floor(diffHours / 24));
+          return rtf.format(-diffDays, 'day');
+        }
+
+        function hydrateRelativeTimes(root) {
+          var scope = root || document;
+          var timestamps = scope.querySelectorAll('.article-time[data-timestamp]');
+
+          timestamps.forEach(function (node) {
+            var isoString = node.getAttribute('data-timestamp');
+            var formatted = formatRelativeTimestamp(isoString);
+            if (formatted) {
+              node.textContent = formatted;
+            }
+          });
+        }
+
+        window.__brokawHydrateRelativeTimes = hydrateRelativeTimes;
+
+        function initRelativeTimes() {
+          hydrateRelativeTimes(document);
+          window.setInterval(function () {
+            hydrateRelativeTimes(document);
+          }, 60000);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initRelativeTimes);
+        } else {
+          initRelativeTimes();
+        }
+      })();
+    </script>
+    <script>
+      (function () {
+        function setSlideState(slides, dots, index) {
+          slides.forEach(function (slide, slideIndex) {
+            var active = slideIndex === index;
+            var wasActive = slide.classList.contains('active');
+
+            if (active) {
+              slide.classList.remove('hidden');
+              slide.classList.add('active');
+              slide.classList.remove('pointer-events-none');
+
+              if (!wasActive) {
+                slide.classList.remove('opacity-100');
+                slide.classList.add('opacity-0');
+                window.requestAnimationFrame(function () {
+                  slide.classList.remove('opacity-0');
+                  slide.classList.add('opacity-100');
+                });
+              } else {
+                slide.classList.remove('opacity-0');
+                slide.classList.add('opacity-100');
+              }
+            } else {
+              slide.classList.remove('active');
+              slide.classList.remove('opacity-100');
+              slide.classList.add('opacity-0');
+              slide.classList.add('hidden');
+              slide.classList.add('pointer-events-none');
+            }
+          });
+          dots.forEach(function (dot, dotIndex) {
+            dot.classList.toggle('active', dotIndex === index);
+          });
+        }
+
+        function initCarousels(root) {
+          var scopes = (root || document).querySelectorAll('[data-carousel]');
+          scopes.forEach(function (scope) {
+            if (scope.dataset.carouselBound === 'true') return;
+
+            var slides = Array.prototype.slice.call(scope.querySelectorAll('.carousel-slide'));
+            if (slides.length === 0) {
+              scope.dataset.carouselBound = 'true';
+              return;
+            }
+
+            var dots = Array.prototype.slice.call(scope.querySelectorAll('.carousel-dot'));
+            var nextButton = scope.querySelector('.carousel-next');
+            var activeIndex = slides.findIndex(function (slide) {
+              return slide.classList.contains('active');
+            });
+            var currentIndex = activeIndex >= 0 ? activeIndex : 0;
+            var timer = null;
+
+            function clearTimer() {
+              if (timer === null) return;
+              window.clearInterval(timer);
+              timer = null;
+            }
+
+            function startTimer() {
+              clearTimer();
+              if (slides.length < 2) return;
+
+              timer = window.setInterval(function () {
+                if (!document.contains(scope)) {
+                  clearTimer();
+                  return;
+                }
+                currentIndex = (currentIndex + 1) % slides.length;
+                setSlideState(slides, dots, currentIndex);
+              }, 6000);
+            }
+
+            function goToSlide(nextIndex) {
+              currentIndex = nextIndex;
+              setSlideState(slides, dots, currentIndex);
+              startTimer();
+            }
+
+            dots.forEach(function (dot, dotIndex) {
+              dot.addEventListener('click', function () {
+                goToSlide(dotIndex);
+              });
+            });
+
+            if (nextButton) {
+              nextButton.addEventListener('click', function () {
+                goToSlide((currentIndex + 1) % slides.length);
+              });
+            }
+
+            scope.addEventListener('mouseenter', clearTimer);
+            scope.addEventListener('mouseleave', startTimer);
+
+            setSlideState(slides, dots, currentIndex);
+            startTimer();
+            scope.dataset.carouselBound = 'true';
+          });
+        }
+
+        window.__brokawInitCarousels = initCarousels;
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () {
+            initCarousels(document);
+          });
+        } else {
+          initCarousels(document);
+        }
+      })();
+    </script>
+    <script>
+      (function () {
+        var WIDGET_HOST = 'widgets.sofascore.com';
+        var WIDGET_PATH = '/embed/attackMomentum';
+
+        function getWidgetTheme() {
+          return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        }
+
+        function updateSofascoreIframe(iframe, theme) {
+          if (!(iframe instanceof HTMLIFrameElement)) return;
+          var src = iframe.getAttribute('src');
+          if (!src) return;
+
+          try {
+            var url = new URL(src, window.location.origin);
+            if (url.hostname !== WIDGET_HOST) return;
+            if (!url.pathname.includes(WIDGET_PATH)) return;
+
+            if (url.searchParams.get('widgetTheme') === theme) return;
+
+            url.searchParams.set('widgetTheme', theme);
+            iframe.setAttribute('src', url.toString());
+          } catch (_error) {
+            // Ignore malformed iframe src values.
+          }
+        }
+
+        function syncSofascoreTheme() {
+          var theme = getWidgetTheme();
+          var iframes = document.querySelectorAll('iframe[src*="widgets.sofascore.com/embed/attackMomentum"]');
+          iframes.forEach(function (iframe) {
+            updateSofascoreIframe(iframe, theme);
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', syncSofascoreTheme);
+        } else {
+          syncSofascoreTheme();
+        }
+
+        var observer = new MutationObserver(function () {
+          syncSofascoreTheme();
+        });
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['class'],
+        });
+      })();
+    </script>
+    <script>
+      (function () {
+        if (typeof gtag !== 'function') return;
+
+        /**
+          * Scroll depth tracking
+          * Tracks when users scroll to certain percentages of the page.
+          */
+        var scrollMilestones = [25, 50, 75, 100];
+        var scrollReached = {};
+
+        function checkScrollDepth() {
+          var scrolled = window.scrollY || document.documentElement.scrollTop;
+          var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          if (docHeight <= 0) return;
+          var pct = Math.min(100, Math.round((scrolled / docHeight) * 100));
+          for (var i = 0; i < scrollMilestones.length; i++) {
+            var milestone = scrollMilestones[i];
+            if (!scrollReached[milestone] && pct >= milestone) {
+              scrollReached[milestone] = true;
+              gtag('event', 'scroll_depth', { percent_scrolled: milestone });
+            }
+          }
+        }
+
+        window.addEventListener('scroll', checkScrollDepth, { passive: true });
+        checkScrollDepth();
+
+        /**
+          * Outbound link click tracking
+          * Tracks clicks on links that navigate away from the current site.
+          */
+        document.addEventListener('click', function (e) {
+          var target = e.target;
+          while (target && target.tagName !== 'A') {
+            target = target.parentElement;
+          }
+          if (!target) return;
+          var href = target.getAttribute('href');
+          if (!href || href.charAt(0) === '#' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+          try {
+            var url = new URL(href, window.location.href);
+            if (url.hostname && url.hostname !== window.location.hostname) {
+              gtag('event', 'outbound_click', {
+                link_url: url.href,
+                link_domain: url.hostname,
+                link_text: (target.textContent || '').trim().slice(0, 100),
+                transport_type: 'beacon'
+              });
+            }
+          } catch (_) {}
+        });
+      })();
+    </script>
+  </body>
+</html>

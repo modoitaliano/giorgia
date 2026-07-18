@@ -1,0 +1,24 @@
+<section class='my-6 border-l-2 border-[#b21100] dark:border-[#ff2e1a] pl-4'>
+  <p class='text-xs uppercase tracking-wider text-[#8f0d00] dark:text-[#ff2e1a] font-bold mb-1'>Live Update</p>
+  <p class='text-xs text-slate-500 dark:text-slate-400 mb-2'>{{formatDate timestamp}}</p>
+  <h4 class='text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 font-serif'>{{headline}}</h4>
+  {{#if html}}
+    <div class='text-slate-800 dark:text-slate-200'>
+      {{{html}}}
+    </div>
+  {{/if}}
+  {{#if media}}
+    <div class='mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3'>
+      {{#each media}}
+        <figure class='overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'>
+          <img src='{{url}}' alt='{{alt}}' class='w-full h-auto object-cover' loading='lazy' />
+          {{#if caption}}
+            <figcaption class='px-3 py-2 text-xs text-slate-500 dark:text-slate-400'>
+              {{caption}}
+            </figcaption>
+          {{/if}}
+        </figure>
+      {{/each}}
+    </div>
+  {{/if}}
+</section>
