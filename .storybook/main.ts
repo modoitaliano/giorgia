@@ -14,6 +14,10 @@ const config: StorybookConfig = {
   ],
   addons: ['@chromatic-com/storybook', '@storybook/addon-vitest', '@storybook/addon-a11y', '@storybook/addon-docs'],
   framework: '@storybook/html-vite',
+  staticDirs: [
+    { from: '../src/templates/assets', to: '/assets' },
+    { from: '../src/styles/fonts', to: '/content/fonts' }
+  ],
   async viteFinal(config) {
     return {
       ...config,

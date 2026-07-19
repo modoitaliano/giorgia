@@ -131,7 +131,7 @@ export function fontFiles(): FontFileEntry[] {
   const entries: FontFileEntry[] = [];
   const items = fs.readdirSync(dir, { withFileTypes: true });
   for (const item of items) {
-    if (!item.isFile()) continue;
+    if (!item.isFile() || item.name === 'fonts.css') continue;
     const fullPath = path.join(dir, item.name);
     entries.push({
       key: `content/fonts/${item.name}`,
@@ -140,7 +140,6 @@ export function fontFiles(): FontFileEntry[] {
     });
   }
 
-  // Also include fonts.css
   const cssPath = path.join(dir, 'fonts.css');
   if (fs.existsSync(cssPath)) {
     entries.push({
@@ -173,6 +172,8 @@ const CONTENT_TYPE_MAP: Record<string, string> = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
   '.ogg': 'audio/ogg',
   '.mp3': 'audio/mpeg',
 };

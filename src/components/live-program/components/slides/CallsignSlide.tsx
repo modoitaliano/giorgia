@@ -91,7 +91,7 @@ export function CallsignSlide({ currentTime: initialTime }: CallsignSlideProps) 
         <div className='flex flex-col items-center' style={{ opacity: centerOpacity, transition: 'opacity 0.5s' }} />
 
         <div
-          className="text-white text-6xl font-bold tracking-wider animate-fade-in-delay font-['JetBrains_Mono']"
+          className="text-white text-6xl font-bold tracking-wider animate-fade-in-delay font-['Barlow_Condensed']"
           style={{ opacity: showTime ? 1 : 0, transition: 'opacity 0.5s' }}
         >
           {formatNyTime(displayTime)}

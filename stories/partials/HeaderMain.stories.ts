@@ -10,10 +10,17 @@ Handlebars.registerPartial('nav/nav-categories', navCategoriesHbs);
 
 const template = Handlebars.compile(headerMainHbs);
 
+const triangoloNowPlaying = {
+  title: 'Triangolo',
+  artist: 'Renato Zero',
+  coverUrl: 'https://is1-ssl.mzstatic.com/image/thumb/Music/bc/1c/65/mzi.ksajqtzy.jpg/600x600bb.jpg',
+  coverAlt: 'Zerolandia album cover by Renato Zero'
+};
+
 const meta = {
   title: 'Partials/Headers/Main',
   render: (args) => template(args),
-  args: { ...homepageFixture, logoLink: '/' },
+  args: { ...homepageFixture, nowPlaying: triangoloNowPlaying, logoLink: '/' },
 } satisfies Meta;
 
 export default meta;
@@ -25,19 +32,24 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'Language buttons switch locale path and explicitly close the menu overlay before navigation.'
+          'Radio-style masthead using the shared self-hosted Modo Italiano font pipeline—Barlow 700 navigation, Barlow Condensed track typography, and Outfit supporting UI—alongside the packaged MI logo, navy 8px-blurred tint, centered Ken Burns artwork slideshow, and a softly rounded now-playing player for “Triangolo” by Renato Zero.'
       }
     }
   }
 };
 
-export const MourningMode: Story = {
-  args: { mourningMode: true },
+export const NowPlayingFallback: Story = {
+  args: {
+    featuredImage: undefined,
+    hero: undefined,
+    authors: [],
+    categories: [{ name: 'Live radio', slug: 'live-radio' }]
+  },
   parameters: {
     docs: {
       description: {
         story:
-          'Mourning mode: logo background is black, theme selector is hidden, dark mode is forced.'
+          'Uses the built-in artwork fallback and category name when the current item has no artwork or author.'
       }
     }
   }

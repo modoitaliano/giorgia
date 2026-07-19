@@ -37,7 +37,7 @@ export function MarqueeCurtain({ onComplete }: MarqueeCurtainProps) {
           color: '#ffffff',
           fontSize: '1.5rem',
           fontWeight: '600',
-          fontFamily: 'Libre Franklin, sans-serif'
+          fontFamily: 'Barlow, sans-serif'
         }}
       >
         This is fifth<span style={{ fontWeight: '700' }}>bell</span>.

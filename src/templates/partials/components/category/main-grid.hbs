@@ -14,7 +14,7 @@
           <a href='{{url}}' class='hover:underline decoration-[#b21100]'>{{title}}</a>
         </h2>
 
-        <p class='text-slate-600 dark:text-slate-400 font-serif leading-relaxed line-clamp-3 text-xl mb-3'>{{excerpt}}</p>
+        <p class='text-slate-600 dark:text-slate-400 font-sans leading-relaxed line-clamp-3 text-xl mb-3'>{{excerpt}}</p>
         <span class='text-sm text-slate-500 dark:text-slate-400 block font-sans'>{{formatDate updatedAt}}</span>
       </article>
     {{/with}}
@@ -27,10 +27,10 @@
           </a>
           <div class='space-y-2'>
             <span class='text-xs font-bold text-[#8f0d00] uppercase tracking-wider'>{{#with (lookup categories 0)}}{{name}}{{/with}}</span>
-            <h3 class='text-2xl font-bold font-serif leading-tight text-slate-900 dark:text-slate-100 group-hover:underline'>
+            <h3 class='text-2xl font-bold font-encode leading-tight text-slate-900 dark:text-slate-100 group-hover:underline'>
               <a href='{{url}}'>{{title}}</a>
             </h3>
-            <p class='text-xl text-slate-500 dark:text-slate-400 line-clamp-3 font-serif'>{{excerpt}}</p>
+            <p class='text-xl text-slate-500 dark:text-slate-400 line-clamp-3 font-sans'>{{excerpt}}</p>
           </div>
         </article>
       {{/each}}

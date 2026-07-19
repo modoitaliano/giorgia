@@ -95,7 +95,7 @@ function MarketSlide({ progress, marketData, language }: { progress: number; mar
       <div className='relative z-10 h-full flex flex-col justify-center px-24'>
         <div className='mb-12 animate-slide-up'>
           <div className='w-32 h-2 bg-white mb-12' />
-          <h1 className="text-5xl font-bold tracking-tight mb-8 leading-tight font-['Encode_Sans']">{t('markets.header', language)}</h1>
+          <h1 className="text-5xl font-bold tracking-tight mb-8 leading-tight font-['Barlow_Condensed']">{t('markets.header', language)}</h1>
           <h2 className='text-3xl font-light opacity-90 leading-relaxed'>{t('markets.subtitle', language)}</h2>
         </div>
 
@@ -115,11 +115,11 @@ function MarketSlide({ progress, marketData, language }: { progress: number; mar
                 style={{ animationDelay: `${index * 0.05}s`, backgroundColor }}
               >
                 <div className='flex flex-col'>
-                  <span className="text-4xl font-bold mb-1 font-['Encode_Sans']">{stock.symbol}</span>
+                  <span className="text-4xl font-bold mb-1 font-['Barlow_Condensed']">{stock.symbol}</span>
                   <span className='text-2xl opacity-70'>{stock.name}</span>
                 </div>
                 <div className='flex flex-col items-end'>
-                  <div className="text-5xl font-bold mb-1 font-['Encode_Sans']">${stock.price.toFixed(2)}</div>
+                  <div className="text-5xl font-bold mb-1 font-['Barlow_Condensed']">${stock.price.toFixed(2)}</div>
                   <div className={`flex items-center space-x-2 ${changeColor}`}>
                     <Icon size={24} strokeWidth={2} />
                     <span className='text-3xl font-bold'>

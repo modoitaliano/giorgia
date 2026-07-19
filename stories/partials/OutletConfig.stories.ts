@@ -34,7 +34,7 @@ const meta = {
       .join('');
 
     return `
-      <main style="font-family: system-ui, sans-serif; padding: 24px; max-width: 960px;">
+      <main style="font-family: Barlow, system-ui, sans-serif; padding: 24px; max-width: 960px;">
         <h1 style="font-size: 24px; margin: 0 0 4px;">Brokaw renderer contract</h1>
         <p style="margin: 0 0 20px; color: #4b5563;">@fifthbell/brokaw@${version}</p>
         <table style="border-collapse: collapse; width: 100%; font-size: 14px;">

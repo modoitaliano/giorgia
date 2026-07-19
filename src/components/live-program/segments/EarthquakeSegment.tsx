@@ -158,7 +158,7 @@ function EarthquakeSlide({ earthquakes, progress, language }: { earthquakes: Ear
           <div className='w-32 h-2 bg-white mb-8' />
           <div className='flex items-center space-x-4 mb-4'>
             <AlertTriangle size={56} className='text-orange-500' strokeWidth={2} />
-            <h1 className="text-5xl font-bold tracking-tight leading-tight font-['Encode_Sans']">{t('earthquakes.header', language)}</h1>
+            <h1 className="text-5xl font-bold tracking-tight leading-tight font-['Barlow_Condensed']">{t('earthquakes.header', language)}</h1>
           </div>
           <h2 className='text-2xl font-light opacity-90 leading-relaxed'>{t('earthquakes.subtitle', language)}</h2>
         </div>
@@ -193,7 +193,7 @@ function EarthquakeSlide({ earthquakes, progress, language }: { earthquakes: Ear
                   <div className='text-5xl font-bold leading-none'>M{quake.magnitude.toFixed(1)}</div>
                 </div>
                 <div className='flex flex-col justify-center min-w-0'>
-                  <h3 className="text-3xl font-bold mb-2 line-clamp-2 leading-tight font-['Encode_Sans']" title={quake.location}>
+                  <h3 className="text-3xl font-bold mb-2 line-clamp-2 leading-tight font-['Barlow_Condensed']" title={quake.location}>
                     {quake.location}
                   </h3>
                   <div className='grid grid-cols-2 gap-x-4 gap-y-1.5 text-xl'>

@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=1080, initial-scale=1.0" />
-  <link href="https://cdn.fifthbell.com/content/fonts/fonts.css" rel="stylesheet">
+  <link rel='preload' as='font' type='font/woff2' href='/content/fonts/barlow-latin-400-normal.woff2' crossorigin />
+  <link rel='preload' as='font' type='font/woff2' href='/content/fonts/barlow-latin-700-normal.woff2' crossorigin />
+  <link href='/content/fonts/fonts.css' rel='stylesheet' />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -107,7 +109,7 @@
     }
 
     .category-label {
-      font-family: 'Encode Sans Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Barlow Condensed', system-ui, sans-serif;
       font-size: 80px;
       line-height: 119px;
       font-weight: 600;
@@ -117,7 +119,7 @@
     }
 
     .title-text {
-      font-family: 'Encode Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Barlow', system-ui, sans-serif;
       font-size: 68px;
       line-height: 1.1;
       font-weight: 700;

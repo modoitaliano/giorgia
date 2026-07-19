@@ -1,14 +1,16 @@
-@import "tailwindcss";
 @import './fonts.css';
+@import "tailwindcss";
 @tailwind utilities;
+@source not "./compiled.css";
 
 @theme {
-  --font-sans: "Libre Franklin", "sans-serif";
-  --font-serif: "EB Garamond";
-  --font-encode: "Encode Sans", "sans-serif";
+  --font-sans: "Barlow", sans-serif;
+  --font-serif: "Barlow", sans-serif;
+  --font-encode: "Barlow Condensed", sans-serif;
+  --font-label: "Outfit", sans-serif;
 }
 
-@variant dark (.dark &);
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer utilities {
   .text-balance {
@@ -52,7 +54,7 @@
   }
 
   .deck {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: 1.125rem;
     line-height: 1.5;
     color: var(--muted-foreground);
@@ -109,7 +111,7 @@
   }
 
   .headline {
-    font-family: var(--font-serif);
+    font-family: var(--font-encode);
     font-weight: 700;
     line-height: 1.1;
   }
@@ -122,6 +124,10 @@
 
 @layer base {
   :root {
+    --font-sans: "Barlow", sans-serif;
+    --font-serif: "Barlow", sans-serif;
+    --font-encode: "Barlow Condensed", sans-serif;
+    --font-label: "Outfit", sans-serif;
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;

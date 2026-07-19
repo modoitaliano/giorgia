@@ -39,13 +39,16 @@
       "types": "./dist/components/live-program/LiveProgram.d.ts",
       "import": "./dist/components/live-program/LiveProgram.js"
     },
-    "./partial-deps.json": "./src/partial-deps.json"
+    "./partial-deps.json": "./src/partial-deps.json",
+    "./assets/mi.svg": "./dist/assets/mi.svg",
+    "./fonts/fonts.css": "./dist/fonts/fonts.css",
+    "./fonts/*": "./dist/fonts/*"
   },
   "scripts": {
     "clean": "node -e \"require('node:fs').rmSync('dist',{ recursive: true, force: true })\"",
     "build:css": "tailwindcss -i src/styles/global.css -o src/styles/compiled.css --minify",
     "build:live-program": "vite build --config vite.config.live-program.ts",
-    "build": "npm run clean && npm run build:css && npm run build:live-program && tsc -p tsconfig.build.json && node -e \"require('node:fs').cpSync('src/styles/fonts','dist/fonts',{recursive:true})\"",
+    "build": "npm run clean && npm run build:css && npm run build:live-program && tsc -p tsconfig.build.json && node -e \"const fs=require('node:fs'); fs.cpSync('src/styles/fonts','dist/fonts',{recursive:true}); fs.copyFileSync('src/styles/fonts.css','dist/fonts/fonts.css'); fs.cpSync('src/templates/assets','dist/assets',{recursive:true})\"",
     "storybook": "npm run build:css && storybook dev -p 6006",
     "build-storybook": "npm run build:css && storybook build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
@@ -53,6 +56,9 @@
     "test:unit": "vitest run --project unit"
   },
   "dependencies": {
+    "@fontsource/barlow": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/outfit": "^5.3.0",
     "date-fns": "^4.1.0",
     "fast-average-color": "^9.5.2",
     "framer-motion": "^12.38.0",

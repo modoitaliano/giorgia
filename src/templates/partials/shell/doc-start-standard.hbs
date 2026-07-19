@@ -3,7 +3,9 @@
   <head>
     <meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1' />
-    <link href='https://cdn.fifthbell.com/content/fonts/fonts.css' rel='stylesheet' />
+    <link rel='preload' as='font' type='font/woff2' href='/content/fonts/barlow-latin-400-normal.woff2' crossorigin />
+    <link rel='preload' as='font' type='font/woff2' href='/content/fonts/barlow-latin-700-normal.woff2' crossorigin />
+    <link href='/content/fonts/fonts.css' rel='stylesheet' />
     {{#if (eq layout 'homepage')}}
       {{#if hero.url}}
         <link rel='preload' as='image' href='{{hero.url}}' fetchpriority='high' />

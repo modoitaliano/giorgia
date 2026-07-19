@@ -14,6 +14,13 @@ const sectionControls = {
   showMoreStories: { control: 'boolean' }
 };
 
+const triangoloNowPlaying = {
+  title: 'Triangolo',
+  artist: 'Renato Zero',
+  coverUrl: 'https://is1-ssl.mzstatic.com/image/thumb/Music/bc/1c/65/mzi.ksajqtzy.jpg/600x600bb.jpg',
+  coverAlt: 'Zerolandia album cover by Renato Zero'
+};
+
 const meta = {
   title: 'Pages/Homepage',
   loaders: [async () => ({ homepage: await loadHomepagePreviewData() })],
@@ -41,8 +48,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    showHero: true,
-    showEditorialHero: true
+    nowPlaying: triangoloNowPlaying,
+    showHero: false,
+    showEditorialHero: false,
+    showBreakingNews: false,
+    showTrending: false,
+    showLanding: false,
+    showMustRead: false,
+    showMoreStories: false
   }
 };
 

@@ -97,7 +97,7 @@
       </h1>
 
       {{#if excerpt}}
-      <p class='text-xl text-slate-600 dark:text-slate-400 font-serif leading-relaxed mb-6 max-w-3xl'>
+      <p class='text-xl text-slate-600 dark:text-slate-400 font-sans leading-relaxed mb-6 max-w-3xl'>
         {{excerpt}}
       </p>
       {{/if}}
@@ -147,7 +147,7 @@
               style='border:0;'
             ></iframe>
             {{#with (sofascoreMatchUrl sofascore_id) as |matchUrl|}}
-              <div style='font-size:12px;font-family:Arial,sans-serif'>
+              <div style='font-size:12px;font-family:Barlow,sans-serif'>
                 <a href='{{matchUrl}}' target='_blank' rel='noreferrer'>{{title}} Live Score</a>
               </div>
             {{/with}}
