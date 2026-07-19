@@ -17,7 +17,7 @@ const meta = {
     title: 'Major Update: Shared Instagram Template Now Lives in Brokaw',
     category: 'Technology',
     slug: 'technology',
-    url: 'https://fifthbell.com/technology/shared-instagram-template'
+    url: 'https://modoitaliano.fm/technology/shared-instagram-template'
   },
   parameters: {
     layout: 'fullscreen'

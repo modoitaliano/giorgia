@@ -1,14 +1,14 @@
-export const FIFTHBELL_ASSETS = {
+export const MODOITALIANO_ASSETS = {
   audio: {
-    pipes: './fifthbell/audio/pipes.ogg'
+    pipes: './modoitaliano/audio/pipes.ogg'
   },
   images: {
-    logo: './fifthbell/images/fifthbell.png',
-    nyc: './fifthbell/images/nyc.jpg',
-    berlin: './fifthbell/images/berlin.jpg',
-    santiago: './fifthbell/images/santiago.jpg',
-    tokyo: './fifthbell/images/tokyo.jpg',
-    nyse: './fifthbell/images/nyse.jpg',
-    seismograph: './fifthbell/images/seismograph.jpg'
+    logo: './modoitaliano/images/modoitaliano.png',
+    nyc: './modoitaliano/images/nyc.jpg',
+    berlin: './modoitaliano/images/berlin.jpg',
+    santiago: './modoitaliano/images/santiago.jpg',
+    tokyo: './modoitaliano/images/tokyo.jpg',
+    nyse: './modoitaliano/images/nyse.jpg',
+    seismograph: './modoitaliano/images/seismograph.jpg'
   }
 } as const;

@@ -66,7 +66,7 @@ export const linkInBioFixture: CanonicalArticle = {
   id: 'link-in-bio',
   slug: '/instagram',
   layout: 'link-in-bio',
-  canonicalUrl: 'https://fifthbell.com/instagram',
+  canonicalUrl: 'https://modoitaliano.fm/instagram',
   contentVersion: '2026-04-27T12:30:00.000Z',
   publishedAt: '2026-04-27T12:30:00.000Z',
   updatedAt: '2026-04-27T12:30:00.000Z',
@@ -75,12 +75,12 @@ export const linkInBioFixture: CanonicalArticle = {
   excerpt: 'Tap a story to read the full article.',
   language: 'en',
   featured: false,
-  authors: [{ name: 'Fifthbell Desk', slug: 'fifthbell-desk' }],
+  authors: [{ name: 'ModoItaliano Desk', slug: 'modoitaliano-desk' }],
   categories: [{ name: 'Top Stories', slug: 'top-stories' }],
   featuredImage: articles[0].featuredImage,
   body: [],
   seo: {
-    metaTitle: 'Top Stories | fifthbell',
+    metaTitle: 'Top Stories | ModoItaliano',
     metaDescription: 'Tap a story to read the full article.',
     ogImage: articles[0].featuredImage?.url
   },

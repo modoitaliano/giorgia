@@ -4,7 +4,7 @@ export const articleFixture: CanonicalArticle = {
   id: 'f4fb8d3f-18da-4df2-8571-7737adc5ad0b',
   slug: '/investigations/atlantic-storm-tracker',
   layout: 'article-page',
-  canonicalUrl: 'https://fifthbell.com/investigations/atlantic-storm-tracker',
+  canonicalUrl: 'https://modoitaliano.fm/investigations/atlantic-storm-tracker',
   contentVersion: '2026-03-08T12:00:00.000Z',
   publishedAt: '2026-03-08T10:30:00.000Z',
   updatedAt: '2026-03-08T11:45:00.000Z',
@@ -16,8 +16,8 @@ export const articleFixture: CanonicalArticle = {
   featured: true,
   authors: [
     {
-      name: 'Fifthbell Desk',
-      slug: 'fifthbell-desk'
+      name: 'ModoItaliano Desk',
+      slug: 'modoitaliano-desk'
     }
   ],
   categories: [
@@ -91,7 +91,7 @@ export const articleFixture: CanonicalArticle = {
     },
     {
       type: 'image',
-      url: 'https://cdn.fifthbell.com/media/2026/03/08/russell-wins-australian-grand-prix-as-mercedes-dominates-f1-season-opener-muhpTza0j5.avif',
+      url: 'https://cdn.modoitaliano.fm/media/2026/03/08/russell-wins-australian-grand-prix-as-mercedes-dominates-f1-season-opener-muhpTza0j5.avif',
       alt: 'Doppler radar display',
       caption: 'Radar signatures tightened after midnight updates.'
     },
@@ -123,7 +123,7 @@ export const articleFixture: CanonicalArticle = {
     }
   ],
   seo: {
-    metaTitle: 'Atlantic storm tracker | fifthbell',
+    metaTitle: 'Atlantic storm tracker | ModoItaliano',
     metaDescription: 'Latest forecast, timing, and impact details for the Atlantic storm setup.',
     ogImage: 'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=1200&h=630&fit=crop'
   },

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BellRing } from 'lucide-react';
 import { useSSE } from './hooks/useSSE.js';
 
-import { FIFTHBELL_ASSETS } from './assets.js';
+import { MODOITALIANO_ASSETS } from './assets.js';
 import { MarqueeCurtain } from './components/MarqueeCurtain.js';
 import Marquee from './components/Marquee.js';
 import { WorldClocks, DEFAULT_WORLD_CLOCK_CITIES } from './components/WorldClocks.js';
@@ -54,7 +54,7 @@ interface ProgramState {
   updatedAt: string;
 }
 
-interface FifthBellWorldClockCity {
+interface ModoItalianoWorldClockCity {
   city: string;
   timezone: string;
 }
@@ -67,7 +67,7 @@ interface LiveProgramProps {
   apiBaseUrl?: string;
 }
 
-interface FifthBellConfig {
+interface ModoItalianoConfig {
   showArticles: boolean;
   showWeather: boolean;
   showEarthquakes: boolean;
@@ -90,7 +90,7 @@ interface FifthBellConfig {
   worldClockTransitionMs: number;
   worldClockShuffle: boolean;
   worldClockWidthPx: number;
-  worldClockCities: FifthBellWorldClockCity[];
+  worldClockCities: ModoItalianoWorldClockCity[];
   audioCueEnabled: boolean;
   audioCueMinute: number;
   audioCueSecond: number;
@@ -107,13 +107,13 @@ interface FifthBellConfig {
 
 const DEFAULT_LANGUAGE_ROTATION: SupportedLanguage[] = ['en', 'es', 'en', 'it'];
 const DEFAULT_CALLSIGN_PRELAUNCH_UNTIL_NYC = '2026-01-02T21:30:00';
-const FIFTHBELL_COMPONENT_TYPE_CONTENT = 'fifthbell-content';
-const FIFTHBELL_COMPONENT_TYPE_MARQUEE = 'fifthbell-marquee';
-const FIFTHBELL_COMPONENT_TYPE_TONI_CLOCK = 'toni-clock';
-const FIFTHBELL_COMPONENT_TYPE_CORNER = 'fifthbell-corner';
-const FIFTHBELL_COMPONENT_TYPE_LEGACY = 'fifthbell';
+const MODOITALIANO_COMPONENT_TYPE_CONTENT = 'modoitaliano-content';
+const MODOITALIANO_COMPONENT_TYPE_MARQUEE = 'modoitaliano-marquee';
+const MODOITALIANO_COMPONENT_TYPE_TONI_CLOCK = 'toni-clock';
+const MODOITALIANO_COMPONENT_TYPE_CORNER = 'modoitaliano-corner';
+const MODOITALIANO_COMPONENT_TYPE_LEGACY = 'modoitaliano';
 
-const DEFAULT_FIFTHBELL_CONFIG: FifthBellConfig = {
+const DEFAULT_MODOITALIANO_CONFIG: ModoItalianoConfig = {
   showArticles: true,
   showWeather: true,
   showEarthquakes: true,
@@ -215,7 +215,7 @@ function normalizeLanguageRotation(value: unknown): SupportedLanguage[] {
   return filtered.length > 0 ? filtered : [...DEFAULT_LANGUAGE_ROTATION];
 }
 
-function normalizeWorldClockCities(value: unknown): FifthBellWorldClockCity[] {
+function normalizeWorldClockCities(value: unknown): ModoItalianoWorldClockCity[] {
   if (!Array.isArray(value)) {
     return [...DEFAULT_WORLD_CLOCK_CITIES];
   }
@@ -234,7 +234,7 @@ function normalizeWorldClockCities(value: unknown): FifthBellWorldClockCity[] {
 
       return { city, timezone };
     })
-    .filter((item): item is FifthBellWorldClockCity => item !== null);
+    .filter((item): item is ModoItalianoWorldClockCity => item !== null);
 
   return normalized.length > 0 ? normalized : [...DEFAULT_WORLD_CLOCK_CITIES];
 }
@@ -267,7 +267,7 @@ function parseSceneMetadata(scene: Scene | null): Record<string, unknown> {
   }
 }
 
-function resolveFifthBellLayerAvailability(activeComponents?: string[]) {
+function resolveModoItalianoLayerAvailability(activeComponents?: string[]) {
   const defaultAvailability = {
     content: true,
     marquee: true
@@ -277,36 +277,36 @@ function resolveFifthBellLayerAvailability(activeComponents?: string[]) {
     return defaultAvailability;
   }
 
-  if (activeComponents.includes(FIFTHBELL_COMPONENT_TYPE_LEGACY)) {
+  if (activeComponents.includes(MODOITALIANO_COMPONENT_TYPE_LEGACY)) {
     return defaultAvailability;
   }
 
   return {
-    content: activeComponents.includes(FIFTHBELL_COMPONENT_TYPE_CONTENT),
-    marquee: activeComponents.includes(FIFTHBELL_COMPONENT_TYPE_MARQUEE)
+    content: activeComponents.includes(MODOITALIANO_COMPONENT_TYPE_CONTENT),
+    marquee: activeComponents.includes(MODOITALIANO_COMPONENT_TYPE_MARQUEE)
   };
 }
 
-function extractConfigFromMetadata(metadataInput: Record<string, unknown> | null | undefined): FifthBellConfig {
+function extractConfigFromMetadata(metadataInput: Record<string, unknown> | null | undefined): ModoItalianoConfig {
   const metadata = toRecord(metadataInput);
-  const legacyProps = toRecord(metadata[FIFTHBELL_COMPONENT_TYPE_LEGACY]);
+  const legacyProps = toRecord(metadata[MODOITALIANO_COMPONENT_TYPE_LEGACY]);
   const contentProps = {
     ...legacyProps,
-    ...toRecord(metadata[FIFTHBELL_COMPONENT_TYPE_CONTENT])
+    ...toRecord(metadata[MODOITALIANO_COMPONENT_TYPE_CONTENT])
   };
   const marqueeProps = {
     ...legacyProps,
-    ...toRecord(metadata[FIFTHBELL_COMPONENT_TYPE_MARQUEE])
+    ...toRecord(metadata[MODOITALIANO_COMPONENT_TYPE_MARQUEE])
   };
   const cornerProps = {
     ...legacyProps,
-    ...toRecord(metadata[FIFTHBELL_COMPONENT_TYPE_TONI_CLOCK]),
-    ...toRecord(metadata[FIFTHBELL_COMPONENT_TYPE_CORNER])
+    ...toRecord(metadata[MODOITALIANO_COMPONENT_TYPE_TONI_CLOCK]),
+    ...toRecord(metadata[MODOITALIANO_COMPONENT_TYPE_CORNER])
   };
 
-  const parsedMarqueeMinPostsCount = clampNumber(marqueeProps.marqueeMinPostsCount, DEFAULT_FIFTHBELL_CONFIG.marqueeMinPostsCount, 0, 50);
-  let parsedMarqueeMinAverageRelevance = clampNumber(marqueeProps.marqueeMinAverageRelevance, DEFAULT_FIFTHBELL_CONFIG.marqueeMinAverageRelevance, 0, 100);
-  let parsedMarqueeMinMedianRelevance = clampNumber(marqueeProps.marqueeMinMedianRelevance, DEFAULT_FIFTHBELL_CONFIG.marqueeMinMedianRelevance, 0, 100);
+  const parsedMarqueeMinPostsCount = clampNumber(marqueeProps.marqueeMinPostsCount, DEFAULT_MODOITALIANO_CONFIG.marqueeMinPostsCount, 0, 50);
+  let parsedMarqueeMinAverageRelevance = clampNumber(marqueeProps.marqueeMinAverageRelevance, DEFAULT_MODOITALIANO_CONFIG.marqueeMinAverageRelevance, 0, 100);
+  let parsedMarqueeMinMedianRelevance = clampNumber(marqueeProps.marqueeMinMedianRelevance, DEFAULT_MODOITALIANO_CONFIG.marqueeMinMedianRelevance, 0, 100);
 
   // Compatibility: prior defaults were tuned for OR logic. Under threshold logic, treat that trio as legacy.
   if (parsedMarqueeMinPostsCount === 4 && parsedMarqueeMinAverageRelevance === 5 && parsedMarqueeMinMedianRelevance === 7) {
@@ -315,44 +315,44 @@ function extractConfigFromMetadata(metadataInput: Record<string, unknown> | null
   }
 
   return {
-    showArticles: normalizeBoolean(contentProps.showArticles, DEFAULT_FIFTHBELL_CONFIG.showArticles),
-    showWeather: normalizeBoolean(contentProps.showWeather, DEFAULT_FIFTHBELL_CONFIG.showWeather),
-    showEarthquakes: normalizeBoolean(contentProps.showEarthquakes, DEFAULT_FIFTHBELL_CONFIG.showEarthquakes),
-    showMarkets: normalizeBoolean(contentProps.showMarkets, DEFAULT_FIFTHBELL_CONFIG.showMarkets),
-    showLiveEvents: normalizeBoolean(contentProps.showLiveEvents, DEFAULT_FIFTHBELL_CONFIG.showLiveEvents),
-    showMarquee: normalizeBoolean(marqueeProps.showMarquee, DEFAULT_FIFTHBELL_CONFIG.showMarquee),
-    showCallsignTake: normalizeBoolean(contentProps.showCallsignTake, DEFAULT_FIFTHBELL_CONFIG.showCallsignTake),
+    showArticles: normalizeBoolean(contentProps.showArticles, DEFAULT_MODOITALIANO_CONFIG.showArticles),
+    showWeather: normalizeBoolean(contentProps.showWeather, DEFAULT_MODOITALIANO_CONFIG.showWeather),
+    showEarthquakes: normalizeBoolean(contentProps.showEarthquakes, DEFAULT_MODOITALIANO_CONFIG.showEarthquakes),
+    showMarkets: normalizeBoolean(contentProps.showMarkets, DEFAULT_MODOITALIANO_CONFIG.showMarkets),
+    showLiveEvents: normalizeBoolean(contentProps.showLiveEvents, DEFAULT_MODOITALIANO_CONFIG.showLiveEvents),
+    showMarquee: normalizeBoolean(marqueeProps.showMarquee, DEFAULT_MODOITALIANO_CONFIG.showMarquee),
+    showCallsignTake: normalizeBoolean(contentProps.showCallsignTake, DEFAULT_MODOITALIANO_CONFIG.showCallsignTake),
     weatherCities: normalizeStringArray(contentProps.weatherCities),
     languageRotation: normalizeLanguageRotation(contentProps.languageRotation),
-    dataLoadTimeoutMs: clampNumber(contentProps.dataLoadTimeoutMs, DEFAULT_FIFTHBELL_CONFIG.dataLoadTimeoutMs, 1000, 120000),
-    playlistDefaultDurationMs: clampNumber(contentProps.playlistDefaultDurationMs, DEFAULT_FIFTHBELL_CONFIG.playlistDefaultDurationMs, 1000, 120000),
-    playlistUpdateIntervalMs: clampNumber(contentProps.playlistUpdateIntervalMs, DEFAULT_FIFTHBELL_CONFIG.playlistUpdateIntervalMs, 16, 5000),
-    articlesDurationMs: clampNumber(contentProps.articlesDurationMs, DEFAULT_FIFTHBELL_CONFIG.articlesDurationMs, 1000, 120000),
-    weatherDurationMs: clampNumber(contentProps.weatherDurationMs, DEFAULT_FIFTHBELL_CONFIG.weatherDurationMs, 1000, 120000),
-    earthquakesDurationMs: clampNumber(contentProps.earthquakesDurationMs, DEFAULT_FIFTHBELL_CONFIG.earthquakesDurationMs, 1000, 120000),
-    marketsDurationMs: clampNumber(contentProps.marketsDurationMs, DEFAULT_FIFTHBELL_CONFIG.marketsDurationMs, 1000, 120000),
-    showWorldClocks: normalizeBoolean(cornerProps.showWorldClocks, DEFAULT_FIFTHBELL_CONFIG.showWorldClocks),
+    dataLoadTimeoutMs: clampNumber(contentProps.dataLoadTimeoutMs, DEFAULT_MODOITALIANO_CONFIG.dataLoadTimeoutMs, 1000, 120000),
+    playlistDefaultDurationMs: clampNumber(contentProps.playlistDefaultDurationMs, DEFAULT_MODOITALIANO_CONFIG.playlistDefaultDurationMs, 1000, 120000),
+    playlistUpdateIntervalMs: clampNumber(contentProps.playlistUpdateIntervalMs, DEFAULT_MODOITALIANO_CONFIG.playlistUpdateIntervalMs, 16, 5000),
+    articlesDurationMs: clampNumber(contentProps.articlesDurationMs, DEFAULT_MODOITALIANO_CONFIG.articlesDurationMs, 1000, 120000),
+    weatherDurationMs: clampNumber(contentProps.weatherDurationMs, DEFAULT_MODOITALIANO_CONFIG.weatherDurationMs, 1000, 120000),
+    earthquakesDurationMs: clampNumber(contentProps.earthquakesDurationMs, DEFAULT_MODOITALIANO_CONFIG.earthquakesDurationMs, 1000, 120000),
+    marketsDurationMs: clampNumber(contentProps.marketsDurationMs, DEFAULT_MODOITALIANO_CONFIG.marketsDurationMs, 1000, 120000),
+    showWorldClocks: normalizeBoolean(cornerProps.showWorldClocks, DEFAULT_MODOITALIANO_CONFIG.showWorldClocks),
     showBellIcon: true,
-    worldClockRotateIntervalMs: clampNumber(cornerProps.worldClockRotateIntervalMs, DEFAULT_FIFTHBELL_CONFIG.worldClockRotateIntervalMs, 500, 120000),
-    worldClockTransitionMs: clampNumber(cornerProps.worldClockTransitionMs, DEFAULT_FIFTHBELL_CONFIG.worldClockTransitionMs, 0, 10000),
-    worldClockShuffle: normalizeBoolean(cornerProps.worldClockShuffle, DEFAULT_FIFTHBELL_CONFIG.worldClockShuffle),
-    worldClockWidthPx: clampNumber(cornerProps.worldClockWidthPx, DEFAULT_FIFTHBELL_CONFIG.worldClockWidthPx, 120, 600),
+    worldClockRotateIntervalMs: clampNumber(cornerProps.worldClockRotateIntervalMs, DEFAULT_MODOITALIANO_CONFIG.worldClockRotateIntervalMs, 500, 120000),
+    worldClockTransitionMs: clampNumber(cornerProps.worldClockTransitionMs, DEFAULT_MODOITALIANO_CONFIG.worldClockTransitionMs, 0, 10000),
+    worldClockShuffle: normalizeBoolean(cornerProps.worldClockShuffle, DEFAULT_MODOITALIANO_CONFIG.worldClockShuffle),
+    worldClockWidthPx: clampNumber(cornerProps.worldClockWidthPx, DEFAULT_MODOITALIANO_CONFIG.worldClockWidthPx, 120, 600),
     worldClockCities: normalizeWorldClockCities(cornerProps.worldClockCities),
-    audioCueEnabled: normalizeBoolean(contentProps.audioCueEnabled, DEFAULT_FIFTHBELL_CONFIG.audioCueEnabled),
-    audioCueMinute: clampNumber(contentProps.audioCueMinute, DEFAULT_FIFTHBELL_CONFIG.audioCueMinute, 0, 59),
-    audioCueSecond: clampNumber(contentProps.audioCueSecond, DEFAULT_FIFTHBELL_CONFIG.audioCueSecond, 0, 59),
+    audioCueEnabled: normalizeBoolean(contentProps.audioCueEnabled, DEFAULT_MODOITALIANO_CONFIG.audioCueEnabled),
+    audioCueMinute: clampNumber(contentProps.audioCueMinute, DEFAULT_MODOITALIANO_CONFIG.audioCueMinute, 0, 59),
+    audioCueSecond: clampNumber(contentProps.audioCueSecond, DEFAULT_MODOITALIANO_CONFIG.audioCueSecond, 0, 59),
     callsignPrelaunchUntilNyc:
       typeof contentProps.callsignPrelaunchUntilNyc === 'string' && contentProps.callsignPrelaunchUntilNyc.trim()
         ? contentProps.callsignPrelaunchUntilNyc.trim()
-        : DEFAULT_FIFTHBELL_CONFIG.callsignPrelaunchUntilNyc,
-    callsignWindowStartSecond: clampNumber(contentProps.callsignWindowStartSecond, DEFAULT_FIFTHBELL_CONFIG.callsignWindowStartSecond, 0, 59),
-    callsignWindowEndSecond: clampNumber(contentProps.callsignWindowEndSecond, DEFAULT_FIFTHBELL_CONFIG.callsignWindowEndSecond, 0, 59),
+        : DEFAULT_MODOITALIANO_CONFIG.callsignPrelaunchUntilNyc,
+    callsignWindowStartSecond: clampNumber(contentProps.callsignWindowStartSecond, DEFAULT_MODOITALIANO_CONFIG.callsignWindowStartSecond, 0, 59),
+    callsignWindowEndSecond: clampNumber(contentProps.callsignWindowEndSecond, DEFAULT_MODOITALIANO_CONFIG.callsignWindowEndSecond, 0, 59),
     marqueeMinPostsCount: parsedMarqueeMinPostsCount,
     marqueeMinAverageRelevance: parsedMarqueeMinAverageRelevance,
     marqueeMinMedianRelevance: parsedMarqueeMinMedianRelevance,
-    marqueePixelsPerSecond: clampNumber(marqueeProps.marqueePixelsPerSecond, DEFAULT_FIFTHBELL_CONFIG.marqueePixelsPerSecond, 10, 1000),
-    marqueeMinDurationSeconds: clampNumber(marqueeProps.marqueeMinDurationSeconds, DEFAULT_FIFTHBELL_CONFIG.marqueeMinDurationSeconds, 1, 120),
-    marqueeHeightPx: clampNumber(marqueeProps.marqueeHeightPx, DEFAULT_FIFTHBELL_CONFIG.marqueeHeightPx, 72, 200)
+    marqueePixelsPerSecond: clampNumber(marqueeProps.marqueePixelsPerSecond, DEFAULT_MODOITALIANO_CONFIG.marqueePixelsPerSecond, 10, 1000),
+    marqueeMinDurationSeconds: clampNumber(marqueeProps.marqueeMinDurationSeconds, DEFAULT_MODOITALIANO_CONFIG.marqueeMinDurationSeconds, 1, 120),
+    marqueeHeightPx: clampNumber(marqueeProps.marqueeHeightPx, DEFAULT_MODOITALIANO_CONFIG.marqueeHeightPx, 72, 200)
   };
 }
 
@@ -402,7 +402,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
     return parseSceneMetadata(state?.activeScene ?? null);
   }, [sceneMetadata, state?.activeScene]);
   const config = useMemo(() => extractConfigFromMetadata(effectiveSceneMetadata), [effectiveSceneMetadata]);
-  const layerAvailability = useMemo(() => resolveFifthBellLayerAvailability(activeComponents), [activeComponents]);
+  const layerAvailability = useMemo(() => resolveModoItalianoLayerAvailability(activeComponents), [activeComponents]);
   const languageRotation = config.languageRotation;
   const currentLanguage: SupportedLanguage = languageRotation[languageIndex] ?? languageRotation[0] ?? 'en';
   const resolvedApiBaseUrl =
@@ -431,7 +431,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
     fetch(`${resolvedApiBaseUrl}/state`)
       .then((res) => res.json())
       .then((data) => setState(data))
-      .catch((err) => console.error('Failed to fetch FifthBell program state:', err));
+      .catch((err) => console.error('Failed to fetch ModoItaliano program state:', err));
   }, [controlledBySceneRenderer, resolvedApiBaseUrl]);
 
   const refreshAllData = useCallback(async () => {
@@ -972,7 +972,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
     <div className={embedded ? 'w-full h-full bg-black overflow-hidden' : 'min-h-screen bg-black flex items-center justify-center overflow-hidden'}>
       {liveStage}
       <audio ref={audioRef} preload='auto'>
-        <source src={FIFTHBELL_ASSETS.audio.pipes} type='audio/ogg' />
+        <source src={MODOITALIANO_ASSETS.audio.pipes} type='audio/ogg' />
       </audio>
 
       <style>{slideStyles}</style>

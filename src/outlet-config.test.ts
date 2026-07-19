@@ -65,7 +65,7 @@ describe('outletConfig', () => {
     }
   });
 
-  it('uses Fifthbell production integration values expected by Cronkite', () => {
+  it('uses ModoItaliano production integration values expected by Cronkite', () => {
     expect(outletConfig.contentPath).toBe('/content');
     expect(outletConfig.inventoryFilename).toBe('cronkite-inventory.json');
     expect(outletConfig.socialImageExport).toBe('buildInstagramImageHtml');

@@ -33,7 +33,7 @@ const MOCK_ARTICLES: NewsItem[] = [
       'World leaders have agreed to ambitious new targets for reducing carbon emissions, marking a significant step forward in the fight against climate change.',
     imageUrl: 'https://picsum.photos/seed/news1/1920/1080',
     category: 'Environment',
-    url: 'https://fifthbell.com/climate-summit-agreement'
+    url: 'https://modoitaliano.fm/climate-summit-agreement'
   },
   {
     id: '2',
@@ -41,7 +41,7 @@ const MOCK_ARTICLES: NewsItem[] = [
     summary: 'Researchers have achieved a major milestone in quantum computing, potentially revolutionizing data processing and encryption technologies.',
     imageUrl: 'https://picsum.photos/seed/news2/1920/1080',
     category: 'Technology',
-    url: 'https://fifthbell.com/quantum-computing-breakthrough'
+    url: 'https://modoitaliano.fm/quantum-computing-breakthrough'
   },
   {
     id: '3',
@@ -49,7 +49,7 @@ const MOCK_ARTICLES: NewsItem[] = [
     summary: 'Archaeologists have unearthed artifacts that challenge our understanding of ancient civilizations and their technological capabilities.',
     imageUrl: 'https://picsum.photos/seed/news3/1920/1080',
     category: 'Science',
-    url: 'https://fifthbell.com/archaeological-discovery'
+    url: 'https://modoitaliano.fm/archaeological-discovery'
   },
   {
     id: '4',
@@ -57,7 +57,7 @@ const MOCK_ARTICLES: NewsItem[] = [
     summary: 'NASA and international partners announce extension of ISS operations, paving the way for continued scientific research in orbit.',
     imageUrl: 'https://picsum.photos/seed/news4/1920/1080',
     category: 'Space',
-    url: 'https://fifthbell.com/iss-mission-extended'
+    url: 'https://modoitaliano.fm/iss-mission-extended'
   },
   {
     id: '5',
@@ -65,7 +65,7 @@ const MOCK_ARTICLES: NewsItem[] = [
     summary: 'For the first time in history, renewable energy sources have generated more electricity than traditional fossil fuels globally.',
     imageUrl: 'https://picsum.photos/seed/news5/1920/1080',
     category: 'Energy',
-    url: 'https://fifthbell.com/renewable-energy-milestone'
+    url: 'https://modoitaliano.fm/renewable-energy-milestone'
   }
 ];
 
@@ -106,7 +106,7 @@ function buildArticlePath(article: ApiArticle, language: SupportedLanguage): str
 
 export async function fetchArticles(language: SupportedLanguage = 'en'): Promise<NewsItem[]> {
   try {
-    const response = await fetch(`https://cdn.fifthbell.com/content/homepage-current-${language}.json?_=${Date.now()}`, {
+    const response = await fetch(`https://cdn.modoitaliano.fm/content/homepage-current-${language}.json?_=${Date.now()}`, {
       cache: 'no-store'
     });
 
@@ -138,7 +138,7 @@ export async function fetchArticles(language: SupportedLanguage = 'en'): Promise
       summary: article.excerpt,
       imageUrl: article.featuredImage.url,
       category: article.categories?.[0]?.name,
-      url: `https://fifthbell.com${buildArticlePath(article, language)}`
+      url: `https://modoitaliano.fm${buildArticlePath(article, language)}`
     }));
 
     const finalItems = items.length > 0 ? items : MOCK_ARTICLES;

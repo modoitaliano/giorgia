@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Cloud, CloudRain, Sun, Wind } from 'lucide-react';
 import { FastAverageColor } from 'fast-average-color';
-import { FIFTHBELL_ASSETS } from '../assets.js';
+import { MODOITALIANO_ASSETS } from '../assets.js';
 import type { Segment } from './types.js';
 import { t, type SupportedLanguage } from '../i18n.js';
 
@@ -62,13 +62,13 @@ function fahrenheitToCelsius(value: number): number {
 function getRegionBackground(region: string): string {
   switch (region) {
     case 'North America':
-      return FIFTHBELL_ASSETS.images.nyc;
+      return MODOITALIANO_ASSETS.images.nyc;
     case 'Europe':
-      return FIFTHBELL_ASSETS.images.berlin;
+      return MODOITALIANO_ASSETS.images.berlin;
     case 'South America':
-      return FIFTHBELL_ASSETS.images.santiago;
+      return MODOITALIANO_ASSETS.images.santiago;
     case 'Asia':
-      return FIFTHBELL_ASSETS.images.tokyo;
+      return MODOITALIANO_ASSETS.images.tokyo;
     default:
       return '';
   }

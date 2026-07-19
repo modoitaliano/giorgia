@@ -4,10 +4,10 @@ import { liveStoryFixture } from './fixtures/live-story.fixture';
 import { categoryFixture } from './fixtures/category.fixture';
 import { articleFixture } from './fixtures/article.fixture';
 
-const HOMEPAGE_JSON_URL = 'https://cdn.fifthbell.com/content/homepage-current-en.json';
-const EVENTS_JSON_URL = 'https://cdn.fifthbell.com/content/events-current-en.json';
-const CATEGORY_JSON_BASE_URL = 'https://cdn.fifthbell.com/content';
-const ARTICLE_JSON_BASE_URL = 'https://cdn.fifthbell.com/json/articles';
+const HOMEPAGE_JSON_URL = 'https://cdn.modoitaliano.fm/content/homepage-current-en.json';
+const EVENTS_JSON_URL = 'https://cdn.modoitaliano.fm/content/events-current-en.json';
+const CATEGORY_JSON_BASE_URL = 'https://cdn.modoitaliano.fm/content';
+const ARTICLE_JSON_BASE_URL = 'https://cdn.modoitaliano.fm/json/articles';
 const DEFAULT_CURRENT_CATEGORY_SLUG = 'sports';
 const PREVIEW_CACHE_TTL_MS = 30_000;
 
@@ -777,7 +777,7 @@ function buildCategoryPreviewDocument(categorySlug: string, payload: CategoryPre
     id: String(categoryMeta?.id ?? `category-en-${normalizedSlug}`),
     slug: `/${normalizedSlug}`,
     layout: 'category-page',
-    canonicalUrl: `https://fifthbell.com/${normalizedSlug}`,
+    canonicalUrl: `https://modoitaliano.fm/${normalizedSlug}`,
     contentVersion: updatedAt,
     publishedAt,
     updatedAt,
@@ -786,7 +786,7 @@ function buildCategoryPreviewDocument(categorySlug: string, payload: CategoryPre
     excerpt: categoryDescription,
     language: 'en',
     featured: true,
-    authors: [{ name: 'Fifthbell Desk', slug: 'fifthbell-desk' }],
+    authors: [{ name: 'ModoItaliano Desk', slug: 'modoitaliano-desk' }],
     categories: [{ name: categoryName, slug: normalizedSlug }],
     featuredImage: leadArticle?.featuredImage || categoryFixture.featuredImage,
     body: [],
@@ -795,7 +795,7 @@ function buildCategoryPreviewDocument(categorySlug: string, payload: CategoryPre
     },
     articles: mappedArticles.length > 0 ? mappedArticles : categoryFixture.articles,
     seo: {
-      metaTitle: `${categoryName} | fifthbell`,
+      metaTitle: `${categoryName} | ModoItaliano`,
       metaDescription: categoryDescription
     }
   };
@@ -887,7 +887,7 @@ function buildFallbackArticlePreviewDocument(articleSummary: Record<string, unkn
     ...articleFixture,
     id: String(articleSummary.id ?? articleFixture.id),
     slug: canonicalSlug,
-    canonicalUrl: `https://fifthbell.com${canonicalSlug}`,
+    canonicalUrl: `https://modoitaliano.fm${canonicalSlug}`,
     contentVersion: updatedAt,
     publishedAt,
     updatedAt,
@@ -906,7 +906,7 @@ function buildFallbackArticlePreviewDocument(articleSummary: Record<string, unkn
 function buildLiveStoryDocument(payload: HomepagePreviewPayload | null, breakingNews: BreakingNewsStoryData): CanonicalArticle {
   const mainCard = (breakingNews.main || {}) as Record<string, unknown>;
   const slug = resolveHref(mainCard.url ?? mainCard.slug ?? liveStoryFixture.slug);
-  const canonicalUrl = slug.startsWith('http') ? slug : `https://fifthbell.com${slug.startsWith('/') ? slug : `/${slug}`}`;
+  const canonicalUrl = slug.startsWith('http') ? slug : `https://modoitaliano.fm${slug.startsWith('/') ? slug : `/${slug}`}`;
   const descriptionText = typeof mainCard.excerpt === 'string' ? mainCard.excerpt : liveStoryFixture.excerpt;
   const defaultTimestamp = toIsoDateTime(payload?.generatedAt ?? payload?.page?.updatedAt ?? payload?.page?.publishedAt, liveStoryFixture.updatedAt);
 
@@ -984,7 +984,7 @@ function buildLiveStoryDocument(payload: HomepagePreviewPayload | null, breaking
         : liveStoryFixture.navigation?.categories || []
     },
     seo: {
-      metaTitle: typeof mainCard.title === 'string' && mainCard.title.trim().length > 0 ? `${mainCard.title} | fifthbell` : liveStoryFixture.seo?.metaTitle,
+      metaTitle: typeof mainCard.title === 'string' && mainCard.title.trim().length > 0 ? `${mainCard.title} | ModoItaliano` : liveStoryFixture.seo?.metaTitle,
       metaDescription: descriptionText || liveStoryFixture.seo?.metaDescription
     },
     liveStory: {
@@ -1002,7 +1002,7 @@ function buildLiveStoryDocumentFromEvent(eventDoc: EventsPreviewDoc, payload: Ho
     ? eventDoc.canonicalUrl
     : slug.startsWith('http')
       ? slug
-      : `https://fifthbell.com${slug.startsWith('/') ? slug : `/${slug}`}`;
+      : `https://modoitaliano.fm${slug.startsWith('/') ? slug : `/${slug}`}`;
   const updatedAt = toIsoDateTime(eventDoc.updatedAt ?? eventDoc.eventDate, liveStoryFixture.updatedAt);
   const publishedAt = toIsoDateTime(eventDoc.eventDate ?? eventDoc.updatedAt, liveStoryFixture.publishedAt);
   const excerpt = typeof eventDoc.excerpt === 'string' && eventDoc.excerpt.trim().length > 0 ? eventDoc.excerpt : liveStoryFixture.excerpt;
@@ -1069,7 +1069,7 @@ function buildLiveStoryDocumentFromEvent(eventDoc: EventsPreviewDoc, payload: Ho
         : liveStoryFixture.navigation?.categories || []
     },
     seo: {
-      metaTitle: `${title} | fifthbell`,
+      metaTitle: `${title} | ModoItaliano`,
       metaDescription: excerpt
     },
     liveStory: {

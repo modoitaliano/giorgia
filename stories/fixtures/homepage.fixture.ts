@@ -66,7 +66,7 @@ const makeArticle = (index: number): SelfReference => {
     excerpt: `Context line for ${category.name.toLowerCase()} headline ${index + 1}.`,
     categories: [category],
     featuredImage: {
-      url: `https://picsum.photos/seed/fifthbell-home-${index + 1}/1280/720`,
+      url: `https://picsum.photos/seed/modoitaliano-home-${index + 1}/1280/720`,
       alt: `${category.name} visual ${index + 1}`
     },
     publishedAt,
@@ -82,7 +82,7 @@ export const homepageFixture: CanonicalArticle = {
   id: '9dd95e8f-ac86-4973-a394-330707527250',
   slug: '/',
   layout: 'homepage',
-  canonicalUrl: 'https://fifthbell.com/',
+  canonicalUrl: 'https://modoitaliano.fm/',
   contentVersion: '2026-03-08T12:00:00.000Z',
   publishedAt: '2026-03-08T08:00:00.000Z',
   updatedAt: '2026-03-08T12:00:00.000Z',
@@ -91,7 +91,7 @@ export const homepageFixture: CanonicalArticle = {
   excerpt: 'Top editors are tracking new diplomatic signals, central bank remarks, and weather disruptions.',
   language: 'en',
   featured: true,
-  authors: [{ name: 'Fifthbell Desk', slug: 'fifthbell-desk' }],
+  authors: [{ name: 'ModoItaliano Desk', slug: 'modoitaliano-desk' }],
   categories: [{ name: 'Top Stories', slug: 'top-stories' }],
   featuredImage: {
     url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1280&h=720&fit=crop',
@@ -103,7 +103,7 @@ export const homepageFixture: CanonicalArticle = {
   },
   body: [],
   seo: {
-    metaTitle: 'fifthbell - Breaking News & Current Events',
+    metaTitle: 'ModoItaliano - Breaking News & Current Events',
     metaDescription: 'Stay informed with breaking news, politics, business, sports, technology, and weather coverage.'
   },
   navigation: {

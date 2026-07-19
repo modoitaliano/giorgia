@@ -100,7 +100,7 @@ export const liveStoryFixture: CanonicalArticle = {
   id: 'b2a14e6c-7f3d-4a90-bc11-f9d2e3a7b5c0',
   slug: '/world/hormuz-strikes-live-march-10',
   layout: 'live-story',
-  canonicalUrl: 'https://fifthbell.com/world/hormuz-strikes-live-march-10',
+  canonicalUrl: 'https://modoitaliano.fm/world/hormuz-strikes-live-march-10',
   contentVersion: '2026-03-10T14:00:00.000Z',
   publishedAt: '2026-03-10T06:00:00.000Z',
   updatedAt: '2026-03-10T13:45:00.000Z',
@@ -122,7 +122,7 @@ export const liveStoryFixture: CanonicalArticle = {
   },
   navigation: { categories: navigationCategories },
   seo: {
-    metaTitle: 'Middle East Live Updates: U.S. Strikes Mine-Laying Vessels | fifthbell',
+    metaTitle: 'Middle East Live Updates: U.S. Strikes Mine-Laying Vessels | ModoItaliano',
     metaDescription: 'Live coverage of U.S. military strikes on mine-laying vessels near the Strait of Hormuz and the diplomatic fallout across the region.'
   },
   liveStory: {

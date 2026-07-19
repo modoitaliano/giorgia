@@ -10,7 +10,7 @@ const sportsEvent: LiveEventData = {
   excerpt: 'Live updates from the decisive semifinal match at Yankee Stadium.',
   image: 'https://picsum.photos/seed/sports-event/1920/1080',
   alt: 'Soccer match at Yankee Stadium',
-  url: 'https://fifthbell.com/sports/nycfc-vs-miami',
+  url: 'https://modoitaliano.fm/sports/nycfc-vs-miami',
   sofascore_id: 1234567,
   updatedAt: new Date().toISOString(),
   updates: [
@@ -28,7 +28,7 @@ const breakingEvent: LiveEventData = {
   excerpt: 'Millions under winter storm warnings as heavy snow and high winds impact travel and power grids.',
   image: 'https://picsum.photos/seed/winter-storm/1920/1080',
   alt: 'Snow-covered city streets',
-  url: 'https://fifthbell.com/us/winter-storm-northeast',
+  url: 'https://modoitaliano.fm/us/winter-storm-northeast',
   updatedAt: new Date().toISOString(),
   updates: [
     { timestamp: new Date(Date.now() - 60000).toISOString(), text: 'Governor declares state of emergency in New York, New Jersey, Connecticut.' },

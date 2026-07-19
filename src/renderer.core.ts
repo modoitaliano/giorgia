@@ -16,9 +16,9 @@ const layoutCache = new Map<LayoutName, HandlebarsTemplateDelegate>();
 let runtimeStyles = '';
 const removedBlockTypes = new Set(['truthSocial', 'truthsocial', 'truth-social', 'truth_social']);
 const siteTitlesByLanguage: Record<CanonicalDocument['language'], string> = {
-  en: 'fifthbell - Breaking News & Current Events',
-  es: 'fifthbell - Noticias de última hora y actualidad',
-  it: 'fifthbell - Ultime notizie e attualità'
+  en: 'ModoItaliano - Breaking News & Current Events',
+  es: 'ModoItaliano - Noticias de última hora y actualidad',
+  it: 'ModoItaliano - Ultime notizie e attualità'
 };
 
 function normalizePathInput(value: unknown): string {
@@ -259,7 +259,7 @@ function registerHelpers(): void {
     return JSON.stringify(value);
   });
   Handlebars.registerHelper('resolveHeadTitle', (doc: unknown) => {
-    if (!doc || typeof doc !== 'object') return 'fifthbell';
+    if (!doc || typeof doc !== 'object') return 'ModoItaliano';
     const page = doc as Partial<CanonicalDocument>;
 
     if (page.layout === 'homepage') {
@@ -270,36 +270,36 @@ function registerHelpers(): void {
     if (page.layout === 'category-page') {
       const categoryName = page.categories?.[0]?.name?.trim();
       const baseTitle = categoryName || page.title?.trim() || 'Category';
-      return `${baseTitle} | fifthbell`;
+      return `${baseTitle} | ModoItaliano`;
     }
 
     if (page.layout === 'search-page') {
-      return 'Search | fifthbell';
+      return 'Search | ModoItaliano';
     }
 
     if (page.layout === 'article-page') {
       const baseTitle = page.title?.trim() || 'Article';
-      return `${baseTitle} | fifthbell`;
+      return `${baseTitle} | ModoItaliano`;
     }
 
     if (page.layout === '404') {
-      return '404 - Page Not Found | fifthbell';
+      return '404 - Page Not Found | ModoItaliano';
     }
 
     if (page.layout === 'live-story') {
       const baseTitle = page.title?.trim() || 'Live Story';
-      return `${baseTitle} | fifthbell`;
+      return `${baseTitle} | ModoItaliano`;
     }
 
     if (page.layout === 'link-in-bio') {
       const baseTitle = page.title?.trim() || 'Top Stories';
-      return `${baseTitle} | fifthbell`;
+      return `${baseTitle} | ModoItaliano`;
     }
 
     const seoTitle = page.seo?.metaTitle?.trim();
     if (seoTitle) return seoTitle;
-    const baseTitle = page.title?.trim() || 'fifthbell';
-    return `${baseTitle} | fifthbell`;
+    const baseTitle = page.title?.trim() || 'ModoItaliano';
+    return `${baseTitle} | ModoItaliano`;
   });
   Handlebars.registerHelper('socialImageUrl', (value: unknown) => {
     if (typeof value !== 'string') return '';

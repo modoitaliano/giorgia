@@ -10,17 +10,10 @@ Handlebars.registerPartial('nav/nav-categories', navCategoriesHbs);
 
 const template = Handlebars.compile(headerMainHbs);
 
-const triangoloNowPlaying = {
-  title: 'Triangolo',
-  artist: 'Renato Zero',
-  coverUrl: 'https://is1-ssl.mzstatic.com/image/thumb/Music/bc/1c/65/mzi.ksajqtzy.jpg/600x600bb.jpg',
-  coverAlt: 'Zerolandia album cover by Renato Zero'
-};
-
 const meta = {
   title: 'Partials/Headers/Main',
   render: (args) => template(args),
-  args: { ...homepageFixture, nowPlaying: triangoloNowPlaying, logoLink: '/' }
+  args: { ...homepageFixture, logoLink: '/' }
 } satisfies Meta;
 
 export default meta;
@@ -32,13 +25,13 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'Radio-style masthead using the shared self-hosted Modo Italiano font pipeline—Barlow 700 navigation, Barlow Condensed track typography, and Outfit supporting UI—alongside the packaged MI logo. The default `/assets/mi.svg` logo path is delivered to deployment code as `assets/mi.svg` by `assetFiles()`, with a navy 8px-blurred tint, centered Ken Burns artwork slideshow, and a softly rounded now-playing player for “Triangolo” by Renato Zero.'
+          'Masthead radiofónico con la canalización de tipografías Modo Italiano autocontenida: navegación en Barlow 700, tipografía de pista en Barlow Condensed y UI complementaria en Outfit, junto al logo MI empaquetado. La ruta predeterminada del logo `/assets/mi.svg` se entrega al código de despliegue como `assets/mi.svg` mediante `assetFiles()`, con una capa azul marino desenfocada, carrusel de ilustraciones Ken Burns centrado y un reproductor estático de “Triangolo” de Renato Zero que nunca hereda contenido de la página.'
       }
     }
   }
 };
 
-export const NowPlayingFallback: Story = {
+export const StaticNowPlaying: Story = {
   args: {
     featuredImage: undefined,
     hero: undefined,
@@ -48,7 +41,7 @@ export const NowPlayingFallback: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Uses the built-in artwork fallback and category name when the current item has no artwork or author.'
+        story: 'Confirma que la tarjeta de reproducción permanece en “Triangolo” de Renato Zero cuando no hay ilustración, autores ni categorías de página disponibles.'
       }
     }
   }

@@ -105,7 +105,7 @@ async function fetchFromAuburnale(language: SupportedLanguage): Promise<LiveEven
 export async function fetchLiveEvent(language: SupportedLanguage = 'en'): Promise<LiveEventData | null> {
   try {
     const response = await fetch(
-      `https://cdn.fifthbell.com/content/homepage-current-${language}.json?_=${Date.now()}`,
+      `https://cdn.modoitaliano.fm/content/homepage-current-${language}.json?_=${Date.now()}`,
       { cache: 'no-store' }
     );
 

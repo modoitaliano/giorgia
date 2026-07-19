@@ -8,21 +8,21 @@ const searchPageFixture: CanonicalArticle = {
   id: 'search-story',
   slug: '/search',
   layout: 'search-page',
-  canonicalUrl: 'https://fifthbell.com/search',
+  canonicalUrl: 'https://modoitaliano.fm/search',
   contentVersion: nowIso,
   publishedAt: nowIso,
   updatedAt: nowIso,
   status: 'published',
   title: 'Search',
-  excerpt: 'Search current-language stories from Fifthbell.',
+  excerpt: 'Search current-language stories from ModoItaliano.',
   language: 'en',
   featured: false,
-  authors: [{ name: 'Fifthbell Desk', slug: 'fifthbell-desk' }],
+  authors: [{ name: 'ModoItaliano Desk', slug: 'modoitaliano-desk' }],
   categories: [{ name: 'Top Stories', slug: 'top-stories' }],
   body: [],
   seo: {
-    metaTitle: 'Search | fifthbell',
-    metaDescription: 'Search current-language stories from Fifthbell.'
+    metaTitle: 'Search | ModoItaliano',
+    metaDescription: 'Search current-language stories from ModoItaliano.'
   },
   navigation: {
     categories: [

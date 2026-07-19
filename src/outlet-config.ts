@@ -1,15 +1,15 @@
 export const outletConfig = {
-  siteName: 'fifthbell',
-  publicSiteUrl: 'https://fifthbell.com',
-  cdnUrl: 'https://cdn.fifthbell.com',
+  siteName: 'ModoItaliano',
+  publicSiteUrl: 'https://modoitaliano.fm',
+  cdnUrl: 'https://cdn.modoitaliano.fm',
   contentPath: '/content',
   inventoryFilename: 'cronkite-inventory.json',
   defaultLanguage: 'en',
   supportedLanguages: ['en', 'es', 'it'],
   prefixDefaultLocale: false,
   defaultAuthor: {
-    name: 'Fifthbell Newsroom',
-    slug: 'fifthbell-newsroom'
+    name: 'ModoItaliano Newsroom',
+    slug: 'modoitaliano-newsroom'
   },
   defaultCategory: {
     name: 'Top Stories',
@@ -18,9 +18,9 @@ export const outletConfig = {
   linkInBioRoute: '/instagram',
   searchTitle: 'Search',
   searchDescriptions: {
-    en: 'Search stories from Fifthbell.',
-    es: 'Busca noticias de Fifthbell.',
-    it: 'Cerca notizie Fifthbell.'
+    en: 'Search stories from ModoItaliano.',
+    es: 'Busca noticias de ModoItaliano.',
+    it: 'Cerca notizie ModoItaliano.'
   },
   socialLanguages: ['en'],
   socialUserAgent: 'Cronkite/1.0',

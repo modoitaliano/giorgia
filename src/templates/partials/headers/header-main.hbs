@@ -56,7 +56,7 @@
         id='radio-menu-button'
         class='mt-4.75 inline-flex h-7 w-7 items-center justify-center text-white transition hover:opacity-70 focus:outline-none focus:ring-2 focus:ring-white'
         type='button'
-        aria-label='Open navigation menu'
+        aria-label='Abrir menú de navegación'
         aria-expanded='false'
         aria-controls='radio-menu'
       >
@@ -70,12 +70,12 @@
         <img src='{{coalesce logoAssetUrl "/assets/mi.svg"}}' alt='MI' class='h-full w-full object-contain' />
       </a>
 
-      <a href='{{#if (eq language "en")}}/search{{else}}/{{language}}/search{{/if}}' class='mt-4.5 justify-self-end p-1 text-white/85 transition hover:text-white focus:outline-none focus:ring-2 focus:ring-white' aria-label='Search'>
+      <a href='{{#if (eq language "en")}}/search{{else}}/{{language}}/search{{/if}}' class='mt-4.5 justify-self-end p-1 text-white/85 transition hover:text-white focus:outline-none focus:ring-2 focus:ring-white' aria-label='Buscar'>
         <svg class='h-5 w-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' aria-hidden='true'><circle cx='11' cy='11' r='7'></circle><path d='m20 20-4-4'></path></svg>
       </a>
     </div>
 
-    <nav class='radio-navigation absolute inset-x-9 top-35.75 hidden justify-center gap-x-10 text-base font-bold uppercase leading-5 lg:flex' style='font-weight: 700;' aria-label='Primary navigation'>
+    <nav class='radio-navigation absolute inset-x-9 top-35.75 hidden justify-center gap-x-10 text-base font-bold uppercase leading-5 lg:flex' style='font-weight: 700;' aria-label='Navegación principal'>
       {{#each (slice navigation.categories 0 6)}}
         <a href='/{{slug}}' class='whitespace-nowrap transition hover:text-white/65 focus:outline-none focus:underline'>{{name}}</a>
       {{/each}}
@@ -83,13 +83,13 @@
 
     <div id='radio-menu' class='pointer-events-none absolute inset-x-9 top-25.75 z-20 origin-top scale-y-95 rounded-sm bg-[#b00058]/95 p-7 opacity-0 shadow-2xl backdrop-blur-md transition duration-200' hidden>
       <div class='flex items-center justify-between border-b border-white/30 pb-4'>
-        <p class='text-xs font-bold uppercase tracking-[0.18em]'>Explore fifthbell</p>
-        <button id='radio-menu-close' class='p-1 focus:outline-none focus:ring-2 focus:ring-white' type='button' aria-label='Close navigation menu'>
+        <p class='text-xs font-bold uppercase tracking-[0.18em]'>Explora ModoItaliano</p>
+        <button id='radio-menu-close' class='p-1 focus:outline-none focus:ring-2 focus:ring-white' type='button' aria-label='Cerrar menú de navegación'>
           <svg class='h-5 w-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' aria-hidden='true'><path d='M6 6l12 12M18 6 6 18'></path></svg>
         </button>
       </div>
       <nav class='grid grid-cols-2 gap-x-6 gap-y-4 pt-5 sm:grid-cols-3' aria-label='All sections'>
-        <a href='{{logoLink}}' class='text-sm font-bold transition hover:text-white/65'>Top stories</a>
+        <a href='{{logoLink}}' class='text-sm font-bold transition hover:text-white/65'>Noticias destacadas</a>
         {{#each navigation.categories}}
           <a href='/{{slug}}' class='text-sm font-bold transition hover:text-white/65'>{{name}}</a>
         {{/each}}
@@ -99,29 +99,21 @@
     <section
       class='absolute left-1/2 top-57.5 z-60 h-72.5 w-72.5 -translate-x-1/2 overflow-hidden bg-[#312d2e] lg:top-51.25'
       style='border-radius: 14px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);'
-      aria-label='Now playing'
+      aria-label='Reproduciendo ahora'
     >
       <div class='relative h-full w-full overflow-hidden'>
-        {{#if nowPlaying.coverUrl}}
-          <img src='{{nowPlaying.coverUrl}}' alt='{{nowPlaying.coverAlt}}' class='h-full w-full object-cover' />
-        {{else if featuredImage.url}}
-          <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='h-full w-full object-cover' />
-        {{else if hero.url}}
-          <img src='{{hero.url}}' alt='{{hero.alt}}' class='h-full w-full object-cover' />
-        {{else}}
-          <div class='flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top_left,#fc83ba,transparent_50%),linear-gradient(135deg,#5e1d42,#21171e)] text-7xl font-black tracking-tighter text-white/80'>fb</div>
-        {{/if}}
+        <img src='https://is1-ssl.mzstatic.com/image/thumb/Music/bc/1c/65/mzi.ksajqtzy.jpg/600x600bb.jpg' alt='Zerolandia album cover by Renato Zero' class='h-full w-full object-cover' />
         <div class='absolute inset-x-0 bottom-0 h-[42%] bg-linear-to-t from-black/80 to-transparent'></div>
         <div class='absolute bottom-3.75 left-3.75 right-16.25'>
-          <p class='flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-white/80'><span class='h-2 w-2 rounded-full bg-cyan-300'></span>On air</p>
-          <h2 class='radio-display mt-1 line-clamp-1 text-2xl font-semibold uppercase leading-none tracking-[0.02em] text-white'>{{coalesce nowPlaying.title heroTitle title}}</h2>
-          <p class='radio-display mt-1 line-clamp-1 text-xl font-medium uppercase leading-none tracking-[0.02em] text-white/85'>{{coalesce nowPlaying.artist authors.0.name categories.0.name}}</p>
+          <p class='flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-white/80'><span class='h-2 w-2 rounded-full bg-cyan-300'></span>En directo</p>
+          <h2 class='radio-display mt-1 line-clamp-1 text-2xl font-semibold uppercase leading-none tracking-[0.02em] text-white'>Triangolo</h2>
+          <p class='radio-display mt-1 line-clamp-1 text-xl font-medium uppercase leading-none tracking-[0.02em] text-white/85'>Renato Zero</p>
         </div>
         <button
           class='absolute bottom-3.5 right-3.5 flex h-12 w-12 items-center justify-center text-white transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#312d2e]'
           style='border: 2px solid rgba(255, 255, 255, 0.82); border-radius: 9999px; background: linear-gradient(145deg, #ff3c9d, #ed0076); box-shadow: 0 5px 14px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.36);'
           type='button'
-          aria-label='Play now playing selection'
+          aria-label='Reproducir selección actual'
         >
           <svg class='ml-0.5 h-5 w-5' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><path d='M8 5.5a1 1 0 0 1 1.52-.86l9 6.5a1 1 0 0 1 0 1.72l-9 6.5A1 1 0 0 1 8 18.5v-13Z'></path></svg>
         </button>

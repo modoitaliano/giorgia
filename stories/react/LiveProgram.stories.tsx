@@ -28,14 +28,14 @@ export default meta;
 
 export const Default: StoryObj = {
   args: {
-    programId: 'fifthbell',
+    programId: 'modoitaliano',
     embedded: false
   }
 };
 
 export const Embedded: StoryObj = {
   args: {
-    programId: 'fifthbell',
+    programId: 'modoitaliano',
     embedded: true
   }
 };

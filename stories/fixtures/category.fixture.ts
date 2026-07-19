@@ -9,7 +9,7 @@ const makeWorldArticle = (index: number): SelfReference => ({
   excerpt: `Key update from international desk report ${index + 1}.`,
   categories: [category],
   featuredImage: {
-    url: `https://picsum.photos/seed/fifthbell-world-${index + 1}/1280/720`,
+    url: `https://picsum.photos/seed/modoitaliano-world-${index + 1}/1280/720`,
     alt: `World report image ${index + 1}`
   },
   publishedAt: `2026-03-${String((index % 8) + 1).padStart(2, '0')}T08:00:00.000Z`,
@@ -20,7 +20,7 @@ export const categoryFixture: CanonicalArticle = {
   id: '5f73e916-bf00-4c2d-a1cb-ce2f4573fcd1',
   slug: '/world',
   layout: 'category-page',
-  canonicalUrl: 'https://fifthbell.com/world',
+  canonicalUrl: 'https://modoitaliano.fm/world',
   contentVersion: '2026-03-08T12:00:00.000Z',
   publishedAt: '2026-03-08T07:30:00.000Z',
   updatedAt: '2026-03-08T12:00:00.000Z',
