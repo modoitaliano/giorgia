@@ -151,7 +151,10 @@ export function fontFiles(): FontFileEntry[] {
     });
   }
 
-  return entries;
+  // Cronkite publishes the static files returned by this established manifest.
+  // Include template assets here so the header's /assets/mi.svg logo is uploaded
+  // as part of the same deployment transaction as fonts and CSS.
+  return [...entries, ...assetFiles()];
 }
 
 export type AssetFileEntry = {

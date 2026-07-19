@@ -14,4 +14,13 @@ export default meta;
 
 type Story = StoryObj;
 
-export const Default: Story = {};
+export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The centered brand treatment uses only the MI SVG at `https://cdn.modoitaliano.fm/assets/mi.svg`, enclosed in a $rgb(50,50,50)$ box with no adjacent wordmark text.'
+      }
+    }
+  }
+};
