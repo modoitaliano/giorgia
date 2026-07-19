@@ -20,7 +20,7 @@ const triangoloNowPlaying = {
 const meta = {
   title: 'Partials/Headers/Main',
   render: (args) => template(args),
-  args: { ...homepageFixture, nowPlaying: triangoloNowPlaying, logoLink: '/' },
+  args: { ...homepageFixture, nowPlaying: triangoloNowPlaying, logoLink: '/' }
 } satisfies Meta;
 
 export default meta;
@@ -32,7 +32,7 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'Radio-style masthead using the shared self-hosted Modo Italiano font pipeline—Barlow 700 navigation, Barlow Condensed track typography, and Outfit supporting UI—alongside the packaged MI logo, navy 8px-blurred tint, centered Ken Burns artwork slideshow, and a softly rounded now-playing player for “Triangolo” by Renato Zero.'
+          'Radio-style masthead using the shared self-hosted Modo Italiano font pipeline—Barlow 700 navigation, Barlow Condensed track typography, and Outfit supporting UI—alongside the packaged MI logo. The default `/assets/mi.svg` logo path is delivered to deployment code as `assets/mi.svg` by `assetFiles()`, with a navy 8px-blurred tint, centered Ken Burns artwork slideshow, and a softly rounded now-playing player for “Triangolo” by Renato Zero.'
       }
     }
   }
@@ -48,8 +48,7 @@ export const NowPlayingFallback: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Uses the built-in artwork fallback and category name when the current item has no artwork or author.'
+        story: 'Uses the built-in artwork fallback and category name when the current item has no artwork or author.'
       }
     }
   }

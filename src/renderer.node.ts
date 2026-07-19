@@ -100,9 +100,7 @@ export function liveProgramPageHtml(): string {
   const htmlPath = path.join(pageDir, 'index.html');
 
   if (!fs.existsSync(htmlPath)) {
-    throw new Error(
-      `live-program-page/index.html not found at ${htmlPath} — run npm run build:live-program first`
-    );
+    throw new Error(`live-program-page/index.html not found at ${htmlPath} — run npm run build:live-program first`);
   }
 
   return fs.readFileSync(htmlPath, 'utf-8');
@@ -114,6 +112,12 @@ function fontsDir(): string {
   return path.join(currentDir, 'fonts');
 }
 
+function assetsDir(): string {
+  const currentFile = fileURLToPath(import.meta.url);
+  const currentDir = path.dirname(currentFile);
+  return path.join(currentDir, 'assets');
+}
+
 export type FontFileEntry = {
   key: string;
   body: Buffer;
@@ -123,9 +127,7 @@ export type FontFileEntry = {
 export function fontFiles(): FontFileEntry[] {
   const dir = fontsDir();
   if (!fs.existsSync(dir)) {
-    throw new Error(
-      `fonts directory not found at ${dir} — run npm run build first`
-    );
+    throw new Error(`fonts directory not found at ${dir} — run npm run build first`);
   }
 
   const entries: FontFileEntry[] = [];
@@ -136,7 +138,7 @@ export function fontFiles(): FontFileEntry[] {
     entries.push({
       key: `content/fonts/${item.name}`,
       body: fs.readFileSync(fullPath),
-      contentType: contentTypeForFile(item.name),
+      contentType: contentTypeForFile(item.name)
     });
   }
 
@@ -145,11 +147,36 @@ export function fontFiles(): FontFileEntry[] {
     entries.push({
       key: 'content/fonts/fonts.css',
       body: fs.readFileSync(cssPath),
-      contentType: 'text/css',
+      contentType: 'text/css'
     });
   }
 
   return entries;
+}
+
+export type AssetFileEntry = {
+  key: string;
+  body: Buffer;
+  contentType: string;
+};
+
+export function assetFiles(): AssetFileEntry[] {
+  const dir = assetsDir();
+  if (!fs.existsSync(dir)) {
+    throw new Error(`assets directory not found at ${dir} — run npm run build first`);
+  }
+
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .filter((item) => item.isFile())
+    .map((item) => {
+      const fullPath = path.join(dir, item.name);
+      return {
+        key: `assets/${item.name}`,
+        body: fs.readFileSync(fullPath),
+        contentType: contentTypeForFile(item.name)
+      };
+    });
 }
 
 export function liveProgramPageAsset(filename: string): string {
@@ -157,9 +184,7 @@ export function liveProgramPageAsset(filename: string): string {
   const assetPath = path.join(pageDir, filename);
 
   if (!fs.existsSync(assetPath)) {
-    throw new Error(
-      `live-program-page/${filename} not found at ${assetPath} — run npm run build:live-program first`
-    );
+    throw new Error(`live-program-page/${filename} not found at ${assetPath} — run npm run build:live-program first`);
   }
 
   return fs.readFileSync(assetPath, 'utf-8');
@@ -172,10 +197,11 @@ const CONTENT_TYPE_MAP: Record<string, string> = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
+  '.svg': 'image/svg+xml',
   '.woff2': 'font/woff2',
   '.woff': 'font/woff',
   '.ogg': 'audio/ogg',
-  '.mp3': 'audio/mpeg',
+  '.mp3': 'audio/mpeg'
 };
 
 function contentTypeForFile(filename: string): string {
@@ -192,9 +218,7 @@ export type LiveProgramFileEntry = {
 export function liveProgramPageFiles(): LiveProgramFileEntry[] {
   const pageDir = liveProgramPageDir();
   if (!fs.existsSync(pageDir)) {
-    throw new Error(
-      `live-program-page directory not found at ${pageDir} — run npm run build:live-program first`
-    );
+    throw new Error(`live-program-page directory not found at ${pageDir} — run npm run build:live-program first`);
   }
 
   const entries: LiveProgramFileEntry[] = [];
@@ -210,7 +234,7 @@ export function liveProgramPageFiles(): LiveProgramFileEntry[] {
         entries.push({
           key: relativeKey,
           body: fs.readFileSync(fullPath),
-          contentType: contentTypeForFile(item.name),
+          contentType: contentTypeForFile(item.name)
         });
       }
     }
