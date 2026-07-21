@@ -41,6 +41,8 @@
     },
     "./partial-deps.json": "./src/partial-deps.json",
     "./assets/mi.svg": "./dist/assets/mi.svg",
+    "./assets/default-og.jpg": "./dist/assets/default-og.jpg",
+    "./assets/default-og.png": "./dist/assets/default-og.png",
     "./fonts/fonts.css": "./dist/fonts/fonts.css",
     "./fonts/*": "./dist/fonts/*"
   },
