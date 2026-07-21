@@ -53,7 +53,9 @@
     "build-storybook": "npm run build:css && storybook build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "npm run test:unit",
-    "test:unit": "vitest run --project unit"
+    "test:unit": "vitest run --project unit",
+    "prepublishOnly": "npm run build",
+    "publish:public": "npm publish --access public"
   },
   "dependencies": {
     "@fontsource/barlow": "^5.3.0",

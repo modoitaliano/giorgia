@@ -30,7 +30,7 @@
   }
 </style>
 
-<header class='radio-header relative z-50 isolate h-130 overflow-visible bg-[#ed0076] text-white lg:h-113.5' style='view-transition-name: site-header;'>
+<header class='radio-header relative z-50 isolate h-96 overflow-visible bg-[#ed0076] text-white lg:h-113.5' style='view-transition-name: site-header;'>
   <div class='absolute inset-0 overflow-hidden' aria-hidden='true'>
     <div data-radio-slide class='is-active absolute inset-0 scale-105 bg-cover bg-center blur-[2px]' style='background-image: url(https://macondostack-alcantara-assets.s3.amazonaws.com/artwork/2026/04/11/compressed_dsc03263-64a92d8e-97a3-4489-bab8-fcc3f44deac6.avif); opacity: 1; transition: opacity 1200ms ease-in-out;'></div>
     <div data-radio-slide class='absolute inset-0 scale-105 bg-cover bg-center blur-[2px]' style='background-image: url(https://macondostack-alcantara-assets.s3.amazonaws.com/artwork/2026/04/11/compressed_dsc03438-91d37874-cc48-40df-91ef-25ed7cf10531.avif); opacity: 0; transition: opacity 1200ms ease-in-out;'></div>
@@ -97,17 +97,24 @@
     </div>
 
     <section
-      class='absolute left-1/2 top-57.5 z-60 h-72.5 w-72.5 -translate-x-1/2 overflow-hidden bg-[#312d2e] lg:top-51.25'
+      class='absolute left-1/2 top-35.75 z-60 h-72.5 w-72.5 -translate-x-1/2 overflow-hidden bg-[#312d2e] lg:top-51.25'
       style='border-radius: 14px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);'
       aria-label='Reproduciendo ahora'
+      data-now-playing
+      data-now-playing-endpoint='https://cdn.modoitaliano.fm/content/now-playing.json'
     >
       <div class='relative h-full w-full overflow-hidden'>
-        <img src='https://is1-ssl.mzstatic.com/image/thumb/Music/bc/1c/65/mzi.ksajqtzy.jpg/600x600bb.jpg' alt='Zerolandia album cover by Renato Zero' class='h-full w-full object-cover' />
+        <div data-now-playing-brand class='absolute inset-0 flex items-center justify-center bg-[#312d2e]'>
+          <div class='absolute inset-0 bg-[#ed0076]/35'></div>
+          <div class='absolute inset-0' style='background: radial-gradient(circle at 50% 35%, rgba(255,255,255,0.18), transparent 34%), linear-gradient(135deg, rgba(10,18,52,0.72), rgba(237,0,118,0.58));'></div>
+          <img src='{{coalesce logoAssetUrl "https://cdn.modoitaliano.fm/assets/mi.svg"}}' alt='' class='relative h-23 w-54 object-contain opacity-95' aria-hidden='true' />
+        </div>
+        <img data-now-playing-artwork alt='' class='hidden h-full w-full object-cover' />
         <div class='absolute inset-x-0 bottom-0 h-[42%] bg-linear-to-t from-black/80 to-transparent'></div>
         <div class='absolute bottom-3.75 left-3.75 right-16.25'>
-          <p class='flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-white/80'><span class='h-2 w-2 rounded-full bg-cyan-300'></span>En directo</p>
-          <h2 class='radio-display mt-1 line-clamp-1 text-2xl font-semibold uppercase leading-none tracking-[0.02em] text-white'>Triangolo</h2>
-          <p class='radio-display mt-1 line-clamp-1 text-xl font-medium uppercase leading-none tracking-[0.02em] text-white/85'>Renato Zero</p>
+          <p class='flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-white/80'><span class='h-2 w-2 rounded-full bg-cyan-300'></span><span data-now-playing-status>En directo</span></p>
+          <h2 data-now-playing-title class='radio-display mt-1 line-clamp-1 text-2xl font-semibold uppercase leading-none tracking-[0.02em] text-white'>ModoItaliano</h2>
+          <p data-now-playing-artist class='radio-display mt-1 line-clamp-1 text-xl font-medium uppercase leading-none tracking-[0.02em] text-white/85'>Live radio</p>
         </div>
         <button
           class='absolute bottom-3.5 right-3.5 flex h-12 w-12 items-center justify-center text-white transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#312d2e]'
@@ -145,6 +152,80 @@
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') setOpen(false);
     });
+  })();
+</script>
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-now-playing]');
+    if (!(root instanceof HTMLElement)) return;
+
+    const endpoint = root.dataset.nowPlayingEndpoint;
+    const artwork = root.querySelector('[data-now-playing-artwork]');
+    const brand = root.querySelector('[data-now-playing-brand]');
+    const status = root.querySelector('[data-now-playing-status]');
+    const title = root.querySelector('[data-now-playing-title]');
+    const artist = root.querySelector('[data-now-playing-artist]');
+    if (!endpoint || !(artwork instanceof HTMLImageElement) || !(brand instanceof HTMLElement) || !(status instanceof HTMLElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement)) return;
+
+    const fallback = {
+      title: title.textContent?.trim() || 'ModoItaliano',
+      artist: artist.textContent?.trim() || 'Live radio',
+      isPlaceholder: true
+    };
+
+    const setText = (element, value, fallbackValue) => {
+      element.textContent = typeof value === 'string' && value.trim() ? value.trim() : fallbackValue;
+    };
+
+    const showBrand = () => {
+      brand.classList.remove('hidden');
+      artwork.classList.add('hidden');
+      artwork.removeAttribute('src');
+      artwork.alt = '';
+    };
+
+    const showArtwork = (url, itemTitle, itemArtist) => {
+      artwork.src = url;
+      artwork.alt = [itemTitle, itemArtist].filter(Boolean).join(' by ');
+      artwork.classList.remove('hidden');
+      brand.classList.add('hidden');
+    };
+
+    const applyNowPlaying = (item) => {
+      const displayTitle = typeof item.title === 'string' && item.title.trim() ? item.title.trim() : fallback.title;
+      const displayArtist = typeof item.artist === 'string' && item.artist.trim() ? item.artist.trim() : fallback.artist;
+      const artworkUrl = typeof item.artworkUrl === 'string' ? item.artworkUrl.trim() : '';
+      const isPlaceholder = item.isPlaceholder === true;
+
+      setText(title, displayTitle, fallback.title);
+      setText(artist, displayArtist, fallback.artist);
+      status.textContent = isPlaceholder ? 'En directo' : 'Reproduciendo';
+
+      if (!isPlaceholder && artworkUrl) {
+        showArtwork(artworkUrl, displayTitle, displayArtist);
+      } else {
+        showBrand();
+      }
+    };
+
+    const fetchNowPlaying = async () => {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 8000);
+      try {
+        const response = await fetch(endpoint, { cache: 'no-store', signal: controller.signal });
+        if (!response.ok) throw new Error('Now playing request failed');
+        const item = await response.json();
+        if (item && typeof item === 'object') applyNowPlaying(item);
+      } catch {
+        if (!title.textContent?.trim()) applyNowPlaying(fallback);
+      } finally {
+        window.clearTimeout(timeout);
+      }
+    };
+
+    fetchNowPlaying();
+    window.setInterval(fetchNowPlaying, 45000);
   })();
 </script>
 
