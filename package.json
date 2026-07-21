@@ -55,7 +55,7 @@
     "test": "npm run test:unit",
     "test:unit": "vitest run --project unit",
     "prepublishOnly": "npm run build",
-    "publish:public": "npm run build && npm publish --access public"
+    "publish:public": "npm run build && npm version patch && npm publish --access public"
   },
   "dependencies": {
     "@fontsource/barlow": "^5.3.0",
