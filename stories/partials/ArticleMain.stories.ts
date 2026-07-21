@@ -42,6 +42,13 @@ const meta = {
   title: 'Partials/Article/Main',
   render: (args) => template(args),
   args: articleFixture,
+  parameters: {
+    docs: {
+      description: {
+        component: 'Article pages render with an 80px top margin on the whole article wrapper.'
+      }
+    }
+  },
 } satisfies Meta;
 
 export default meta;
