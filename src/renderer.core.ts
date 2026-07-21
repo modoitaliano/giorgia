@@ -15,6 +15,7 @@ let initialized = false;
 const layoutCache = new Map<LayoutName, HandlebarsTemplateDelegate>();
 let runtimeStyles = '';
 const removedBlockTypes = new Set(['truthSocial', 'truthsocial', 'truth-social', 'truth_social']);
+const defaultSocialImageUrl = 'https://cdn.modoitaliano.fm/assets/default-og.jpg';
 const siteTitlesByLanguage: Record<CanonicalDocument['language'], string> = {
   en: 'ModoItaliano - Breaking News & Current Events',
   es: 'ModoItaliano - Noticias de última hora y actualidad',
@@ -317,6 +318,32 @@ function registerHelpers(): void {
       // Support relative URLs in template data.
       return normalizePath(raw);
     }
+  });
+  Handlebars.registerHelper('socialImageCandidate', (doc: unknown) => {
+    if (!doc || typeof doc !== 'object') return defaultSocialImageUrl;
+
+    const page = doc as Partial<CanonicalDocument>;
+    const seoImage = page.seo?.ogImage?.trim();
+    if (seoImage) return seoImage;
+
+    if (page.layout === 'article-page') {
+      const featuredImage = page.featuredImage?.url?.trim();
+      if (featuredImage) return featuredImage;
+    }
+
+    return defaultSocialImageUrl;
+  });
+  Handlebars.registerHelper('socialImageAlt', (doc: unknown) => {
+    if (!doc || typeof doc !== 'object') return 'ModoItaliano';
+
+    const page = doc as Partial<CanonicalDocument>;
+    if (page.layout === 'article-page') {
+      const featuredAlt = page.featuredImage?.alt?.trim();
+      if (featuredAlt) return featuredAlt;
+    }
+
+    const title = page.seo?.metaTitle?.trim() || page.title?.trim();
+    return title || 'ModoItaliano';
   });
 }
 
