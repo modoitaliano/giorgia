@@ -38,8 +38,37 @@ const withNowPlaying =
       }
       return originalFetch(input, init);
     };
+    queueMicrotask(() => hydrateNowPlayingPreview(item));
     return story();
   };
+
+const hydrateNowPlayingPreview = (item: NowPlayingStoryItem): void => {
+  const root = document.querySelector('[data-now-playing]');
+  if (!(root instanceof HTMLElement)) return;
+
+  const artwork = root.querySelector('[data-now-playing-artwork]');
+  const brand = root.querySelector('[data-now-playing-brand]');
+  const status = root.querySelector('[data-now-playing-status]');
+  const title = root.querySelector('[data-now-playing-title]');
+  const artist = root.querySelector('[data-now-playing-artist]');
+  if (!(artwork instanceof HTMLImageElement) || !(brand instanceof HTMLElement) || !(status instanceof HTMLElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement)) return;
+
+  title.textContent = item.title.trim() || 'ModoItaliano';
+  artist.textContent = item.artist.trim() || 'Live radio';
+  status.textContent = item.isPlaceholder ? 'En directo' : 'Reproduciendo';
+
+  if (!item.isPlaceholder && item.artworkUrl.trim()) {
+    artwork.src = item.artworkUrl.trim();
+    artwork.alt = [item.title, item.artist].filter(Boolean).join(' by ');
+    artwork.classList.remove('hidden');
+    brand.classList.add('hidden');
+  } else {
+    brand.classList.remove('hidden');
+    artwork.classList.add('hidden');
+    artwork.removeAttribute('src');
+    artwork.alt = '';
+  }
+};
 
 const meta = {
   title: 'Partials/Headers/Main',

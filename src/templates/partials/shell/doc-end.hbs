@@ -226,6 +226,103 @@
     </script>
     <script>
       (function () {
+        function initNowPlaying(root) {
+          if (!(root instanceof HTMLElement) || root.dataset.nowPlayingBound === 'true') return;
+
+          var endpoint = root.dataset.nowPlayingEndpoint;
+          var artwork = root.querySelector('[data-now-playing-artwork]');
+          var brand = root.querySelector('[data-now-playing-brand]');
+          var status = root.querySelector('[data-now-playing-status]');
+          var title = root.querySelector('[data-now-playing-title]');
+          var artist = root.querySelector('[data-now-playing-artist]');
+          if (!endpoint || !(artwork instanceof HTMLImageElement) || !(brand instanceof HTMLElement) || !(status instanceof HTMLElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement)) return;
+
+          var fallback = {
+            title: (title.textContent || '').trim() || 'ModoItaliano',
+            artist: (artist.textContent || '').trim() || 'Live radio',
+            isPlaceholder: true
+          };
+
+          function setText(element, value, fallbackValue) {
+            element.textContent = typeof value === 'string' && value.trim() ? value.trim() : fallbackValue;
+          }
+
+          function showBrand() {
+            brand.classList.remove('hidden');
+            artwork.classList.add('hidden');
+            artwork.removeAttribute('src');
+            artwork.alt = '';
+          }
+
+          function showArtwork(url, itemTitle, itemArtist) {
+            artwork.src = url;
+            artwork.alt = [itemTitle, itemArtist].filter(Boolean).join(' by ');
+            artwork.classList.remove('hidden');
+            brand.classList.add('hidden');
+          }
+
+          function applyNowPlaying(item) {
+            var displayTitle = typeof item.title === 'string' && item.title.trim() ? item.title.trim() : fallback.title;
+            var displayArtist = typeof item.artist === 'string' && item.artist.trim() ? item.artist.trim() : fallback.artist;
+            var artworkUrl = typeof item.artworkUrl === 'string' ? item.artworkUrl.trim() : '';
+            var isPlaceholder = item.isPlaceholder === true;
+
+            setText(title, displayTitle, fallback.title);
+            setText(artist, displayArtist, fallback.artist);
+            status.textContent = isPlaceholder ? 'En directo' : 'Reproduciendo';
+
+            if (!isPlaceholder && artworkUrl) {
+              showArtwork(artworkUrl, displayTitle, displayArtist);
+            } else {
+              showBrand();
+            }
+          }
+
+          function fetchNowPlaying() {
+            var controller = typeof AbortController === 'function' ? new AbortController() : null;
+            var timeout = controller ? window.setTimeout(function () {
+              controller.abort();
+            }, 8000) : null;
+
+            fetch(endpoint, {
+              cache: 'no-store',
+              signal: controller ? controller.signal : undefined
+            })
+              .then(function (response) {
+                if (!response.ok) throw new Error('Now playing request failed');
+                return response.json();
+              })
+              .then(function (item) {
+                if (item && typeof item === 'object') applyNowPlaying(item);
+              })
+              .catch(function () {
+                if (!(title.textContent || '').trim()) applyNowPlaying(fallback);
+              })
+              .finally(function () {
+                if (timeout !== null) window.clearTimeout(timeout);
+              });
+          }
+
+          root.dataset.nowPlayingBound = 'true';
+          fetchNowPlaying();
+          window.setInterval(fetchNowPlaying, 45000);
+        }
+
+        function initAllNowPlaying() {
+          var roots = document.querySelectorAll('[data-now-playing]');
+          roots.forEach(initNowPlaying);
+        }
+
+        window.__brokawInitNowPlaying = initAllNowPlaying;
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initAllNowPlaying);
+        } else {
+          initAllNowPlaying();
+        }
+      })();
+    </script>
+    <script>
+      (function () {
         if (typeof gtag !== 'function') return;
 
         /**
