@@ -17,6 +17,10 @@
           var pauseIconPath = 'M7 5h4v14H7zM13 5h4v14h-4z';
           var nowPlaying = window.__brokawNowPlaying || null;
           var hasStartedPlayback = false;
+          var desiredVolume = Number(volume.value);
+          var audioContext = null;
+          var gainNode = null;
+          var sourceNode = null;
 
           function setControls(isPlaying) {
             toggles.forEach(function (toggle) {
@@ -61,10 +65,52 @@
             setControls(false);
           }
 
+          function getVolumeValue() {
+            var nextVolume = Number(volume.value);
+            if (!Number.isFinite(nextVolume)) return 0.85;
+            return Math.max(0, Math.min(1, nextVolume));
+          }
+
+          function applyVolume() {
+            audio.muted = desiredVolume <= 0;
+            audio.volume = desiredVolume;
+            if (gainNode) gainNode.gain.value = desiredVolume;
+          }
+
+          function ensureVolumePipeline() {
+            if (gainNode || sourceNode) {
+              if (audioContext && audioContext.state === 'suspended') void audioContext.resume();
+              applyVolume();
+              return;
+            }
+
+            var AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextConstructor) {
+              applyVolume();
+              return;
+            }
+
+            try {
+              audioContext = new AudioContextConstructor();
+              sourceNode = audioContext.createMediaElementSource(audio);
+              gainNode = audioContext.createGain();
+              sourceNode.connect(gainNode);
+              gainNode.connect(audioContext.destination);
+              if (audioContext.state === 'suspended') void audioContext.resume();
+            } catch (_error) {
+              audioContext = null;
+              gainNode = null;
+              sourceNode = null;
+            }
+
+            applyVolume();
+          }
+
           async function togglePlayback() {
             if (audio.paused) {
               setControls(true);
               setMessage('Conectando…', 'Abriendo transmisión');
+              ensureVolumePipeline();
               try {
                 await audio.play();
               } catch (_error) {
@@ -77,12 +123,13 @@
             }
           }
 
-          audio.volume = Number(volume.value);
+          applyVolume();
           toggles.forEach(function (toggle) {
             if (toggle instanceof HTMLButtonElement) toggle.addEventListener('click', togglePlayback);
           });
           volume.addEventListener('input', function () {
-            audio.volume = Number(volume.value);
+            desiredVolume = getVolumeValue();
+            applyVolume();
           });
           audio.addEventListener('play', setPlaying);
           audio.addEventListener('playing', setPlaying);
