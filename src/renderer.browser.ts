@@ -54,6 +54,7 @@ import componentSearchMainHbs from './templates/partials/components/search/main.
 import componentNotFoundMainHbs from './templates/partials/components/not-found/main.hbs?raw';
 import componentLiveStoryMainHbs from './templates/partials/components/live-story/main.hbs?raw';
 import componentMediaMainHbs from './templates/partials/components/media/main.hbs?raw';
+import componentStreamPlayerHbs from './templates/partials/components/stream-player.hbs?raw';
 import componentUiAccordionHbs from './templates/partials/components/ui/accordion.hbs?raw';
 import componentUiBreadcrumbHbs from './templates/partials/components/ui/breadcrumb.hbs?raw';
 import componentUiIconButtonHbs from './templates/partials/components/ui/icon-button.hbs?raw';
@@ -124,6 +125,7 @@ const assets: RendererAssets = {
     'components/not-found/main': componentNotFoundMainHbs,
     'components/live-story/main': componentLiveStoryMainHbs,
     'components/media/main': componentMediaMainHbs,
+    'components/stream-player': componentStreamPlayerHbs,
     'components/ui/accordion': componentUiAccordionHbs,
     'components/ui/breadcrumb': componentUiBreadcrumbHbs,
     'components/ui/icon-button': componentUiIconButtonHbs,

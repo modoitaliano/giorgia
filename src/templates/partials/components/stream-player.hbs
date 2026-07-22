@@ -1,0 +1,38 @@
+<section
+  class='fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[100] mx-auto w-auto max-w-4xl text-white sm:inset-x-6'
+  aria-label='Reproductor de ModoItaliano FM'
+  data-stream-player
+  {{#unless streamPlayerVisible}}hidden{{/unless}}
+>
+  <div class='relative overflow-hidden border border-white/15 bg-[#11142c]/95 px-3 py-3 shadow-2xl backdrop-blur-xl sm:px-4' style='border-radius: 14px; box-shadow: 0 16px 40px rgba(10, 18, 52, 0.34), 0 4px 12px rgba(0, 0, 0, 0.2);'>
+    <div class='pointer-events-none absolute inset-y-0 left-0 w-1.5 bg-[#ed0076]' aria-hidden='true'></div>
+    <div class='pointer-events-none absolute -right-10 -top-16 h-32 w-48 bg-[#ed0076]/30 blur-3xl' aria-hidden='true'></div>
+    <div class='relative grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-x-4'>
+      <button
+        class='flex h-11 w-11 items-center justify-center border-2 border-white/80 bg-[#ed0076] text-white transition hover:scale-105 hover:bg-[#ff3c9d] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#11142c]'
+        style='border-radius: 9999px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.36);'
+        type='button'
+        aria-label='Reproducir ModoItaliano FM'
+        aria-pressed='false'
+        data-stream-toggle
+      >
+        <svg class='ml-0.5 h-5 w-5' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><path data-stream-icon d='M8 5.5a1 1 0 0 1 1.52-.86l9 6.5a1 1 0 0 1 0 1.72l-9 6.5A1 1 0 0 1 8 18.5v-13Z'></path></svg>
+      </button>
+
+      <div class='min-w-0' aria-live='polite'>
+        <p class='font-label flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/70'>
+          <span class='relative flex h-2 w-2' aria-hidden='true'><span class='absolute inline-flex h-full w-full animate-ping bg-cyan-300 opacity-75' style='border-radius: 9999px;'></span><span class='relative inline-flex h-2 w-2 bg-cyan-300' style='border-radius: 9999px;'></span></span>
+          <span data-stream-status>En directo</span>
+        </p>
+        <p data-stream-title class='radio-display mt-0.5 truncate text-xl font-semibold uppercase leading-none tracking-[0.02em] text-white'>{{#if streamPlayerNowPlaying.title}}{{streamPlayerNowPlaying.title}}{{else}}ModoItaliano FM{{/if}}</p>
+        <p data-stream-artist class='radio-display mt-0.5 truncate text-sm font-medium uppercase leading-none tracking-[0.08em] text-white/70'>{{#if streamPlayerNowPlaying.artist}}{{streamPlayerNowPlaying.artist}}{{else}}La música que nos une{{/if}}</p>
+      </div>
+
+      <label class='col-start-2 flex min-w-0 items-center gap-2 text-white/75 sm:col-start-auto' aria-label='Volumen de ModoItaliano FM'>
+        <svg class='h-4 w-4 shrink-0' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><path d='M4 9v6h4l5 4V5L8 9H4zm11.5 1.1v3.8c.6-.5 1-1.2 1-1.9s-.4-1.4-1-1.9zm0-4.1v2.1a4.97 4.97 0 0 1 0 7.8V18a7 7 0 0 0 0-12z'></path></svg>
+        <input data-stream-volume class='h-1 w-full min-w-20 accent-[#ed0076] sm:w-24' type='range' min='0' max='1' step='0.01' value='0.85' aria-label='Volumen' />
+      </label>
+    </div>
+  </div>
+  <audio data-stream-audio preload='none' src='https://palazzo.gaulatti.com'>Tu navegador no admite la reproducción de audio.</audio>
+</section>

@@ -1,4 +1,120 @@
+      {{> components/stream-player}}
     </div>
+    <script>
+      (function () {
+        function initStreamPlayer(root) {
+          if (!(root instanceof HTMLElement) || root.dataset.streamPlayerBound === 'true') return;
+
+          var audio = root.querySelector('[data-stream-audio]');
+          var title = root.querySelector('[data-stream-title]');
+          var artist = root.querySelector('[data-stream-artist]');
+          var status = root.querySelector('[data-stream-status]');
+          var volume = root.querySelector('[data-stream-volume]');
+          var toggles = document.querySelectorAll('[data-stream-toggle]');
+          if (!(audio instanceof HTMLAudioElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement) || !(status instanceof HTMLElement) || !(volume instanceof HTMLInputElement)) return;
+
+          var playIconPath = 'M8 5.5a1 1 0 0 1 1.52-.86l9 6.5a1 1 0 0 1 0 1.72l-9 6.5A1 1 0 0 1 8 18.5v-13Z';
+          var pauseIconPath = 'M7 5h4v14H7zM13 5h4v14h-4z';
+          var nowPlaying = window.__brokawNowPlaying || null;
+          var hasStartedPlayback = false;
+
+          function setControls(isPlaying) {
+            toggles.forEach(function (toggle) {
+              if (!(toggle instanceof HTMLButtonElement)) return;
+              toggle.setAttribute('aria-pressed', String(isPlaying));
+              toggle.setAttribute('aria-label', isPlaying ? 'Pausar ModoItaliano FM' : 'Reproducir ModoItaliano FM');
+              var icon = toggle.querySelector('[data-stream-icon]');
+              if (icon instanceof SVGPathElement) icon.setAttribute('d', isPlaying ? pauseIconPath : playIconPath);
+            });
+          }
+
+          function setMessage(nextTitle, nextStatus) {
+            title.textContent = nextTitle;
+            status.textContent = nextStatus;
+          }
+
+          function setNowPlaying(item) {
+            if (!item || typeof item !== 'object') return;
+
+            nowPlaying = item;
+            var nextTitle = typeof item.title === 'string' && item.title.trim() ? item.title.trim() : 'ModoItaliano FM';
+            var nextArtist = typeof item.artist === 'string' && item.artist.trim() ? item.artist.trim() : 'La música que nos une';
+            title.textContent = nextTitle;
+            artist.textContent = nextArtist;
+            status.textContent = item.isPlaceholder === true ? 'En directo' : 'Reproduciendo';
+          }
+
+          function setPlaying() {
+            hasStartedPlayback = true;
+            root.hidden = false;
+            setControls(true);
+            if (nowPlaying) {
+              setNowPlaying(nowPlaying);
+            } else {
+              setMessage('ModoItaliano FM', 'En directo');
+            }
+          }
+
+          function setPaused() {
+            hasStartedPlayback = false;
+            root.hidden = true;
+            setControls(false);
+          }
+
+          async function togglePlayback() {
+            if (audio.paused) {
+              setControls(true);
+              setMessage('Conectando…', 'Abriendo transmisión');
+              try {
+                await audio.play();
+              } catch (_error) {
+                root.hidden = true;
+                setControls(false);
+                setMessage('No disponible', 'Inténtalo de nuevo');
+              }
+            } else {
+              audio.pause();
+            }
+          }
+
+          audio.volume = Number(volume.value);
+          toggles.forEach(function (toggle) {
+            if (toggle instanceof HTMLButtonElement) toggle.addEventListener('click', togglePlayback);
+          });
+          volume.addEventListener('input', function () {
+            audio.volume = Number(volume.value);
+          });
+          audio.addEventListener('play', setPlaying);
+          audio.addEventListener('playing', setPlaying);
+          audio.addEventListener('pause', setPaused);
+          audio.addEventListener('waiting', function () {
+            if (!hasStartedPlayback) setMessage('Conectando…', 'Abriendo transmisión');
+          });
+          audio.addEventListener('error', function () {
+            root.hidden = true;
+            setControls(false);
+            setMessage('No disponible', 'Inténtalo de nuevo');
+          });
+          document.addEventListener('brokaw:now-playing', function (event) {
+            setNowPlaying(event.detail);
+          });
+          if (nowPlaying) setNowPlaying(nowPlaying);
+
+          root.dataset.streamPlayerBound = 'true';
+        }
+
+        function initAllStreamPlayers() {
+          document.querySelectorAll('[data-stream-player]').forEach(initStreamPlayer);
+        }
+
+        window.__brokawInitStreamPlayers = initAllStreamPlayers;
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initAllStreamPlayers);
+        } else {
+          initAllStreamPlayers();
+        }
+      })();
+    </script>
     <script>
       (function () {
         function getLocale() {
@@ -276,6 +392,9 @@
             } else {
               showBrand();
             }
+
+            window.__brokawNowPlaying = item;
+            document.dispatchEvent(new CustomEvent('brokaw:now-playing', { detail: item }));
           }
 
           function fetchNowPlaying() {
