@@ -19,7 +19,7 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'The centered brand treatment uses only the MI SVG at `https://cdn.modoitaliano.fm/assets/mi.svg`, enclosed in a $rgb(50,50,50)$ box with no adjacent wordmark text. The social row includes X, Instagram, TikTok, and the AristonSpritz YouTube channel.'
+          'The single shared site footer is used by every standard page, including the 404. The centered brand treatment uses only the MI SVG at `https://cdn.modoitaliano.fm/assets/mi.svg`, enclosed in a $rgb(50,50,50)$ box with no adjacent wordmark text. The social row includes X, Instagram, TikTok, and the AristonSpritz YouTube channel.'
       }
     }
   }
