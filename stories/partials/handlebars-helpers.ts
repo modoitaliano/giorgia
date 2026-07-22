@@ -36,15 +36,22 @@ function cleanPathSegment(value: unknown): string {
 }
 
 function buildLocalePath(path: string, language: unknown): string {
-  const normalizedLanguage = language === 'es' || language === 'it' ? language : 'en';
-  if (!path) return normalizedLanguage === 'en' ? '/' : `/${normalizedLanguage}`;
+  const normalizedLanguage = language === 'en' || language === 'it' ? language : 'es';
+  if (!path) return normalizedLanguage === 'es' ? '/' : `/${normalizedLanguage}`;
 
   const normalized = String(path).startsWith('/') ? String(path) : `/${path}`;
-  if (normalized.startsWith('/es/') || normalized.startsWith('/it/')) {
+  const localizedPath = normalized.match(/^\/(en|es|it)(?=\/|$)/)?.[1];
+  if (localizedPath && localizedPath !== normalizedLanguage) {
     return normalized;
   }
 
-  if (normalizedLanguage === 'en') {
+  if (localizedPath === 'es') {
+    return normalized.replace(/^\/es(?=\/|$)/, '') || '/';
+  }
+
+  if (localizedPath) return normalized;
+
+  if (normalizedLanguage === 'es') {
     return normalized;
   }
 
@@ -137,14 +144,14 @@ export function registerCommonHelpers(): void {
       const now = new Date();
       const isWithin24h = now.getTime() - date.getTime() < 24 * 60 * 60 * 1000;
       if (isWithin24h) {
-        return date.toLocaleTimeString('en-US', {
+        return date.toLocaleTimeString('es-ES', {
           hour: 'numeric',
           minute: '2-digit',
           hour12: true,
           timeZone: 'America/New_York'
         });
       } else {
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString('es-ES', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
