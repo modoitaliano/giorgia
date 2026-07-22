@@ -138,6 +138,7 @@ export const canonicalArticleSchema = z
       'category-page',
       'search-page',
       '404',
+      'coming-soon',
       'live-story',
       'link-in-bio',
       'media-page',

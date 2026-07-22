@@ -3,6 +3,7 @@ import homepageLayoutHbs from './templates/layouts/homepage.hbs?raw';
 import categoryLayoutHbs from './templates/layouts/category-page.hbs?raw';
 import searchLayoutHbs from './templates/layouts/search-page.hbs?raw';
 import notFoundLayoutHbs from './templates/layouts/404.hbs?raw';
+import comingSoonLayoutHbs from './templates/layouts/coming-soon.hbs?raw';
 import liveStoryLayoutHbs from './templates/layouts/live-story.hbs?raw';
 import linkInBioLayoutHbs from './templates/layouts/link-in-bio.hbs?raw';
 import mediaPageLayoutHbs from './templates/layouts/media-page.hbs?raw';
@@ -51,6 +52,7 @@ import componentCategoryMainGridHbs from './templates/partials/components/catego
 import componentCategoryMoreGridHbs from './templates/partials/components/category/more-grid.hbs?raw';
 import componentSearchMainHbs from './templates/partials/components/search/main.hbs?raw';
 import componentNotFoundMainHbs from './templates/partials/components/not-found/main.hbs?raw';
+import componentComingSoonMainHbs from './templates/partials/components/coming-soon/main.hbs?raw';
 import componentLiveStoryMainHbs from './templates/partials/components/live-story/main.hbs?raw';
 import componentMediaMainHbs from './templates/partials/components/media/main.hbs?raw';
 import componentStreamPlayerHbs from './templates/partials/components/stream-player.hbs?raw';
@@ -74,6 +76,7 @@ const assets: RendererAssets = {
     'category-page': categoryLayoutHbs,
     'search-page': searchLayoutHbs,
     '404': notFoundLayoutHbs,
+    'coming-soon': comingSoonLayoutHbs,
     'live-story': liveStoryLayoutHbs,
     'link-in-bio': linkInBioLayoutHbs,
     'media-page': mediaPageLayoutHbs
@@ -121,6 +124,7 @@ const assets: RendererAssets = {
     'components/category/more-grid': componentCategoryMoreGridHbs,
     'components/search/main': componentSearchMainHbs,
     'components/not-found/main': componentNotFoundMainHbs,
+    'components/coming-soon/main': componentComingSoonMainHbs,
     'components/live-story/main': componentLiveStoryMainHbs,
     'components/media/main': componentMediaMainHbs,
     'components/stream-player': componentStreamPlayerHbs,
