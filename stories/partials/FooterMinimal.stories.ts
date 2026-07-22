@@ -14,4 +14,12 @@ export default meta;
 
 type Story = StoryObj;
 
-export const Default: Story = {};
+export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Pie mínimo para la página 404, con la marca ModoItaliano.'
+      }
+    }
+  }
+};
