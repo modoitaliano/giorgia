@@ -214,7 +214,7 @@ export function LiveEventSlide({ event, progress, language }: LiveEventSlideProp
       <div className='relative z-10 grid grid-cols-12 h-full'>
         <div className='col-span-5 flex flex-col justify-center p-16 relative bg-black/35 backdrop-blur-2xl'>
           <div className='animate-slide-up flex flex-col items-start'>
-            <span className="inline-flex items-center px-4 py-1.5 bg-[#cc0000] text-white text-xl font-bold tracking-[0.08em] uppercase font-['Barlow_Condensed'] mb-4">LIVE</span>
+            <span className="inline-flex items-center px-4 py-1.5 bg-[#cc0000] text-white text-xl font-bold tracking-[0.08em] uppercase font-['Barlow_Condensed'] mb-4">EN VIVO</span>
             <span className="text-white/80 text-2xl font-semibold uppercase tracking-wider mb-2 font-['Barlow_Condensed']">{event.category}</span>
             <div className='w-16 h-1.5 bg-[#b21100] mb-6' />
             <h1 className="text-4xl font-bold leading-tight mb-4 tracking-tight line-clamp-5 font-['Barlow_Condensed'] [text-wrap:balance] text-white">{event.title}</h1>
@@ -229,7 +229,7 @@ export function LiveEventSlide({ event, progress, language }: LiveEventSlideProp
             <div className='bg-[#b21100] text-white px-4 py-2 shadow-lg'>
               <SecondBellIcon size={32} />
             </div>
-            <h2 className="text-white/60 text-2xl font-semibold uppercase tracking-[0.12em] font-['Barlow_Condensed']">LIVE UPDATES</h2>
+            <h2 className="text-white/60 text-2xl font-semibold uppercase tracking-[0.12em] font-['Barlow_Condensed']">ACTUALIZACIONES EN VIVO</h2>
           </div>
           <ScrollingTimeline updates={event.updates} language={language} />
           <div className='absolute bottom-8 right-8 z-30'>

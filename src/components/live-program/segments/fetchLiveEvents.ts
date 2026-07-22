@@ -69,7 +69,7 @@ function extractUpdatesFromAuburnaleEvent(updates?: AuburnaleEvent['updates']): 
     }
     return {
       timestamp: u.timestamp,
-      text: text || 'Update available',
+      text: text || 'Actualización disponible',
     };
   });
 }
@@ -87,7 +87,7 @@ async function fetchFromAuburnale(language: SupportedLanguage): Promise<LiveEven
     if (!event) return null;
 
     return {
-      category: event.categories?.[0]?.name || 'EVENT',
+      category: event.categories?.[0]?.name || 'EVENTO',
       title: event.title,
       excerpt: '',
       image: event.featuredImage?.url || '',
@@ -102,7 +102,7 @@ async function fetchFromAuburnale(language: SupportedLanguage): Promise<LiveEven
   }
 }
 
-export async function fetchLiveEvent(language: SupportedLanguage = 'en'): Promise<LiveEventData | null> {
+export async function fetchLiveEvent(language: SupportedLanguage = 'es'): Promise<LiveEventData | null> {
   try {
     const response = await fetch(
       `https://cdn.modoitaliano.fm/content/homepage-current-${language}.json?_=${Date.now()}`,
@@ -120,7 +120,7 @@ export async function fetchLiveEvent(language: SupportedLanguage = 'en'): Promis
     }
 
     return {
-      category: main.category || 'LIVE',
+      category: main.category || 'EN VIVO',
       title: main.title,
       excerpt: main.excerpt,
       image: main.image || '',

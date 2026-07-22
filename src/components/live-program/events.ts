@@ -52,7 +52,7 @@ interface EventCacheEntry {
   lastFetchTime: Date;
 }
 
-const SUPPORTED_LANGUAGE_SET = new Set<SupportedLanguage>(['en', 'es', 'it']);
+const SUPPORTED_LANGUAGE_SET = new Set<SupportedLanguage>(['es']);
 const eventCacheByKey = new Map<string, EventCacheEntry>();
 let activeCacheKey = '__default__';
 

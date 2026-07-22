@@ -55,15 +55,22 @@ function cleanPathSegment(value: unknown): string {
 }
 
 function buildLocalePath(path: string, language: unknown): string {
-  const normalizedLanguage = language === 'es' || language === 'it' ? language : 'en';
-  if (!path) return normalizedLanguage === 'en' ? '/' : `/${normalizedLanguage}`;
+  const normalizedLanguage = language === 'en' || language === 'it' ? language : 'es';
+  if (!path) return normalizedLanguage === 'es' ? '/' : `/${normalizedLanguage}`;
 
   const normalized = String(path).startsWith('/') ? String(path) : `/${path}`;
-  if (normalized.startsWith('/es/') || normalized.startsWith('/it/')) {
+  const localizedPath = normalized.match(/^\/(en|es|it)(?=\/|$)/)?.[1];
+  if (localizedPath && localizedPath !== normalizedLanguage) {
     return normalized;
   }
 
-  if (normalizedLanguage === 'en') {
+  if (localizedPath === 'es') {
+    return normalized.replace(/^\/es(?=\/|$)/, '') || '/';
+  }
+
+  if (localizedPath) return normalized;
+
+  if (normalizedLanguage === 'es') {
     return normalized;
   }
 
@@ -164,14 +171,14 @@ function registerHelpers(): void {
       const now = new Date();
       const isWithin24h = now.getTime() - date.getTime() < 24 * 60 * 60 * 1000;
       if (isWithin24h) {
-        return date.toLocaleTimeString('en-US', {
+        return date.toLocaleTimeString('es-ES', {
           hour: 'numeric',
           minute: '2-digit',
           hour12: true,
           timeZone: 'America/New_York'
         });
       } else {
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString('es-ES', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
@@ -264,40 +271,40 @@ function registerHelpers(): void {
     const page = doc as Partial<CanonicalDocument>;
 
     if (page.layout === 'homepage') {
-      const language = page.language === 'es' || page.language === 'it' ? page.language : 'en';
+      const language = page.language === 'en' || page.language === 'it' ? page.language : 'es';
       return siteTitlesByLanguage[language];
     }
 
     if (page.layout === 'category-page') {
       const categoryName = page.categories?.[0]?.name?.trim();
-      const baseTitle = categoryName || page.title?.trim() || 'Category';
+      const baseTitle = categoryName || page.title?.trim() || 'Categoría';
       return `${baseTitle} | ModoItaliano`;
     }
 
     if (page.layout === 'search-page') {
-      return 'Search | ModoItaliano';
+      return 'Buscar | ModoItaliano';
     }
 
     if (page.layout === 'article-page') {
-      const baseTitle = page.title?.trim() || 'Article';
+      const baseTitle = page.title?.trim() || 'Artículo';
       return `${baseTitle} | ModoItaliano`;
     }
 
     if (page.layout === '404') {
-      return '404 - Page Not Found | ModoItaliano';
+      return '404 - Página no encontrada | ModoItaliano';
     }
 
     if (page.layout === 'coming-soon') {
-      return `${page.title?.trim() || 'Coming Soon'} | ModoItaliano`;
+      return `${page.title?.trim() || 'Próximamente'} | ModoItaliano`;
     }
 
     if (page.layout === 'live-story') {
-      const baseTitle = page.title?.trim() || 'Live Story';
+      const baseTitle = page.title?.trim() || 'Cobertura en vivo';
       return `${baseTitle} | ModoItaliano`;
     }
 
     if (page.layout === 'link-in-bio') {
-      const baseTitle = page.title?.trim() || 'Top Stories';
+      const baseTitle = page.title?.trim() || 'Noticias destacadas';
       return `${baseTitle} | ModoItaliano`;
     }
 
@@ -426,6 +433,6 @@ export function renderWithAssets(doc: CanonicalDocument, assets: RendererAssets)
     ...parsed,
     ...(homepageSlots !== undefined ? { homepageSlots } : {}),
     styles: runtimeStyles,
-    logoLink: parsed.language === 'en' ? '/' : `/${parsed.language}`
+    logoLink: parsed.language === 'es' ? '/' : `/${parsed.language}`
   });
 }

@@ -4,25 +4,23 @@ export const outletConfig = {
   cdnUrl: 'https://cdn.modoitaliano.fm',
   contentPath: '/content',
   inventoryFilename: 'cronkite-inventory.json',
-  defaultLanguage: 'en',
-  supportedLanguages: ['en', 'es', 'it'],
+  defaultLanguage: 'es',
+  supportedLanguages: ['es'],
   prefixDefaultLocale: false,
   defaultAuthor: {
-    name: 'ModoItaliano Newsroom',
-    slug: 'modoitaliano-newsroom'
+    name: 'Redacción de ModoItaliano',
+    slug: 'redaccion-modoitaliano'
   },
   defaultCategory: {
-    name: 'Top Stories',
-    slug: 'top-stories'
+    name: 'Noticias destacadas',
+    slug: 'noticias-destacadas'
   },
   linkInBioRoute: '/instagram',
-  searchTitle: 'Search',
+  searchTitle: 'Buscar',
   searchDescriptions: {
-    en: 'Search stories from ModoItaliano.',
     es: 'Busca noticias de ModoItaliano.',
-    it: 'Cerca notizie ModoItaliano.'
   },
-  socialLanguages: ['en'],
+  socialLanguages: ['es'],
   socialUserAgent: 'Cronkite/1.0',
   socialImageExport: 'buildInstagramImageHtml',
   hashtagServiceBaseUrl: 'http://192.168.0.99:8000'

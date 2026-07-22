@@ -60,7 +60,7 @@ interface WorldClocksProps {
 export function WorldClocks({
   currentTime,
   timeOverride = null,
-  language = 'en',
+  language = 'es',
   cities,
   rotateIntervalMs = 7000,
   transitionDurationMs = 300,

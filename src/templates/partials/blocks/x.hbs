@@ -2,7 +2,7 @@
   <div class='x-embed-shell overflow-hidden w-full' data-tweet-id='{{xTweetId url}}'>
     {{#if (xEmbedUrl url)}}
       <iframe
-        title='Embedded X post'
+        title='Publicación de X incrustada'
         src='{{xEmbedUrl url}}'
         data-x-embed-frame='true'
         width='100%'
@@ -13,7 +13,7 @@
       ></iframe>
     {{else}}
       <div class='p-4 text-sm text-slate-600 dark:text-slate-300'>
-        Post preview unavailable.
+        La vista previa de la publicación no está disponible.
       </div>
     {{/if}}
   </div>
@@ -69,6 +69,6 @@
     })();
   </script>
   <figcaption class='text-sm text-slate-500 dark:text-slate-400 mt-2'>
-    <a href='{{url}}' target='_blank' rel='noopener noreferrer' class='hover:underline'>View post on X</a>
+    <a href='{{url}}' target='_blank' rel='noopener noreferrer' class='hover:underline'>Ver publicación en X</a>
   </figcaption>
 </figure>

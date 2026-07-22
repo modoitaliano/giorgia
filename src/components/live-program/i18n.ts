@@ -303,7 +303,7 @@ export function t(key: string, language: SupportedLanguage, replacements?: Recor
     return key;
   }
 
-  let text = translation[language] || translation.en || key;
+  let text = translation[language] || translation.es || key;
 
   if (replacements) {
     Object.entries(replacements).forEach(([placeholder, value]) => {
@@ -314,7 +314,7 @@ export function t(key: string, language: SupportedLanguage, replacements?: Recor
   return text;
 }
 
-export const LANGUAGE_ROTATION: SupportedLanguage[] = ['en', 'es', 'en', 'it'];
+export const LANGUAGE_ROTATION: SupportedLanguage[] = ['es'];
 
 export function getNextLanguageIndex(currentIndex: number): number {
   return (currentIndex + 1) % LANGUAGE_ROTATION.length;

@@ -13,7 +13,7 @@ const comingSoonFixture: CanonicalArticle = {
   publishedAt: nowIso,
   updatedAt: nowIso,
   status: 'published',
-  title: 'Coming Soon',
+  title: 'Próximamente',
   excerpt: 'Estamos preparando algo especial. Vuelve pronto para descubrirlo.',
   language: 'es',
   featured: false,
@@ -39,4 +39,12 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'La página de llegada no incluye un enlace de regreso, ya que se publica como la raíz del sitio.'
+      }
+    }
+  }
+};

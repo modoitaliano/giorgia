@@ -105,7 +105,7 @@ interface ModoItalianoConfig {
   marqueeHeightPx: number;
 }
 
-const DEFAULT_LANGUAGE_ROTATION: SupportedLanguage[] = ['en', 'es', 'en', 'it'];
+const DEFAULT_LANGUAGE_ROTATION: SupportedLanguage[] = ['es'];
 const DEFAULT_CALLSIGN_PRELAUNCH_UNTIL_NYC = '2026-01-02T21:30:00';
 const MODOITALIANO_COMPONENT_TYPE_CONTENT = 'modoitaliano-content';
 const MODOITALIANO_COMPONENT_TYPE_MARQUEE = 'modoitaliano-marquee';
@@ -209,7 +209,7 @@ function normalizeLanguageRotation(value: unknown): SupportedLanguage[] {
     return [...DEFAULT_LANGUAGE_ROTATION];
   }
 
-  const allowed = new Set<SupportedLanguage>(['en', 'es', 'it']);
+  const allowed = new Set<SupportedLanguage>(['es']);
   const filtered = value.filter((item): item is SupportedLanguage => typeof item === 'string' && allowed.has(item as SupportedLanguage));
 
   return filtered.length > 0 ? filtered : [...DEFAULT_LANGUAGE_ROTATION];
@@ -404,7 +404,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
   const config = useMemo(() => extractConfigFromMetadata(effectiveSceneMetadata), [effectiveSceneMetadata]);
   const layerAvailability = useMemo(() => resolveModoItalianoLayerAvailability(activeComponents), [activeComponents]);
   const languageRotation = config.languageRotation;
-  const currentLanguage: SupportedLanguage = languageRotation[languageIndex] ?? languageRotation[0] ?? 'en';
+  const currentLanguage: SupportedLanguage = languageRotation[languageIndex] ?? languageRotation[0] ?? 'es';
   const resolvedApiBaseUrl =
     apiBaseUrl?.replace(/\/+$/, '') ||
     (() => {

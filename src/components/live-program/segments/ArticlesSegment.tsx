@@ -28,43 +28,43 @@ interface ApiResponse {
 const MOCK_ARTICLES: NewsItem[] = [
   {
     id: '1',
-    headline: 'Global Climate Summit Reaches Historic Agreement',
+    headline: 'La cumbre climática mundial alcanza un acuerdo histórico',
     summary:
-      'World leaders have agreed to ambitious new targets for reducing carbon emissions, marking a significant step forward in the fight against climate change.',
+      'Los líderes mundiales acordaron nuevas y ambiciosas metas para reducir las emisiones de carbono, un paso importante en la lucha contra el cambio climático.',
     imageUrl: 'https://picsum.photos/seed/news1/1920/1080',
-    category: 'Environment',
+    category: 'Medio ambiente',
     url: 'https://modoitaliano.fm/climate-summit-agreement'
   },
   {
     id: '2',
-    headline: 'Breakthrough in Quantum Computing Announced',
-    summary: 'Researchers have achieved a major milestone in quantum computing, potentially revolutionizing data processing and encryption technologies.',
+    headline: 'Anuncian un avance en la computación cuántica',
+    summary: 'Investigadores alcanzaron un hito en la computación cuántica que podría transformar el procesamiento de datos y las tecnologías de cifrado.',
     imageUrl: 'https://picsum.photos/seed/news2/1920/1080',
-    category: 'Technology',
+    category: 'Tecnología',
     url: 'https://modoitaliano.fm/quantum-computing-breakthrough'
   },
   {
     id: '3',
-    headline: 'New Archaeological Discovery Rewrites Ancient History',
-    summary: 'Archaeologists have unearthed artifacts that challenge our understanding of ancient civilizations and their technological capabilities.',
+    headline: 'Un nuevo hallazgo arqueológico reescribe la historia antigua',
+    summary: 'Arqueólogos desenterraron objetos que cuestionan lo que sabemos sobre las civilizaciones antiguas y sus capacidades tecnológicas.',
     imageUrl: 'https://picsum.photos/seed/news3/1920/1080',
-    category: 'Science',
+    category: 'Ciencia',
     url: 'https://modoitaliano.fm/archaeological-discovery'
   },
   {
     id: '4',
-    headline: 'International Space Station Mission Extended',
-    summary: 'NASA and international partners announce extension of ISS operations, paving the way for continued scientific research in orbit.',
+    headline: 'Extienden la misión de la Estación Espacial Internacional',
+    summary: 'La NASA y sus socios internacionales anunciaron una extensión de las operaciones de la EEI para continuar la investigación científica en órbita.',
     imageUrl: 'https://picsum.photos/seed/news4/1920/1080',
-    category: 'Space',
+    category: 'Espacio',
     url: 'https://modoitaliano.fm/iss-mission-extended'
   },
   {
     id: '5',
-    headline: 'Renewable Energy Surpasses Fossil Fuels',
-    summary: 'For the first time in history, renewable energy sources have generated more electricity than traditional fossil fuels globally.',
+    headline: 'La energía renovable supera a los combustibles fósiles',
+    summary: 'Por primera vez, las fuentes renovables generaron más electricidad que los combustibles fósiles tradicionales a nivel mundial.',
     imageUrl: 'https://picsum.photos/seed/news5/1920/1080',
-    category: 'Energy',
+    category: 'Energía',
     url: 'https://modoitaliano.fm/renewable-energy-milestone'
   }
 ];
@@ -97,14 +97,14 @@ function buildArticlePath(article: ApiArticle, language: SupportedLanguage): str
   return (
     explicitUrl ||
     (primaryCategorySlug
-      ? language === 'en'
+      ? language === 'es'
         ? `/${primaryCategorySlug}/${bareSlug.replace(/^\//, '')}`
         : `/${language}/${primaryCategorySlug}/${bareSlug.replace(/^\//, '')}`
       : normalizePath(bareSlug || article.canonicalUrl || '/'))
   );
 }
 
-export async function fetchArticles(language: SupportedLanguage = 'en'): Promise<NewsItem[]> {
+export async function fetchArticles(language: SupportedLanguage = 'es'): Promise<NewsItem[]> {
   try {
     const response = await fetch(`https://cdn.modoitaliano.fm/content/homepage-current-${language}.json?_=${Date.now()}`, {
       cache: 'no-store'
@@ -201,7 +201,7 @@ function ArticlesSegmentRenderer({ items, itemIndex, progress, language }: Artic
   );
 }
 
-export function createArticlesSegment(articles: NewsItem[], onDataUpdate?: (nextArticles: NewsItem[]) => void, language: SupportedLanguage = 'en'): Segment {
+export function createArticlesSegment(articles: NewsItem[], onDataUpdate?: (nextArticles: NewsItem[]) => void, language: SupportedLanguage = 'es'): Segment {
   return {
     id: 'articles',
     label: t('segment.articles', language),

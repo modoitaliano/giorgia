@@ -197,7 +197,7 @@ function WeatherLoadingSlide({ language }: { language: SupportedLanguage }) {
 export function createWeatherSegment(
   weatherData: WeatherRegionData[],
   onDataUpdate?: (data: WeatherRegionData[]) => void,
-  language: SupportedLanguage = 'en'
+  language: SupportedLanguage = 'es'
 ): Segment {
   return {
     id: 'weather',

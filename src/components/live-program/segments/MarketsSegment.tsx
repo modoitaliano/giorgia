@@ -149,7 +149,7 @@ function MarketSlide({ progress, marketData, language }: { progress: number; mar
   );
 }
 
-export function createMarketsSegment(marketData: MarketData[], onDataUpdate?: (data: MarketData[]) => void, language: SupportedLanguage = 'en'): Segment {
+export function createMarketsSegment(marketData: MarketData[], onDataUpdate?: (data: MarketData[]) => void, language: SupportedLanguage = 'es'): Segment {
   return {
     id: 'markets',
     label: t('segment.markets', language),

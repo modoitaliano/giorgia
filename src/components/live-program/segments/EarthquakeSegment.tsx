@@ -36,7 +36,7 @@ interface ApiEarthquake {
   datapoints: ApiDatapoint[];
 }
 
-function formatTimeAgo(timestamp: number, language: SupportedLanguage = 'en'): string {
+function formatTimeAgo(timestamp: number, language: SupportedLanguage = 'es'): string {
   const now = Date.now();
   const diffMs = now - timestamp;
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
@@ -55,7 +55,7 @@ function formatTimeAgo(timestamp: number, language: SupportedLanguage = 'en'): s
   return t('earthquakes.timeAgo.justNow', language);
 }
 
-export async function fetchEarthquakes(language: SupportedLanguage = 'en'): Promise<EarthquakeData[]> {
+export async function fetchEarthquakes(language: SupportedLanguage = 'es'): Promise<EarthquakeData[]> {
   try {
     const response = await fetch(`https://api.monitor.gaulatti.com/earthquakes?_=${Date.now()}`);
     if (!response.ok) {
@@ -248,7 +248,7 @@ function EarthquakeLoadingSlide({ language }: { language: SupportedLanguage }) {
 export function createEarthquakeSegment(
   earthquakes: EarthquakeData[],
   onDataUpdate?: (data: EarthquakeData[]) => void,
-  language: SupportedLanguage = 'en'
+  language: SupportedLanguage = 'es'
 ): Segment {
   return {
     id: 'earthquakes',

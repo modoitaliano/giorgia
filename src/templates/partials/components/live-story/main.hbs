@@ -40,15 +40,15 @@
             </div>
             {{/each}}
             <div class='absolute inset-x-0 bottom-4 z-20 flex items-center justify-center gap-2'>
-              <button type='button' class='carousel-dot w-2.5 h-2.5 rounded-full active' aria-label='Show image 1'></button>
+              <button type='button' class='carousel-dot w-2.5 h-2.5 rounded-full active' aria-label='Mostrar imagen 1'></button>
               {{#each media}}
-              <button type='button' class='carousel-dot w-2.5 h-2.5 rounded-full' aria-label='Show image'></button>
+              <button type='button' class='carousel-dot w-2.5 h-2.5 rounded-full' aria-label='Mostrar imagen'></button>
               {{/each}}
             </div>
             <button
               type='button'
               class='carousel-next absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/55 text-white text-lg leading-none flex items-center justify-center'
-              aria-label='Next image'
+              aria-label='Siguiente imagen'
             >
               &rsaquo;
             </button>
@@ -72,7 +72,7 @@
     {{!-- Story Header --}}
     <header class='pt-8 pb-8 border-b border-slate-200 dark:border-slate-700'>
       <div class='flex items-center gap-3 mb-4'>
-        <span class='inline-flex items-center px-3 py-1.5 bg-[#cc0000] text-white text-xs font-bold tracking-[0.08em] uppercase leading-none'>LIVE</span>
+        <span class='inline-flex items-center px-3 py-1.5 bg-[#cc0000] text-white text-xs font-bold tracking-[0.08em] uppercase leading-none'>EN VIVO</span>
         {{#with (lookup categories 0)}}
           <span class='text-xs font-bold uppercase tracking-wider text-[#8f0d00] dark:text-[#ff2e1a]'>{{name}}</span>
         {{/with}}
@@ -113,7 +113,7 @@
         {{#if liveStory.keyPoints}}
         <div class='hidden mb-10 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700'>
           <div class='px-6 py-3 bg-[#cc0000]'>
-            <h2 class='text-sm font-bold tracking-[0.06em] uppercase text-white leading-none'>Here's the latest</h2>
+            <h2 class='text-sm font-bold tracking-[0.06em] uppercase text-white leading-none'>Lo último</h2>
           </div>
           <div class='px-6 py-5 bg-slate-50 dark:bg-slate-800'>
             <ul class='space-y-3'>
@@ -132,14 +132,14 @@
         {{#with (sofascoreWidgetUrl sofascore_id) as |widgetUrl|}}
         <div class='mb-10 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'>
           <div class='px-6 py-3 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700'>
-            <h2 class='text-sm font-bold tracking-[0.06em] uppercase text-slate-700 dark:text-slate-200 leading-none'>Match Momentum</h2>
+            <h2 class='text-sm font-bold tracking-[0.06em] uppercase text-slate-700 dark:text-slate-200 leading-none'>Momento del partido</h2>
           </div>
           <div class='p-4'>
             <iframe
               width='100%'
               height='286'
               src='{{widgetUrl}}'
-              title='SofaScore Attack Momentum'
+              title='Impulso de ataque de SofaScore'
               frameborder='0'
               scrolling='no'
               loading='lazy'
@@ -148,7 +148,7 @@
             ></iframe>
             {{#with (sofascoreMatchUrl sofascore_id) as |matchUrl|}}
               <div style='font-size:12px;font-family:Barlow,sans-serif'>
-                <a href='{{matchUrl}}' target='_blank' rel='noreferrer'>{{title}} Live Score</a>
+                <a href='{{matchUrl}}' target='_blank' rel='noreferrer'>Marcador en vivo de {{title}}</a>
               </div>
             {{/with}}
           </div>
@@ -213,7 +213,7 @@
         <div class='sticky top-6'>
           {{#if articles.[0]}}
           <h3 class='text-xs font-bold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400 mb-4 pb-2 border-b border-slate-200 dark:border-slate-700'>
-            Related Articles
+            Artículos relacionados
           </h3>
           <div>
             {{#each (slice articles 0 6)}}

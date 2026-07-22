@@ -196,7 +196,7 @@
       
       <section class='grid'>
         {{#each articles}}
-          <a class='card' href='{{url}}' aria-label='Read article: {{title}}'>
+          <a class='card' href='{{url}}' aria-label='Leer artículo: {{title}}'>
             {{#if featuredImage.url}}
               <div class='card-bg'>
                 <img src='{{featuredImage.url}}' alt='{{#if featuredImage.alt}}{{featuredImage.alt}}{{else}}{{title}}{{/if}}' loading='lazy' />
@@ -210,7 +210,7 @@
                 </div>
               {{else}}
                 <div class='card-header'>
-                  <span class='category-label'>LATEST</span>
+                  <span class='category-label'>ÚLTIMAS</span>
                 </div>
               {{/if}}
               <div class='card-main'>

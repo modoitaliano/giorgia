@@ -30,7 +30,7 @@ function LiveEventSegmentRenderer({ event, progress, language }: LiveEventSegmen
 export function createLiveEventSegment(
   liveEvent: LiveEventData | null,
   onDataUpdate?: (next: LiveEventData | null) => void,
-  language: SupportedLanguage = 'en'
+  language: SupportedLanguage = 'es'
 ): Segment {
   return {
     id: 'live-event',

@@ -13,22 +13,22 @@ const searchPageFixture: CanonicalArticle = {
   publishedAt: nowIso,
   updatedAt: nowIso,
   status: 'published',
-  title: 'Search',
-  excerpt: 'Search current-language stories from ModoItaliano.',
-  language: 'en',
+  title: 'Buscar',
+  excerpt: 'Busca noticias de ModoItaliano.',
+  language: 'es',
   featured: false,
-  authors: [{ name: 'ModoItaliano Desk', slug: 'modoitaliano-desk' }],
-  categories: [{ name: 'Top Stories', slug: 'top-stories' }],
+  authors: [{ name: 'Redacción de ModoItaliano', slug: 'redaccion-modoitaliano' }],
+  categories: [{ name: 'Noticias destacadas', slug: 'noticias-destacadas' }],
   body: [],
   seo: {
-    metaTitle: 'Search | ModoItaliano',
-    metaDescription: 'Search current-language stories from ModoItaliano.'
+    metaTitle: 'Buscar | ModoItaliano',
+    metaDescription: 'Busca noticias de ModoItaliano.'
   },
   navigation: {
     categories: [
-      { name: 'World', slug: 'world' },
-      { name: 'Business', slug: 'business' },
-      { name: 'Sports', slug: 'sports' }
+      { name: 'Mundo', slug: 'mundo' },
+      { name: 'Economía', slug: 'economía' },
+      { name: 'Deportes', slug: 'deportes' }
     ]
   },
   articles: []
@@ -47,7 +47,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const ClientSideOnly: Story = {
-  name: 'Client-side only submit',
+  name: 'Búsqueda del lado del cliente',
   args: {
     ...searchPageFixture
   },
@@ -55,7 +55,7 @@ export const ClientSideOnly: Story = {
     docs: {
       description: {
         story:
-          'When rendered on /search, submit updates query params and reruns results client-side. Matching results are shown newest-first by published date. If rendered outside search route context, normal navigation is allowed.'
+          'En /search, el envío actualiza los parámetros de consulta y vuelve a ejecutar los resultados en el cliente. Los resultados coincidentes se muestran primero por fecha de publicación.'
       }
     }
   }
