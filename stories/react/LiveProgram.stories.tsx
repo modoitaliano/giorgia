@@ -29,7 +29,12 @@ export default meta;
 export const Default: StoryObj = {
   args: {
     programId: 'modoitaliano',
-    embedded: false
+    embedded: false,
+    sceneMetadata: {
+      'modoitaliano-content': {
+        languageRotation: ['es']
+      }
+    }
   }
 };
 

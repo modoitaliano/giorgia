@@ -43,7 +43,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'La página de llegada no incluye un enlace de regreso, ya que se publica como la raíz del sitio.'
+        story: 'La página de llegada no incluye enlaces de navegación ni búsqueda, ya que se publica como la raíz del sitio.'
       }
     }
   }
