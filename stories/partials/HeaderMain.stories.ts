@@ -139,7 +139,18 @@ export const WeatherRotation: Story = {
     const sequence = canvasElement
       .querySelector<HTMLElement>('[data-giorgia-weather-bar]')
       ?.dataset.weatherSequence?.split('|') ?? [];
-    await expect(sequence.length).toBe(weatherPayload.cities.length);
+    const cities = canvasElement
+      .querySelector<HTMLElement>('[data-giorgia-weather-bar]')
+      ?.dataset.weatherCities?.split('|') ?? [];
+    await expect(cities.sort()).toEqual([
+      'Montevideo',
+      'New York City',
+      'Sanremo',
+      'Santiago',
+      'Tala',
+      'Viña del Mar'
+    ]);
+    await expect(sequence.length).toBe(cities.length);
     sequence.forEach((country, index) => {
       expect(country).not.toBe(sequence[(index + 1) % sequence.length]);
     });
