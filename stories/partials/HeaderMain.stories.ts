@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/html';
 import Handlebars from 'handlebars';
+import { expect, waitFor } from 'storybook/test';
 import headerMainHbs from '../../src/templates/partials/headers/header-main.hbs?raw';
 import navCategoriesHbs from '../../src/templates/partials/nav/nav-categories.hbs?raw';
 import { homepageFixture } from '../fixtures/homepage.fixture';
@@ -10,6 +11,7 @@ Handlebars.registerPartial('nav/nav-categories', navCategoriesHbs);
 
 const template = Handlebars.compile(headerMainHbs);
 const NOW_PLAYING_URL = 'https://cdn.modoitaliano.fm/content/now-playing.json';
+const WEATHER_URL = 'https://cdn.fifthbell.com/content/weather-current.json';
 
 type NowPlayingStoryItem = {
   status: string;
@@ -24,6 +26,32 @@ type NowPlayingStoryItem = {
   updatedAt: string;
 };
 
+const defaultNowPlaying: NowPlayingStoryItem = {
+  status: 'playing',
+  station: 'modoitaliano',
+  source: 'alcantara',
+  title: 'Volare',
+  artist: 'Domenico Modugno',
+  album: '',
+  artworkUrl: '',
+  externalUrl: 'https://modoitaliano.fm/',
+  isPlaceholder: false,
+  updatedAt: '2026-07-21T18:53:33Z'
+};
+
+const weatherPayload = {
+  cities: [
+    { name: 'Antofagasta', country: 'Chile', temp: 61, condition: 'cloudy' },
+    { name: 'New York City', country: 'United States', temp: 79, condition: 'cloudy' },
+    { name: 'Rome', country: 'Italy', temp: 77, condition: 'sunny' },
+    { name: 'Sanremo', country: 'Italy', temp: 92, condition: 'sunny' },
+    { name: 'Tala', country: 'Uruguay', temp: 46, condition: 'cloudy' },
+    { name: 'Montevideo', country: 'Uruguay', temp: 46, condition: 'cloudy' },
+    { name: 'Viña del Mar', country: 'Chile', temp: 50, condition: 'cloudy' },
+    { name: 'Santiago', country: 'Chile', temp: 44, condition: 'cloudy' }
+  ]
+};
+
 const withNowPlaying =
   (item: NowPlayingStoryItem) =>
   (story: () => string): string => {
@@ -32,6 +60,12 @@ const withNowPlaying =
       const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
       if (url === NOW_PLAYING_URL) {
         return new Response(JSON.stringify(item), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      if (url.startsWith(WEATHER_URL)) {
+        return new Response(JSON.stringify(weatherPayload), {
           status: 200,
           headers: { 'Content-Type': 'application/json' }
         });
@@ -81,25 +115,59 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-  decorators: [
-    withNowPlaying({
-      status: 'playing',
-      station: 'modoitaliano',
-      source: 'alcantara',
-      title: 'Volare',
-      artist: 'Domenico Modugno',
-      album: '',
-      artworkUrl: '',
-      externalUrl: 'https://modoitaliano.fm/',
-      isPlaceholder: false,
-      updatedAt: '2026-07-21T18:53:33Z'
-    })
-  ],
+  decorators: [withNowPlaying(defaultNowPlaying)],
   parameters: {
     docs: {
       description: {
         story:
           'Masthead radiofónico con la canalización de tipografías Modo Italiano autocontenida: navegación en Barlow 700, tipografía de pista en Barlow Condensed y UI complementaria en Outfit, junto al logo MI empaquetado. La ruta predeterminada del logo es `https://cdn.modoitaliano.fm/assets/mi.svg`; el manifiesto de despliegue `fontFiles()` lo entrega como `assets/mi.svg` junto a las fuentes y la hoja de estilos, con una capa azul marino desenfocada, carrusel de ilustraciones Ken Burns centrado y un reproductor de “now playing” que consulta `https://cdn.modoitaliano.fm/content/now-playing.json` en el cliente cada 45 segundos. El reproductor se acerca al logo y sobresale del masthead también en móvil; el menú abierto se apila por encima de la tarjeta de reproducción.'
+      }
+    }
+  }
+};
+
+export const WeatherRotation: Story = {
+  decorators: [withNowPlaying(defaultNowPlaying)],
+  play: async ({ canvasElement }) => {
+    const weather = canvasElement.querySelector<HTMLElement>('[data-weather-current]');
+    await waitFor(() => expect(weather).not.toHaveAttribute('hidden'));
+    await expect(weather).toHaveAttribute('data-weather-unit', 'celsius');
+
+    const expectedMonth = new Intl.DateTimeFormat('es-CL', { month: 'long' }).format(new Date());
+    await expect(canvasElement.querySelector('[data-weather-date]')?.textContent).toContain(expectedMonth);
+
+    const sequence = canvasElement
+      .querySelector<HTMLElement>('[data-giorgia-weather-bar]')
+      ?.dataset.weatherSequence?.split('|') ?? [];
+    await expect(sequence.length).toBe(weatherPayload.cities.length);
+    sequence.forEach((country, index) => {
+      expect(country).not.toBe(sequence[(index + 1) % sequence.length]);
+    });
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'La barra consulta el JSON meteorológico compartido cada hora y alterna cada ciudad entre Celsius y Fahrenheit sin agrupar países consecutivos.'
+      }
+    }
+  }
+};
+
+export const SpanishDate: Story = {
+  decorators: [withNowPlaying(defaultNowPlaying)],
+  play: async ({ canvasElement }) => {
+    const expectedDate = new Intl.DateTimeFormat('es-CL', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(new Date());
+    await waitFor(() => expect(canvasElement.querySelector('[data-weather-date]')?.textContent).toBe(expectedDate));
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'La fecha editorial de Giorgia siempre usa la localización española.'
       }
     }
   }
