@@ -132,6 +132,7 @@ export const WeatherRotation: Story = {
     const weather = canvasElement.querySelector<HTMLElement>('[data-weather-current]');
     await waitFor(() => expect(weather).not.toHaveAttribute('hidden'));
     await expect(weather).toHaveAttribute('data-weather-unit', 'celsius');
+    await expect(canvasElement.querySelector('[data-weather-temperature]')?.textContent).toMatch(/^-?\d+°C$/);
 
     const expectedMonth = new Intl.DateTimeFormat('es-CL', { month: 'long' }).format(new Date());
     await expect(canvasElement.querySelector('[data-weather-date]')?.textContent).toContain(expectedMonth);
@@ -159,7 +160,7 @@ export const WeatherRotation: Story = {
     docs: {
       description: {
         story:
-          'La barra consulta el JSON meteorológico compartido cada hora y alterna cada ciudad entre Celsius y Fahrenheit sin agrupar países consecutivos.'
+          'La barra consulta el JSON meteorológico compartido cada hora, muestra todas las temperaturas en Celsius y rota las ciudades sin agrupar países consecutivos.'
       }
     }
   }

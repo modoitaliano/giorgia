@@ -362,18 +362,17 @@
 
     const renderWeather = () => {
       if (!(weatherElement instanceof HTMLElement) || cities.length === 0) return;
-      const city = cities[Math.floor(phase / 2) % cities.length];
-      const celsius = phase % 2 === 0;
+      const city = cities[phase % cities.length];
       const fahrenheit = Number(city.temp);
-      const temperature = celsius ? Math.round((fahrenheit - 32) * 5 / 9) : Math.round(fahrenheit);
+      const temperature = Math.round((fahrenheit - 32) * 5 / 9);
       cityElement.textContent = city.name || '';
       countryElement.textContent = city.country || '';
-      temperatureElement.textContent = `${temperature}°${celsius ? 'C' : 'F'}`;
+      temperatureElement.textContent = `${temperature}°C`;
       iconElement.innerHTML = iconSvg(city.condition);
       weatherElement.hidden = false;
       weatherElement.dataset.weatherCity = city.name || '';
       weatherElement.dataset.weatherCountry = city.country || '';
-      weatherElement.dataset.weatherUnit = celsius ? 'celsius' : 'fahrenheit';
+      weatherElement.dataset.weatherUnit = 'celsius';
       weatherElement.classList.remove('radio-weather-swap');
       void weatherElement.offsetWidth;
       weatherElement.classList.add('radio-weather-swap');
