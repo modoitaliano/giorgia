@@ -46,6 +46,14 @@
     <meta name='twitter:description' content='{{#if seo.metaDescription}}{{seo.metaDescription}}{{else}}{{excerpt}}{{/if}}' />
     <title>{{resolveHeadTitle this}}</title>
     <style>{{{styles}}}</style>
+    <script>
+      document.documentElement.classList.add('spritz-highlights-pending');
+      window.setTimeout(function () {
+        if (!document.documentElement.classList.contains('spritz-highlights-ready')) {
+          document.documentElement.classList.remove('spritz-highlights-pending');
+        }
+      }, 3000);
+    </script>
     {{#if rumConfig}}
     <script>
       (function(n,i,v,r,s,c,u,x,z){

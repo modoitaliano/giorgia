@@ -456,6 +456,74 @@
     </script>
     <script>
       (function () {
+        function initAnimatedHighlights() {
+          var marks = Array.prototype.slice.call(
+            document.querySelectorAll('[data-animated-highlights] mark.spritz-highlight')
+          );
+          if (!marks.length) return;
+
+          document.documentElement.classList.add('spritz-highlights-ready');
+
+          marks.forEach(function (mark) {
+            mark.setAttribute(
+              'data-highlight-direction',
+              window.getComputedStyle(mark).direction === 'rtl' ? 'rtl' : 'ltr'
+            );
+          });
+
+          function reveal(target) {
+            var targetMarks = target.matches('mark.spritz-highlight')
+              ? [target]
+              : Array.prototype.slice.call(target.querySelectorAll('mark.spritz-highlight'));
+
+            targetMarks.forEach(function (mark, index) {
+              window.setTimeout(function () {
+                mark.classList.add('is-highlighted');
+              }, index * 90);
+            });
+          }
+
+          if (
+            !('IntersectionObserver' in window) ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ) {
+            marks.forEach(function (mark) {
+              mark.classList.add('is-highlighted');
+            });
+            return;
+          }
+
+          var targets = [];
+          marks.forEach(function (mark) {
+            var target = mark.closest('p, li, blockquote') || mark;
+            if (targets.indexOf(target) === -1) targets.push(target);
+          });
+
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                reveal(entry.target);
+                observer.unobserve(entry.target);
+              });
+            },
+            { rootMargin: '0px 0px -12% 0px', threshold: 0.2 }
+          );
+
+          targets.forEach(function (target) {
+            observer.observe(target);
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initAnimatedHighlights);
+        } else {
+          initAnimatedHighlights();
+        }
+      })();
+    </script>
+    <script>
+      (function () {
         if (typeof gtag !== 'function') return;
 
         /**

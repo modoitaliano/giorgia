@@ -34,7 +34,7 @@ export const articleFixture: CanonicalArticle = {
   body: [
     {
       type: 'richText',
-      html: '<p>Forecasters shifted guidance overnight after new runs showed a faster storm track. Coastal gusts may exceed previous projections, especially in exposed shoreline communities.</p>'
+      html: '<p>Forecasters shifted guidance overnight after new runs showed a faster storm track. <mark class="spritz-highlight">Coastal gusts may exceed previous projections</mark>, especially in exposed shoreline communities.</p>'
     },
     {
       type: 'heading',
