@@ -13,7 +13,8 @@ const layoutFiles: Record<LayoutName, string> = {
   'coming-soon': 'coming-soon.hbs',
   'live-story': 'live-story.hbs',
   'link-in-bio': 'link-in-bio.hbs',
-  'media-page': 'media-page.hbs'
+  'media-page': 'media-page.hbs',
+  'standalone-page': 'standalone-page.hbs'
 };
 
 function getPaths() {

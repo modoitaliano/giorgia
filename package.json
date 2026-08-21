@@ -54,6 +54,7 @@
     "storybook": "npm run build:css && storybook dev -p 6006",
     "build-storybook": "npm run build:css && storybook build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "pretest:unit": "npm run build:css",
     "test": "npm run test:unit",
     "test:unit": "vitest run --project unit",
     "prepublishOnly": "npm run build",
