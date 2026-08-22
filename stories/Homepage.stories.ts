@@ -9,7 +9,6 @@ const sectionControls = {
   showHero: { control: 'boolean' },
   showEditorialHero: { control: 'boolean' },
   showBreakingNews: { control: 'boolean' },
-  showTrending: { control: 'boolean' },
   showLanding: { control: 'boolean' },
   showMustRead: { control: 'boolean' },
   showMoreStories: { control: 'boolean' }
@@ -30,7 +29,6 @@ const meta = {
     showHero: true,
     showEditorialHero: false,
     showBreakingNews: true,
-    showTrending: true,
     showLanding: true,
     showMustRead: true,
     showMoreStories: true
@@ -38,7 +36,7 @@ const meta = {
   argTypes: sectionControls,
   parameters: {
     controls: {
-      include: ['showHero', 'showEditorialHero', 'showBreakingNews', 'showTrending', 'showLanding', 'showMustRead', 'showMoreStories']
+      include: ['showHero', 'showEditorialHero', 'showBreakingNews', 'showLanding', 'showMustRead', 'showMoreStories']
     }
   }
 } satisfies Meta;
@@ -53,7 +51,6 @@ export const Default: Story = {
     showHero: false,
     showEditorialHero: false,
     showBreakingNews: false,
-    showTrending: false,
     showLanding: false,
     showMustRead: false,
     showMoreStories: false
@@ -122,7 +119,6 @@ export const WithBreakingNews: Story = {
     showHero: false,
     showEditorialHero: false,
     showBreakingNews: true,
-    showTrending: false
   }
 };
 

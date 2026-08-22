@@ -42,7 +42,6 @@
   "components/editorial-hero": ["homepage"],
   "components/hero": ["homepage"],
   "components/hero-editorial": ["homepage"],
-  "components/trending": ["homepage"],
   "components/ui/accordion": ["article-page", "homepage", "category-page", "search-page", "live-story", "404"],
   "components/ui/breadcrumb": ["article-page", "homepage", "category-page", "search-page", "live-story", "404"],
   "components/ui/icon-button": ["article-page", "homepage", "category-page", "search-page", "live-story", "404"],
