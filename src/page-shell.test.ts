@@ -52,6 +52,14 @@ describe('page shell', () => {
     expect(html).not.toContain('Terremoto en Magallanes');
   });
 
+  it('links to the current ModoItaliano social profiles', () => {
+    const html = render(baseDocument);
+
+    expect(html).toContain("href='https://www.instagram.com/modoitaliano.fm/'");
+    expect(html).toContain("href='https://www.tiktok.com/@modoitaliano.fm'");
+    expect(html).not.toContain('modoitaliano.oficial');
+  });
+
   it('keeps category content the same safe distance below the masthead as an article', () => {
     const html = render({
       ...baseDocument,
