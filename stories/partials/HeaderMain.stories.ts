@@ -116,11 +116,22 @@ type Story = StoryObj;
 
 export const Default: Story = {
   decorators: [withNowPlaying(defaultNowPlaying)],
+  play: async ({ canvasElement }) => {
+    const desktopLink = canvasElement.querySelector(
+      'nav[aria-label="Navegación principal"] a[href="/quienes-somos"]'
+    );
+    const menuLink = canvasElement.querySelector(
+      'nav[aria-label="Todas las secciones"] a[href="/quienes-somos"]'
+    );
+
+    await expect(desktopLink).toHaveTextContent('Quienes somos');
+    await expect(menuLink).toHaveTextContent('Quienes somos');
+  },
   parameters: {
     docs: {
       description: {
         story:
-          'Masthead radiofónico con la canalización de tipografías Modo Italiano autocontenida: navegación en Barlow 700, tipografía de pista en Barlow Condensed y UI complementaria en Outfit, junto al logo MI empaquetado. La ruta predeterminada del logo es `https://cdn.modoitaliano.fm/assets/mi.svg`; el manifiesto de despliegue `fontFiles()` lo entrega como `assets/mi.svg` junto a las fuentes y la hoja de estilos, con una capa azul marino desenfocada, carrusel de ilustraciones Ken Burns centrado y un reproductor de “now playing” que consulta `https://cdn.modoitaliano.fm/content/now-playing.json` en el cliente cada 45 segundos. El reproductor se acerca al logo y sobresale del masthead también en móvil; el menú abierto se apila por encima de la tarjeta de reproducción.'
+          'Masthead radiofónico con la canalización de tipografías Modo Italiano autocontenida: navegación en Barlow 700, tipografía de pista en Barlow Condensed y UI complementaria en Outfit, junto al logo MI empaquetado. La barra meteorológica usa un gradiente translúcido y desenfoque de fondo. La navegación principal y el menú desplegable enlazan a la página Quienes somos. La ruta predeterminada del logo es `https://cdn.modoitaliano.fm/assets/mi.svg`; el manifiesto de despliegue `fontFiles()` lo entrega como `assets/mi.svg` junto a las fuentes y la hoja de estilos, con una capa azul marino desenfocada, carrusel de ilustraciones Ken Burns centrado y un reproductor de “now playing” que consulta `https://cdn.modoitaliano.fm/content/now-playing.json` en el cliente cada 45 segundos. El reproductor se acerca al logo y sobresale del masthead también en móvil; el menú abierto se apila por encima de la tarjeta de reproducción.'
       }
     }
   }

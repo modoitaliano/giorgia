@@ -37,6 +37,14 @@ describe('page shell', () => {
     expect(html).toContain(`<meta name='twitter:title' content='${title}' />`);
   });
 
+  it('never restores the retired English homepage title for localized payloads', () => {
+    const html = render({ ...baseDocument, language: 'en', slug: 'en', canonicalUrl: 'https://modoitaliano.fm/en' });
+
+    expect(html).toContain('<title>ModoItaliano - Música italiana, noticias y lanzamientos</title>');
+    expect(html).not.toContain('ModoItaliano - Breaking News &amp; Current Events');
+    expect(html).not.toContain('ModoItaliano - Breaking News & Current Events');
+  });
+
   it('keeps homepage content the same safe distance below the masthead as an article', () => {
     const html = render(baseDocument);
 
@@ -58,6 +66,22 @@ describe('page shell', () => {
     expect(html).toContain("href='https://www.instagram.com/modoitaliano.fm/'");
     expect(html).toContain("href='https://www.tiktok.com/@modoitaliano.fm'");
     expect(html).not.toContain('modoitaliano.oficial');
+  });
+
+  it('links to Quienes somos from both header navigation surfaces', () => {
+    const html = render(baseDocument);
+
+    expect(html.match(/href='\/quienes-somos'/g)).toHaveLength(2);
+    expect(html).toContain("aria-label='Navegación principal'");
+    expect(html).toContain("aria-label='Todas las secciones'");
+  });
+
+  it('renders the weather bar with the requested translucent blurred treatment', () => {
+    const html = render(baseDocument);
+
+    expect(html).toContain('background: linear-gradient(90deg, rgba(10, 18, 52, 0.78), rgba(49, 45, 46, 0.4));');
+    expect(html).toContain('-webkit-backdrop-filter: blur(7px);');
+    expect(html).toContain('backdrop-filter: blur(7px);');
   });
 
   it('keeps category content the same safe distance below the masthead as an article', () => {
