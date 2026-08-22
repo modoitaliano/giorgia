@@ -28,7 +28,8 @@ describe('stream player', () => {
   it('does not force CORS for the live stream audio element', () => {
     const html = render(homepageFixture);
 
-    expect(html).toContain("<audio data-stream-audio preload='none' src='https://palazzo.gaulatti.com'");
+    expect(html).toContain("<audio data-stream-audio preload='none' src='https://radio.modoitaliano.fm'");
+    expect(html).not.toContain('palazzo.gaulatti.com');
     expect(html).not.toContain('crossorigin=');
     expect(html).not.toContain('createMediaElementSource');
   });

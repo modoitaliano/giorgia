@@ -21,7 +21,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'El reproductor aparece cuando ModoItaliano FM ya está reproduciéndose. Recibe el título y artista del mismo feed de “now playing” que utiliza el masthead; esos metadatos permanecen visibles durante una pausa de buffer, el volumen usa un control compatible con móvil, y el reproductor usa el stream en directo de `https://palazzo.gaulatti.com`.'
+        story: 'El reproductor aparece cuando ModoItaliano FM ya está reproduciéndose. Recibe el título y artista del mismo feed de “now playing” que utiliza el masthead; esos metadatos permanecen visibles durante una pausa de buffer, el volumen usa un control compatible con móvil, y el reproductor usa el stream en directo de `https://radio.modoitaliano.fm`.'
       }
     }
   }
