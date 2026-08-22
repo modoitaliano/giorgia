@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/html';
+import { expect } from 'storybook/test';
 import { render } from '../src/renderer.browser';
 import { homepageFixture, FIXTURE_NOW } from './fixtures/homepage.fixture';
 import type { CanonicalArticle } from '../src/types/canonical-article';
@@ -56,6 +57,18 @@ export const Default: Story = {
     showLanding: false,
     showMustRead: false,
     showMoreStories: false
+  },
+  play: async ({ canvasElement }) => {
+    const content = canvasElement.querySelector<HTMLElement>('[data-homepage-content]');
+    await expect(content).toHaveClass('mt-20');
+    await expect(getComputedStyle(content as HTMLElement).marginTop).toBe('80px');
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'La portada conserva un margen seguro de 5rem entre el masthead y el primer contenido, incluso cuando el hero está oculto.'
+      }
+    }
   }
 };
 
