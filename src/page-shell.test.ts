@@ -76,6 +76,14 @@ describe('page shell', () => {
     expect(html).toContain("aria-label='Todas las secciones'");
   });
 
+  it('renders the weather bar with the requested translucent blurred treatment', () => {
+    const html = render(baseDocument);
+
+    expect(html).toContain('background: linear-gradient(90deg, rgba(10, 18, 52, 0.78), rgba(49, 45, 46, 0.4));');
+    expect(html).toContain('-webkit-backdrop-filter: blur(7px);');
+    expect(html).toContain('backdrop-filter: blur(7px);');
+  });
+
   it('keeps category content the same safe distance below the masthead as an article', () => {
     const html = render({
       ...baseDocument,
