@@ -5,7 +5,7 @@ export const outletConfig = {
   contentPath: '/content',
   inventoryFilename: 'cronkite-inventory.json',
   defaultLanguage: 'es',
-  supportedLanguages: ['es'],
+  supportedLanguages: ['es', 'en', 'it'],
   prefixDefaultLocale: false,
   defaultAuthor: {
     name: 'Redacción de ModoItaliano',
@@ -19,6 +19,8 @@ export const outletConfig = {
   searchTitle: 'Buscar',
   searchDescriptions: {
     es: 'Busca noticias de ModoItaliano.',
+    en: 'Search ModoItaliano news.',
+    it: 'Cerca le notizie di ModoItaliano.',
   },
   socialLanguages: ['es'],
   socialUserAgent: 'Cronkite/1.0',

@@ -27,6 +27,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Build renderer styles for template tests
+        run: npm run build:css
+
       - name: Unit tests
         run: npm run test:unit
 
