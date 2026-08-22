@@ -103,7 +103,7 @@ export const homepageFixture: CanonicalArticle = {
   },
   body: [],
   seo: {
-    metaTitle: 'ModoItaliano - Breaking News & Current Events',
+    metaTitle: 'ModoItaliano - Música italiana, noticias y lanzamientos',
     metaDescription: 'Stay informed with breaking news, politics, business, sports, technology, and weather coverage.'
   },
   navigation: {

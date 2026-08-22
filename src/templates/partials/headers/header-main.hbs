@@ -26,7 +26,9 @@
   }
 
   .radio-weather-bar {
-    background: linear-gradient(90deg, rgba(10, 18, 52, 0.98), rgba(49, 45, 46, 0.94));
+    background: linear-gradient(90deg, rgba(10, 18, 52, 0.78), rgba(49, 45, 46, 0.4));
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
     border-top: 2px solid #ed0076;
     box-shadow: inset 0 -1px rgba(255, 255, 255, 0.12);
     color: #fff;
@@ -185,6 +187,7 @@
         {{#each (slice navigation.categories 0 6)}}
           <a href='/{{slug}}' class='whitespace-nowrap transition hover:text-white/65 focus:outline-none focus:underline'>{{name}}</a>
         {{/each}}
+        <a href='/quienes-somos' class='whitespace-nowrap transition hover:text-white/65 focus:outline-none focus:underline'>Quienes somos</a>
       </nav>
 
       <div id='radio-menu' class='pointer-events-none absolute inset-x-9 top-25.75 z-[70] origin-top scale-y-95 rounded-sm bg-[#b00058]/95 p-7 opacity-0 shadow-2xl backdrop-blur-md transition duration-200' hidden>
@@ -199,6 +202,7 @@
           {{#each navigation.categories}}
             <a href='/{{slug}}' class='text-sm font-bold transition hover:text-white/65'>{{name}}</a>
           {{/each}}
+          <a href='/quienes-somos' class='text-sm font-bold transition hover:text-white/65'>Quienes somos</a>
         </nav>
       </div>
     {{/unless}}
