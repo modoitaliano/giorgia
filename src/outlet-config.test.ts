@@ -71,6 +71,13 @@ describe('outletConfig', () => {
     expect(outletConfig.socialImageExport).toBe('buildInstagramImageHtml');
     expect(outletConfig.hashtagServiceBaseUrl).toBe('http://192.168.0.99:8000');
   });
+
+  it('advertises the complete localized publishing contract', () => {
+    expect(outletConfig.defaultLanguage).toBe('es');
+    expect(outletConfig.supportedLanguages).toEqual(['es', 'en', 'it']);
+    expect(Object.keys(outletConfig.searchDescriptions).sort()).toEqual(['en', 'es', 'it']);
+    expect(outletConfig.prefixDefaultLocale).toBe(false);
+  });
 });
 
 describe('version', () => {
