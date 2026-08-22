@@ -22,7 +22,6 @@ const baseDocument: CanonicalDocument = {
   showHero: false,
   showEditorialHero: false,
   showBreakingNews: false,
-  showTrending: false,
   showLanding: false,
   showMustRead: false,
   showMoreStories: false
@@ -43,6 +42,14 @@ describe('page shell', () => {
 
     expect(html).toContain("class='mt-20 min-h-screen font-sans");
     expect(html).toContain('data-homepage-content');
+  });
+
+  it('never renders the retired hardcoded trending strip', () => {
+    const html = render({ ...baseDocument, showTrending: true });
+
+    expect(html).not.toContain('Clásico Universitario');
+    expect(html).not.toContain('Trending Up:');
+    expect(html).not.toContain('Terremoto en Magallanes');
   });
 
   it('keeps category content the same safe distance below the masthead as an article', () => {

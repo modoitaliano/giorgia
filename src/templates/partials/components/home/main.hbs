@@ -26,10 +26,6 @@
   {{/unless}}
 
   <main class='max-w-[1440px] mx-auto min-h-screen'>
-    {{#unless (eq showTrending false)}}
-      {{> components/trending}}
-    {{/unless}}
-
     {{#if showEditorialHero}}
       {{> components/editorial-hero
         title=(coalesce heroTitle title)
