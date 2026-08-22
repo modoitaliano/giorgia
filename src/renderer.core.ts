@@ -18,7 +18,7 @@ const removedBlockTypes = new Set(['truthSocial', 'truthsocial', 'truth-social',
 const defaultSocialImageUrl = 'https://cdn.modoitaliano.fm/assets/default-og.jpg';
 const siteTitlesByLanguage: Record<CanonicalDocument['language'], string> = {
   en: 'ModoItaliano - Breaking News & Current Events',
-  es: 'ModoItaliano - Noticias de última hora y actualidad',
+  es: 'ModoItaliano - Música italiana, noticias y lanzamientos',
   it: 'ModoItaliano - Ultime notizie e attualità'
 };
 

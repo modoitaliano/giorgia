@@ -1,0 +1,60 @@
+import { describe, expect, it } from 'vitest';
+import { render } from './renderer.node.js';
+import type { CanonicalDocument } from './types/canonical-article.js';
+
+const baseDocument: CanonicalDocument = {
+  id: 'page-shell-verification',
+  slug: '/',
+  layout: 'homepage',
+  canonicalUrl: 'https://modoitaliano.fm/',
+  contentVersion: '2026-08-21T12:00:00.000Z',
+  publishedAt: '2026-08-21T12:00:00.000Z',
+  updatedAt: '2026-08-21T12:00:00.000Z',
+  status: 'published',
+  title: 'ModoItaliano',
+  language: 'es',
+  featured: false,
+  authors: [],
+  categories: [],
+  body: [],
+  navigation: { categories: [] },
+  articles: [],
+  showHero: false,
+  showEditorialHero: false,
+  showBreakingNews: false,
+  showTrending: false,
+  showLanding: false,
+  showMustRead: false,
+  showMoreStories: false
+};
+
+describe('page shell', () => {
+  it('uses the requested Spanish homepage title in every title metadata surface', () => {
+    const html = render(baseDocument);
+    const title = 'ModoItaliano - Música italiana, noticias y lanzamientos';
+
+    expect(html).toContain(`<title>${title}</title>`);
+    expect(html).toContain(`<meta property='og:title' content='${title}' />`);
+    expect(html).toContain(`<meta name='twitter:title' content='${title}' />`);
+  });
+
+  it('keeps homepage content the same safe distance below the masthead as an article', () => {
+    const html = render(baseDocument);
+
+    expect(html).toContain("class='mt-20 min-h-screen font-sans");
+    expect(html).toContain('data-homepage-content');
+  });
+
+  it('keeps category content the same safe distance below the masthead as an article', () => {
+    const html = render({
+      ...baseDocument,
+      slug: 'musica',
+      layout: 'category-page',
+      canonicalUrl: 'https://modoitaliano.fm/musica',
+      title: 'Música',
+      categories: [{ name: 'Música', slug: 'musica' }]
+    });
+
+    expect(html).toContain("<main class='mt-20 flex-1 container mx-auto px-4' data-category-content>");
+  });
+});
