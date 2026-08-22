@@ -16,11 +16,7 @@ const layoutCache = new Map<LayoutName, HandlebarsTemplateDelegate>();
 let runtimeStyles = '';
 const removedBlockTypes = new Set(['truthSocial', 'truthsocial', 'truth-social', 'truth_social']);
 const defaultSocialImageUrl = 'https://cdn.modoitaliano.fm/assets/default-og.jpg';
-const siteTitlesByLanguage: Record<CanonicalDocument['language'], string> = {
-  en: 'ModoItaliano - Breaking News & Current Events',
-  es: 'ModoItaliano - Música italiana, noticias y lanzamientos',
-  it: 'ModoItaliano - Ultime notizie e attualità'
-};
+const homepageTitle = 'ModoItaliano - Música italiana, noticias y lanzamientos';
 
 function normalizePathInput(value: unknown): string {
   if (typeof value !== 'string') return '';
@@ -271,8 +267,7 @@ function registerHelpers(): void {
     const page = doc as Partial<CanonicalDocument>;
 
     if (page.layout === 'homepage') {
-      const language = page.language === 'en' || page.language === 'it' ? page.language : 'es';
-      return siteTitlesByLanguage[language];
+      return homepageTitle;
     }
 
     if (page.layout === 'category-page') {
