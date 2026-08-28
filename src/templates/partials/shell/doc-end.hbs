@@ -365,13 +365,15 @@
           var status = root.querySelector('[data-now-playing-status]');
           var title = root.querySelector('[data-now-playing-title]');
           var artist = root.querySelector('[data-now-playing-artist]');
-          if (!endpoint || !(artwork instanceof HTMLImageElement) || !(brand instanceof HTMLElement) || !(status instanceof HTMLElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement)) return;
+          var copy = root.querySelector('[data-now-playing-copy]');
+          if (!endpoint || !(artwork instanceof HTMLImageElement) || !(brand instanceof HTMLElement) || !(status instanceof HTMLElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement) || !(copy instanceof HTMLElement)) return;
 
           var fallback = {
             title: (title.textContent || '').trim() || 'ModoItaliano',
             artist: (artist.textContent || '').trim() || 'Radio en vivo',
             isPlaceholder: true
           };
+          var lastSignature = JSON.stringify([fallback.title, fallback.artist, '', true]);
 
           function setText(element, value, fallbackValue) {
             element.textContent = typeof value === 'string' && value.trim() ? value.trim() : fallbackValue;
@@ -391,11 +393,22 @@
             brand.classList.add('hidden');
           }
 
+          function animateUpdate() {
+            artwork.classList.remove('radio-now-playing-swap');
+            brand.classList.remove('radio-now-playing-swap');
+            copy.classList.remove('radio-now-playing-swap');
+            void root.offsetWidth;
+            (brand.classList.contains('hidden') ? artwork : brand).classList.add('radio-now-playing-swap');
+            copy.classList.add('radio-now-playing-swap');
+          }
+
           function applyNowPlaying(item) {
             var displayTitle = typeof item.title === 'string' && item.title.trim() ? item.title.trim() : fallback.title;
             var displayArtist = typeof item.artist === 'string' && item.artist.trim() ? item.artist.trim() : fallback.artist;
             var artworkUrl = typeof item.artworkUrl === 'string' ? item.artworkUrl.trim() : '';
             var isPlaceholder = item.isPlaceholder === true;
+            var nextSignature = JSON.stringify([displayTitle, displayArtist, artworkUrl, isPlaceholder]);
+            var changed = nextSignature !== lastSignature;
 
             setText(title, displayTitle, fallback.title);
             setText(artist, displayArtist, fallback.artist);
@@ -406,6 +419,9 @@
             } else {
               showBrand();
             }
+
+            if (changed) animateUpdate();
+            lastSignature = nextSignature;
 
             window.__brokawNowPlaying = item;
             document.dispatchEvent(new CustomEvent('brokaw:now-playing', { detail: item }));
@@ -438,7 +454,7 @@
 
           root.dataset.nowPlayingBound = 'true';
           fetchNowPlaying();
-          window.setInterval(fetchNowPlaying, 45000);
+          window.setInterval(fetchNowPlaying, 5000);
         }
 
         function initAllNowPlaying() {

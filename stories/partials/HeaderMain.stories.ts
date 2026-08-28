@@ -85,7 +85,8 @@ const hydrateNowPlayingPreview = (item: NowPlayingStoryItem): void => {
   const status = root.querySelector('[data-now-playing-status]');
   const title = root.querySelector('[data-now-playing-title]');
   const artist = root.querySelector('[data-now-playing-artist]');
-  if (!(artwork instanceof HTMLImageElement) || !(brand instanceof HTMLElement) || !(status instanceof HTMLElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement)) return;
+  const copy = root.querySelector('[data-now-playing-copy]');
+  if (!(artwork instanceof HTMLImageElement) || !(brand instanceof HTMLElement) || !(status instanceof HTMLElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement) || !(copy instanceof HTMLElement)) return;
 
   title.textContent = item.title.trim() || 'ModoItaliano';
   artist.textContent = item.artist.trim() || 'Live radio';
@@ -102,6 +103,9 @@ const hydrateNowPlayingPreview = (item: NowPlayingStoryItem): void => {
     artwork.removeAttribute('src');
     artwork.alt = '';
   }
+
+  (brand.classList.contains('hidden') ? artwork : brand).classList.add('radio-now-playing-swap');
+  copy.classList.add('radio-now-playing-swap');
 };
 
 const meta = {
@@ -126,12 +130,14 @@ export const Default: Story = {
 
     await expect(desktopLink).toHaveTextContent('Quienes somos');
     await expect(menuLink).toHaveTextContent('Quienes somos');
+    await expect(canvasElement.querySelector('[data-now-playing-copy]')).toHaveClass('radio-now-playing-swap');
+    await expect(canvasElement.querySelector('[data-now-playing-brand]')).toHaveClass('radio-now-playing-swap');
   },
   parameters: {
     docs: {
       description: {
         story:
-          'Masthead radiofónico con la canalización de tipografías Modo Italiano autocontenida: navegación en Barlow 700, tipografía de pista en Barlow Condensed y UI complementaria en Outfit, junto al logo MI empaquetado. La barra meteorológica usa un gradiente translúcido y desenfoque de fondo. La navegación principal y el menú desplegable enlazan a la página Quienes somos. La ruta predeterminada del logo es `https://cdn.modoitaliano.fm/assets/mi.svg`; el manifiesto de despliegue `fontFiles()` lo entrega como `assets/mi.svg` junto a las fuentes y la hoja de estilos, con una capa azul marino desenfocada, carrusel de ilustraciones Ken Burns centrado y un reproductor de “now playing” que consulta `https://cdn.modoitaliano.fm/content/now-playing.json` en el cliente cada 45 segundos. El reproductor se acerca al logo y sobresale del masthead también en móvil; el menú abierto se apila por encima de la tarjeta de reproducción.'
+          'Masthead radiofónico con la canalización de tipografías Modo Italiano autocontenida: navegación en Barlow 700, tipografía de pista en Barlow Condensed y UI complementaria en Outfit, junto al logo MI empaquetado. La barra meteorológica usa un gradiente translúcido y desenfoque de fondo. La navegación principal y el menú desplegable enlazan a la página Quienes somos. La ruta predeterminada del logo es `https://cdn.modoitaliano.fm/assets/mi.svg`; el manifiesto de despliegue `fontFiles()` lo entrega como `assets/mi.svg` junto a las fuentes y la hoja de estilos, con una capa azul marino desenfocada, carrusel de ilustraciones Ken Burns centrado y un reproductor de “now playing” que consulta `https://cdn.modoitaliano.fm/content/now-playing.json` en el cliente cada 5 segundos. Cuando cambia la pista, el arte visible y todo el bloque de texto entran juntos con una transición breve que respeta la preferencia de movimiento reducido. El reproductor se acerca al logo y sobresale del masthead también en móvil; el menú abierto se apila por encima de la tarjeta de reproducción.'
       }
     }
   }
