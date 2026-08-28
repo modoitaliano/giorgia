@@ -84,6 +84,24 @@ describe('page shell', () => {
     expect(html).toContain('backdrop-filter: blur(7px);');
   });
 
+  it('refreshes the masthead radio information every five seconds', () => {
+    const html = render(baseDocument);
+
+    expect(html).toContain('fetchNowPlaying();');
+    expect(html).toContain('window.setInterval(fetchNowPlaying, 5000);');
+    expect(html).not.toContain('window.setInterval(fetchNowPlaying, 45000);');
+  });
+
+  it('animates artwork and text when the masthead radio information changes', () => {
+    const html = render(baseDocument);
+
+    expect(html).toContain('data-now-playing-copy');
+    expect(html).toContain('.radio-now-playing-swap { animation: radio-now-playing-swap 420ms ease-out; }');
+    expect(html).toContain("copy.classList.add('radio-now-playing-swap');");
+    expect(html).toContain("(brand.classList.contains('hidden') ? artwork : brand).classList.add('radio-now-playing-swap');");
+    expect(html).toContain('.radio-now-playing-swap { animation: none; }');
+  });
+
   it('keeps category content the same safe distance below the masthead as an article', () => {
     const html = render({
       ...baseDocument,

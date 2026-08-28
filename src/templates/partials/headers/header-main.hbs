@@ -108,9 +108,17 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  .radio-now-playing-swap { animation: radio-now-playing-swap 420ms ease-out; }
+
+  @keyframes radio-now-playing-swap {
+    from { opacity: 0; transform: translateY(8px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     [data-radio-slide].is-active { animation: none; transform: scale(1.05); }
     .radio-weather-swap { animation: none; }
+    .radio-now-playing-swap { animation: none; }
   }
 
   @media (max-width: 639px) {
@@ -222,7 +230,7 @@
         </div>
         <img data-now-playing-artwork alt='' class='hidden h-full w-full object-cover' />
         <div class='absolute inset-x-0 bottom-0 h-[42%] bg-linear-to-t from-black/80 to-transparent'></div>
-        <div class='absolute bottom-3.75 left-3.75 right-16.25'>
+        <div data-now-playing-copy class='absolute bottom-3.75 left-3.75 right-16.25'>
           <p class='flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-white/80'><span class='h-2 w-2 rounded-full bg-cyan-300'></span><span data-now-playing-status>En directo</span></p>
           <h2 data-now-playing-title class='radio-display mt-1 line-clamp-1 text-2xl font-semibold uppercase leading-none tracking-[0.02em] text-white'>ModoItaliano</h2>
           <p data-now-playing-artist class='radio-display mt-1 line-clamp-1 text-xl font-medium uppercase leading-none tracking-[0.02em] text-white/85'>Radio en vivo</p>
