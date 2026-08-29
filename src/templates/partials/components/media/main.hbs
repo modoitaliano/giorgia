@@ -13,7 +13,7 @@
     <nav id='media-pagination' aria-label='Paginación' class='mt-8 hidden items-center justify-center gap-6'></nav>
   </section>
 </main>
-<script>
+<script data-swup-reload-script>
   (function () {
     var PAGE_SIZE = 48;
     var page = document.querySelector('[data-media-page]');
@@ -197,13 +197,21 @@
       var anchor = target.closest('a[href]');
       if (!(anchor instanceof HTMLAnchorElement)) return;
       event.preventDefault();
-      window.history.pushState({}, '', anchor.getAttribute('href') || window.location.href);
+      window.history.pushState(
+        { source: 'brokaw-page', pageLayout: 'media-page' },
+        '',
+        anchor.getAttribute('href') || window.location.href
+      );
       render(loadedData);
     });
 
-    window.addEventListener('popstate', function () {
+    var handleMediaPopState = function () {
       if (loadedData) render(loadedData);
-    });
+    };
+    window.addEventListener('popstate', handleMediaPopState);
+    window.__brokawPageCleanup = function () {
+      window.removeEventListener('popstate', handleMediaPopState);
+    };
 
     fetch('https://cdn.modoitaliano.fm/contents/assignments/' + encodeURIComponent(assignmentId) + '.json', {
       cache: 'no-store'

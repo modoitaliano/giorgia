@@ -191,6 +191,7 @@
         }
       })();
     </script>
+    <script type='module' src='/assets/giorgia-navigation.js' data-swup-ignore-script></script>
     <script>
       (function () {
         function setSlideState(slides, dots, index) {
@@ -339,6 +340,7 @@
           });
         }
 
+        window.__brokawSyncSofascoreTheme = syncSofascoreTheme;
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', syncSofascoreTheme);
         } else {
@@ -569,6 +571,7 @@
           });
         }
 
+        window.__brokawInitAnimatedHighlights = initAnimatedHighlights;
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', initAnimatedHighlights);
         } else {

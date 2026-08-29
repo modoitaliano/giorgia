@@ -57,13 +57,18 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const content = canvasElement.querySelector<HTMLElement>('[data-homepage-content]');
+    const pageContent = canvasElement.querySelector<HTMLElement>('#page-content');
+    const player = canvasElement.querySelector<HTMLElement>('[data-stream-player]');
     await expect(content).toHaveClass('mt-20');
     await expect(getComputedStyle(content as HTMLElement).marginTop).toBe('80px');
+    await expect(pageContent).toContainElement(content);
+    await expect(pageContent).toHaveClass('transition-page');
+    await expect(pageContent?.contains(player ?? null)).toBe(false);
   },
   parameters: {
     docs: {
       description: {
-        story: 'La portada conserva un margen seguro de 5rem entre el masthead y el primer contenido, incluso cuando el hero está oculto.'
+        story: 'La portada conserva un margen seguro de 5rem y delimita solo el contenido reemplazable; el masthead y el reproductor permanecen fuera durante la navegación.'
       }
     }
   }
