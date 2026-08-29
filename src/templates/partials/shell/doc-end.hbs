@@ -366,7 +366,8 @@
           var title = root.querySelector('[data-now-playing-title]');
           var artist = root.querySelector('[data-now-playing-artist]');
           var copy = root.querySelector('[data-now-playing-copy]');
-          if (!endpoint || !(artwork instanceof HTMLImageElement) || !(brand instanceof HTMLElement) || !(status instanceof HTMLElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement) || !(copy instanceof HTMLElement)) return;
+          var copyLines = root.querySelectorAll('[data-now-playing-line]');
+          if (!endpoint || !(artwork instanceof HTMLImageElement) || !(brand instanceof HTMLElement) || !(status instanceof HTMLElement) || !(title instanceof HTMLElement) || !(artist instanceof HTMLElement) || !(copy instanceof HTMLElement) || copyLines.length !== 3) return;
 
           var fallback = {
             title: (title.textContent || '').trim() || 'ModoItaliano',
@@ -374,6 +375,7 @@
             isPlaceholder: true
           };
           var lastSignature = JSON.stringify([fallback.title, fallback.artist, '', true]);
+          var transitionTimer = null;
 
           function setText(element, value, fallbackValue) {
             element.textContent = typeof value === 'string' && value.trim() ? value.trim() : fallbackValue;
@@ -393,23 +395,20 @@
             brand.classList.add('hidden');
           }
 
-          function animateUpdate() {
-            artwork.classList.remove('radio-now-playing-swap');
-            brand.classList.remove('radio-now-playing-swap');
-            copy.classList.remove('radio-now-playing-swap');
-            void root.offsetWidth;
-            (brand.classList.contains('hidden') ? artwork : brand).classList.add('radio-now-playing-swap');
-            copy.classList.add('radio-now-playing-swap');
+          function visibleMedia() {
+            return brand.classList.contains('hidden') ? artwork : brand;
           }
 
-          function applyNowPlaying(item) {
-            var displayTitle = typeof item.title === 'string' && item.title.trim() ? item.title.trim() : fallback.title;
-            var displayArtist = typeof item.artist === 'string' && item.artist.trim() ? item.artist.trim() : fallback.artist;
-            var artworkUrl = typeof item.artworkUrl === 'string' ? item.artworkUrl.trim() : '';
-            var isPlaceholder = item.isPlaceholder === true;
-            var nextSignature = JSON.stringify([displayTitle, displayArtist, artworkUrl, isPlaceholder]);
-            var changed = nextSignature !== lastSignature;
+          function clearTransitionClasses() {
+            [artwork, brand].forEach(function (element) {
+              element.classList.remove('radio-now-playing-media-exit', 'radio-now-playing-media-enter');
+            });
+            copyLines.forEach(function (line) {
+              line.classList.remove('radio-now-playing-copy-exit', 'radio-now-playing-copy-enter');
+            });
+          }
 
+          function commitNowPlaying(item, displayTitle, displayArtist, artworkUrl, isPlaceholder, nextSignature) {
             setText(title, displayTitle, fallback.title);
             setText(artist, displayArtist, fallback.artist);
             status.textContent = isPlaceholder ? 'En directo' : 'Reproduciendo';
@@ -420,11 +419,50 @@
               showBrand();
             }
 
-            if (changed) animateUpdate();
             lastSignature = nextSignature;
-
             window.__brokawNowPlaying = item;
             document.dispatchEvent(new CustomEvent('brokaw:now-playing', { detail: item }));
+          }
+
+          function animateUpdate(commit) {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              clearTransitionClasses();
+              commit();
+              return;
+            }
+
+            if (transitionTimer !== null) window.clearTimeout(transitionTimer);
+            clearTransitionClasses();
+            visibleMedia().classList.add('radio-now-playing-media-exit');
+            copyLines.forEach(function (line) {
+              line.classList.add('radio-now-playing-copy-exit');
+            });
+
+            transitionTimer = window.setTimeout(function () {
+              clearTransitionClasses();
+              commit();
+              void root.offsetWidth;
+              visibleMedia().classList.add('radio-now-playing-media-enter');
+              copyLines.forEach(function (line) {
+                line.classList.add('radio-now-playing-copy-enter');
+              });
+              transitionTimer = null;
+            }, 210);
+          }
+
+          function applyNowPlaying(item) {
+            var displayTitle = typeof item.title === 'string' && item.title.trim() ? item.title.trim() : fallback.title;
+            var displayArtist = typeof item.artist === 'string' && item.artist.trim() ? item.artist.trim() : fallback.artist;
+            var artworkUrl = typeof item.artworkUrl === 'string' ? item.artworkUrl.trim() : '';
+            var isPlaceholder = item.isPlaceholder === true;
+            var nextSignature = JSON.stringify([displayTitle, displayArtist, artworkUrl, isPlaceholder]);
+            var changed = nextSignature !== lastSignature;
+            var commit = function () {
+              commitNowPlaying(item, displayTitle, displayArtist, artworkUrl, isPlaceholder, nextSignature);
+            };
+
+            if (changed) animateUpdate(commit);
+            else commit();
           }
 
           function fetchNowPlaying() {

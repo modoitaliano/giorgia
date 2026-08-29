@@ -96,10 +96,13 @@ describe('page shell', () => {
     const html = render(baseDocument);
 
     expect(html).toContain('data-now-playing-copy');
-    expect(html).toContain('.radio-now-playing-swap { animation: radio-now-playing-swap 420ms ease-out; }');
-    expect(html).toContain("copy.classList.add('radio-now-playing-swap');");
-    expect(html).toContain("(brand.classList.contains('hidden') ? artwork : brand).classList.add('radio-now-playing-swap');");
-    expect(html).toContain('.radio-now-playing-swap { animation: none; }');
+    expect(html).toContain('.radio-now-playing-media-enter { animation: radio-now-playing-media-enter 360ms ease-out both; }');
+    expect(html).toContain('.radio-now-playing-copy-exit { animation: radio-now-playing-copy-exit 160ms ease-in both; }');
+    expect(html).toContain('.radio-now-playing-copy-enter { animation: radio-now-playing-copy-enter 320ms cubic-bezier(0.22, 1, 0.36, 1) both; }');
+    expect(html).toContain("line.classList.add('radio-now-playing-copy-exit');");
+    expect(html).toContain('commit();');
+    expect(html).toContain("line.classList.add('radio-now-playing-copy-enter');");
+    expect(html).toContain("window.matchMedia('(prefers-reduced-motion: reduce)').matches");
   });
 
   it('keeps category content the same safe distance below the masthead as an article', () => {

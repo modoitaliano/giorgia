@@ -108,17 +108,43 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .radio-now-playing-swap { animation: radio-now-playing-swap 420ms ease-out; }
+  .radio-now-playing-media-exit { animation: radio-now-playing-media-exit 210ms ease-in both; }
+  .radio-now-playing-media-enter { animation: radio-now-playing-media-enter 360ms ease-out both; }
+  .radio-now-playing-copy-exit { animation: radio-now-playing-copy-exit 160ms ease-in both; }
+  .radio-now-playing-copy-enter { animation: radio-now-playing-copy-enter 320ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-  @keyframes radio-now-playing-swap {
+  .radio-now-playing-copy-exit:nth-child(2) { animation-delay: 25ms; }
+  .radio-now-playing-copy-exit:nth-child(3) { animation-delay: 50ms; }
+  .radio-now-playing-copy-enter:nth-child(2) { animation-delay: 45ms; }
+  .radio-now-playing-copy-enter:nth-child(3) { animation-delay: 90ms; }
+
+  @keyframes radio-now-playing-media-exit {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(-6px) scale(0.99); }
+  }
+
+  @keyframes radio-now-playing-media-enter {
     from { opacity: 0; transform: translateY(8px) scale(0.985); }
     to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes radio-now-playing-copy-exit {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+  }
+
+  @keyframes radio-now-playing-copy-enter {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   @media (prefers-reduced-motion: reduce) {
     [data-radio-slide].is-active { animation: none; transform: scale(1.05); }
     .radio-weather-swap { animation: none; }
-    .radio-now-playing-swap { animation: none; }
+    .radio-now-playing-media-exit,
+    .radio-now-playing-media-enter,
+    .radio-now-playing-copy-exit,
+    .radio-now-playing-copy-enter { animation: none; }
   }
 
   @media (max-width: 639px) {
@@ -231,9 +257,9 @@
         <img data-now-playing-artwork alt='' class='hidden h-full w-full object-cover' />
         <div class='absolute inset-x-0 bottom-0 h-[42%] bg-linear-to-t from-black/80 to-transparent'></div>
         <div data-now-playing-copy class='absolute bottom-3.75 left-3.75 right-16.25'>
-          <p class='flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-white/80'><span class='h-2 w-2 rounded-full bg-cyan-300'></span><span data-now-playing-status>En directo</span></p>
-          <h2 data-now-playing-title class='radio-display mt-1 line-clamp-1 text-2xl font-semibold uppercase leading-none tracking-[0.02em] text-white'>ModoItaliano</h2>
-          <p data-now-playing-artist class='radio-display mt-1 line-clamp-1 text-xl font-medium uppercase leading-none tracking-[0.02em] text-white/85'>Radio en vivo</p>
+          <p data-now-playing-line class='flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-white/80'><span class='h-2 w-2 rounded-full bg-cyan-300'></span><span data-now-playing-status>En directo</span></p>
+          <h2 data-now-playing-line data-now-playing-title class='radio-display mt-1 line-clamp-1 text-2xl font-semibold uppercase leading-none tracking-[0.02em] text-white'>ModoItaliano</h2>
+          <p data-now-playing-line data-now-playing-artist class='radio-display mt-1 line-clamp-1 text-xl font-medium uppercase leading-none tracking-[0.02em] text-white/85'>Radio en vivo</p>
         </div>
         <button
           class='absolute bottom-3.5 right-3.5 flex h-12 w-12 items-center justify-center text-white transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#312d2e]'
