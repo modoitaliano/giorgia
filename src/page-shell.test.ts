@@ -105,6 +105,33 @@ describe('page shell', () => {
     expect(html).toContain("window.matchMedia('(prefers-reduced-motion: reduce)').matches");
   });
 
+  it('keeps the masthead and player outside the soft-navigation content boundary', () => {
+    const html = render(baseDocument);
+    const headerIndex = html.indexOf('<header');
+    const pageIndex = html.indexOf("id='page-content'");
+    const playerIndex = html.indexOf('data-stream-player');
+
+    expect(headerIndex).toBeGreaterThan(-1);
+    expect(pageIndex).toBeGreaterThan(headerIndex);
+    expect(playerIndex).toBeGreaterThan(pageIndex);
+    expect(html).toContain("class='transition-page'");
+    expect(html).toContain("src='/assets/giorgia-navigation.js'");
+    expect(html).toContain('data-swup-ignore-script');
+  });
+
+  it('opts dynamic page scripts into the soft-navigation lifecycle', () => {
+    const html = render({
+      ...baseDocument,
+      layout: 'search-page',
+      slug: 'search',
+      canonicalUrl: 'https://modoitaliano.fm/search'
+    });
+
+    expect(html).toContain('<script data-swup-reload-script>');
+    expect(html).toContain('window.__brokawPageCleanup');
+    expect(html).toContain("{ source: 'brokaw-page', pageLayout: 'search-page' }");
+  });
+
   it('keeps category content the same safe distance below the masthead as an article', () => {
     const html = render({
       ...baseDocument,

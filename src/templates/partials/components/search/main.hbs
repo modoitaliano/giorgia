@@ -37,7 +37,7 @@
   </div>
 </main>
 
-<script>
+<script data-swup-reload-script>
   (function () {
     const PAGE_SIZE = 20;
     const CDN_BASE = 'https://cdn.modoitaliano.fm/content';
@@ -161,7 +161,7 @@
 
       const nextRelative = `${currentUrl.pathname}?${currentUrl.searchParams.toString()}${currentUrl.hash}`;
       const method = options.replace ? 'replaceState' : 'pushState';
-      window.history[method](null, '', nextRelative);
+      window.history[method]({ source: 'brokaw-page', pageLayout: 'search-page' }, '', nextRelative);
       runSearch();
     }
 
@@ -411,9 +411,13 @@
       navigateToSearchUrl(anchor.getAttribute('href') || '/', { replace: false });
     });
 
-    window.addEventListener('popstate', () => {
+    const handleSearchPopState = () => {
       runSearch();
-    });
+    };
+    window.addEventListener('popstate', handleSearchPopState);
+    window.__brokawPageCleanup = () => {
+      window.removeEventListener('popstate', handleSearchPopState);
+    };
 
     runSearch();
   })();

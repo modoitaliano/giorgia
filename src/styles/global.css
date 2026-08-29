@@ -266,6 +266,23 @@ html.spritz-highlights-pending mark.spritz-highlight.is-highlighted {
 }
 
 /* Main content transitions */
+html.swup-enabled .transition-page {
+  view-transition-name: main-content;
+}
+
+html.is-changing:not(.swup-native) .transition-page {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+html.is-animating:not(.swup-native) .transition-page {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
 ::view-transition-old(main-content) {
   animation: 0.3s ease-out both fade-out-slide-left;
 }
@@ -309,5 +326,16 @@ html.spritz-highlights-pending mark.spritz-highlight.is-highlighted {
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-changing:not(.swup-native) .transition-page {
+    transition: none;
+  }
+
+  ::view-transition-old(main-content),
+  ::view-transition-new(main-content) {
+    animation: none;
   }
 }
