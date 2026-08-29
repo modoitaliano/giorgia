@@ -115,6 +115,9 @@ describe('page shell', () => {
     expect(pageIndex).toBeGreaterThan(headerIndex);
     expect(playerIndex).toBeGreaterThan(pageIndex);
     expect(html).toContain("class='transition-page'");
+    expect(html).toContain("style='view-transition-name: stream-player;'");
+    expect(html).toContain("data-swup-persist='stream-player'");
+    expect(html).toContain('::view-transition-group(stream-player)');
     expect(html).toContain("src='/assets/giorgia-navigation.js'");
     expect(html).toContain('data-swup-ignore-script');
   });

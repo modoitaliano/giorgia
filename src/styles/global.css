@@ -291,16 +291,19 @@ html.is-animating:not(.swup-native) .transition-page {
   animation: 0.3s ease-out both fade-in-slide-right;
 }
 
-/* Keep header and footer static */
+/* Keep persistent shell surfaces static */
 ::view-transition-group(site-header),
-::view-transition-group(site-footer) {
+::view-transition-group(site-footer),
+::view-transition-group(stream-player) {
   animation-duration: 0s;
 }
 
 ::view-transition-old(site-header),
 ::view-transition-new(site-header),
 ::view-transition-old(site-footer),
-::view-transition-new(site-footer) {
+::view-transition-new(site-footer),
+::view-transition-old(stream-player),
+::view-transition-new(stream-player) {
   animation: none;
   mix-blend-mode: normal;
 }
