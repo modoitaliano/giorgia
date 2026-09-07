@@ -50,3 +50,45 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
 
 - CI validates typecheck, unit tests, and package build on pull requests and `main` pushes.
 - Package publish is triggered by pushing a `v*` tag.
+- Storybook pull requests build an immutable artifact but receive no AWS token.
+  A push or manual run on `main` deploys that exact artifact to
+  `https://ui.modoitaliano.fm` through the `giorgia-storybook` GitHub
+  environment and short-lived AWS OIDC role
+  `giorgia-storybook-github-deploy`. Storybook deployment never runs
+  `npm publish` or changes the package version.
+
+### Storybook infrastructure and rollback
+
+The Modo Italiano `Loredana` CloudFormation stack owns the dedicated Storybook
+bucket and CloudFront distribution. The workflow resolves outputs
+`LoredanaGiorgiaStorybookBucketName` and
+`LoredanaGiorgiaStorybookDistributionId`; it must never target the Fifthbell
+`ui.fifthbell.com` resources used by Brokaw.
+
+Each build carries `deployment.json` with its repository, package version, run,
+and full Git SHA. Deployment uploads to `/releases/<sha>` and changes the
+CloudFront origin path only after the complete immutable prefix is present.
+The previous origin path is retained and restored automatically if the public
+identity check fails after promotion. A failed build or upload therefore
+cannot partially overwrite the last known-good documentation.
+
+For an operator-authorized manual rollback, rerun the promotion logic against
+the prior recorded release path or restore that path in the distribution
+configuration, wait for CloudFront to deploy, and invalidate `/*`. Confirm the
+public `deployment.json` reports the expected prior SHA. Do not delete release
+prefixes until a separately reviewed retention policy exists.
+
+The deployment role must trust only audience `sts.amazonaws.com` and the
+repository's current immutable GitHub OIDC subject:
+
+```text
+repo:gaulatti@4602751/giorgia@1304750193:environment:giorgia-storybook
+```
+
+Its permissions are limited to `cloudformation:DescribeStacks` for Loredana;
+`s3:ListBucket` on the dedicated bucket; `s3:GetObject` and `s3:PutObject` on
+that bucket's `releases/*`; and `cloudfront:GetDistribution`,
+`cloudfront:GetDistributionConfig`, `cloudfront:UpdateDistribution`,
+`cloudfront:CreateInvalidation`, and `cloudfront:GetInvalidation` on the one
+Storybook distribution. It has no delete permission. No long-lived AWS key
+belongs in GitHub secrets.
