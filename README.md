@@ -72,11 +72,13 @@ The previous origin path is retained and restored automatically if the public
 identity check fails after promotion. A failed build or upload therefore
 cannot partially overwrite the last known-good documentation.
 
-For an operator-authorized manual rollback, rerun the promotion logic against
-the prior recorded release path or restore that path in the distribution
-configuration, wait for CloudFront to deploy, and invalidate `/*`. Confirm the
-public `deployment.json` reports the expected prior SHA. Do not delete release
-prefixes until a separately reviewed retention policy exists.
+The deployment log records the previous origin path. For an
+operator-authorized manual rollback, fetch the current distribution config and
+ETag, restore only the dedicated S3 origin's `OriginPath` to that recorded
+`/releases/<sha>` value, submit the update with the ETag, wait for CloudFront to
+deploy, and invalidate `/*`. Confirm the public `deployment.json` reports the
+expected prior SHA. Do not delete release prefixes until a separately reviewed
+retention policy exists.
 
 The deployment role must trust only audience `sts.amazonaws.com` and the
 repository's current immutable GitHub OIDC subject:
@@ -86,8 +88,9 @@ repo:gaulatti@4602751/giorgia@1304750193:environment:giorgia-storybook
 ```
 
 Its permissions are limited to `cloudformation:DescribeStacks` for Loredana;
-`s3:ListBucket` on the dedicated bucket; `s3:GetObject` and `s3:PutObject` on
-that bucket's `releases/*`; and `cloudfront:GetDistribution`,
+`s3:ListBucket` and `s3:GetBucketLocation` on the dedicated bucket;
+`s3:GetObject` and `s3:PutObject` on that bucket's `releases/*`; and
+`cloudfront:GetDistribution`,
 `cloudfront:GetDistributionConfig`, `cloudfront:UpdateDistribution`,
 `cloudfront:CreateInvalidation`, and `cloudfront:GetInvalidation` on the one
 Storybook distribution. It has no delete permission. No long-lived AWS key
