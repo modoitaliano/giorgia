@@ -1,14 +1,23 @@
 name: Deploy Storybook
 
 on:
+  pull_request:
   push:
     branches:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: giorgia-storybook-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
@@ -26,43 +35,84 @@ jobs:
       - name: Build Storybook
         run: npm run build-storybook
 
+      - name: Record immutable build identity
+        run: |
+          jq -n \
+            --arg repository "$GITHUB_REPOSITORY" \
+            --arg sha "$GITHUB_SHA" \
+            --arg packageVersion "$(node -p 'require("./package.json").version')" \
+            --arg runId "$GITHUB_RUN_ID" \
+            '{repository: $repository, sha: $sha, packageVersion: $packageVersion, runId: $runId}' \
+            > storybook-static/deployment.json
+
       - name: Upload Storybook artifact
         uses: actions/upload-artifact@v4
         with:
-          name: storybook-static
+          name: storybook-${{ github.sha }}
           path: storybook-static
+          if-no-files-found: error
+          retention-days: 14
 
   deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: build
+    environment:
+      name: giorgia-storybook
+      url: https://ui.modoitaliano.fm
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
-      - name: Download Storybook artifact
+      - name: Checkout deployment code
+        uses: actions/checkout@v4
+
+      - name: Download exact Storybook artifact
         uses: actions/download-artifact@v4
         with:
-          name: storybook-static
+          name: storybook-${{ github.sha }}
           path: storybook-static
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.2
+      - name: Configure short-lived AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: arn:aws:iam::792025092931:role/giorgia-storybook-github-deploy
+          role-session-name: giorgia-storybook-${{ github.run_id }}
+          role-duration-seconds: 900
+          aws-region: us-east-1
+          allowed-account-ids: 792025092931
+          mask-aws-account-id: true
 
-      - name: Upload to S3
+      - name: Resolve Loredana-owned Storybook resources
+        env:
+          STORYBOOK_STACK_NAME: Loredana
         run: |
-          aws s3 rm s3://${{ vars.BROKAW_BUCKET_NAME }} --recursive
-          aws s3 sync storybook-static/ s3://${{ vars.BROKAW_BUCKET_NAME }}
+          bucket=$(aws cloudformation describe-stacks \
+            --stack-name "$STORYBOOK_STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='LoredanaGiorgiaStorybookBucketName'].OutputValue | [0]" \
+            --output text)
+          distribution=$(aws cloudformation describe-stacks \
+            --stack-name "$STORYBOOK_STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='LoredanaGiorgiaStorybookDistributionId'].OutputValue | [0]" \
+            --output text)
+          test -n "$bucket" && test "$bucket" != None
+          test -n "$distribution" && test "$distribution" != None
+          printf 'STORYBOOK_BUCKET_NAME=%s\n' "$bucket" >> "$GITHUB_ENV"
+          printf 'STORYBOOK_DISTRIBUTION_ID=%s\n' "$distribution" >> "$GITHUB_ENV"
 
-      - name: Invalidate CloudFront cache
-        run: |
-          aws cloudfront create-invalidation --distribution-id ${{ vars.BROKAW_DISTRIBUTION_ID }} --paths "/*"
+      - name: Promote immutable Storybook release
+        env:
+          STORYBOOK_URL: https://ui.modoitaliano.fm
+        run: ./scripts/promote-storybook.sh storybook-static
 
       - name: Deployment summary
+        env:
+          STORYBOOK_URL: https://ui.modoitaliano.fm
         run: |
-          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **Project**: Brokaw Storybook" >> $GITHUB_STEP_SUMMARY
-          echo "- **S3 Bucket**: ${{ vars.BROKAW_BUCKET_NAME }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **CloudFront Distribution**: ${{ vars.BROKAW_DISTRIBUTION_ID }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status**: ✅ Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "## Giorgia Storybook deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Source SHA**: \`$GITHUB_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Release path**: \`/releases/$GITHUB_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Public URL**: $STORYBOOK_URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **npm package**: unchanged" >> "$GITHUB_STEP_SUMMARY"
