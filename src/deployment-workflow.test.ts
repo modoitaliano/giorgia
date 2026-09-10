@@ -36,7 +36,7 @@ function runPromotion({ failPublicCheck = false } = {}) {
   mkdirSync(fakeBin);
   writeFileSync(
     join(artifact, 'deployment.json'),
-    JSON.stringify({ repository: 'gaulatti/giorgia', sha: 'a'.repeat(40) }),
+    JSON.stringify({ repository: 'modoitaliano/giorgia', sha: 'a'.repeat(40) }),
   );
   writeFileSync(join(artifact, 'index.html'), '<!doctype html>');
   writeFileSync(join(artifact, 'assets', 'manager-123.js'), 'export {};');
@@ -84,7 +84,7 @@ function runPromotion({ failPublicCheck = false } = {}) {
       FAKE_AWS_LOG: awsLog,
       FAKE_CURL_FAIL: String(failPublicCheck),
       FAKE_ORIGIN_STATE: originState,
-      GITHUB_REPOSITORY: 'gaulatti/giorgia',
+      GITHUB_REPOSITORY: 'modoitaliano/giorgia',
       GITHUB_RUN_ID: '12345',
       GITHUB_SHA: 'a'.repeat(40),
       PATH: `${fakeBin}:${process.env.PATH}`,
