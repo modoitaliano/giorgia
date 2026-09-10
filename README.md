@@ -84,7 +84,7 @@ The deployment role must trust only audience `sts.amazonaws.com` and the
 repository's current immutable GitHub OIDC subject:
 
 ```text
-repo:gaulatti@4602751/giorgia@1304750193:environment:giorgia-storybook
+repo:modoitaliano@327696306/giorgia@1304750193:environment:giorgia-storybook
 ```
 
 Its permissions are limited to `cloudformation:DescribeStacks` for Loredana;
