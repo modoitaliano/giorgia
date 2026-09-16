@@ -20,8 +20,7 @@ const meta = {
       'searchDescriptions',
       'socialLanguages',
       'socialUserAgent',
-      'socialImageExport',
-      'hashtagServiceBaseUrl'
+      'socialImageExport'
     ];
 
     const rows = requiredKeys
@@ -35,7 +34,7 @@ const meta = {
 
     return `
       <main style="font-family: Barlow, system-ui, sans-serif; padding: 24px; max-width: 960px;">
-        <h1 style="font-size: 24px; margin: 0 0 4px;">Contrato del renderizador Brokaw</h1>
+        <h1 style="font-size: 24px; margin: 0 0 4px;">Contrato del renderizador Giorgia</h1>
         <p style="margin: 0 0 20px; color: #4b5563;">ModoItaliano renderer v${version}</p>
         <table style="border-collapse: collapse; width: 100%; font-size: 14px;">
           <tbody>${rows}</tbody>

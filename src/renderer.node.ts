@@ -1,21 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { layoutFiles, type LayoutName } from './layouts.js';
 import type { CanonicalDocument } from './types/canonical-article.js';
-import { renderWithAssets, type RendererAssets, type LayoutName } from './renderer.core.js';
-
-const layoutFiles: Record<LayoutName, string> = {
-  'article-page': 'article-page.hbs',
-  homepage: 'homepage.hbs',
-  'category-page': 'category-page.hbs',
-  'search-page': 'search-page.hbs',
-  '404': '404.hbs',
-  'coming-soon': 'coming-soon.hbs',
-  'live-story': 'live-story.hbs',
-  'link-in-bio': 'link-in-bio.hbs',
-  'media-page': 'media-page.hbs',
-  'standalone-page': 'standalone-page.hbs'
-};
+import { renderWithAssets, type RendererAssets } from './renderer.core.js';
 
 function getPaths() {
   const currentFile = fileURLToPath(import.meta.url);

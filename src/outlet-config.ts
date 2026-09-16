@@ -24,6 +24,5 @@ export const outletConfig = {
   },
   socialLanguages: ['es'],
   socialUserAgent: 'Cronkite/1.0',
-  socialImageExport: 'buildInstagramImageHtml',
-  hashtagServiceBaseUrl: 'http://192.168.0.99:8000'
+  socialImageExport: 'buildInstagramImageHtml'
 } as const;

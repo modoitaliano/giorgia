@@ -1,8 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/html';
+import { cronkiteManifest } from '../src/cronkite-manifest';
 import { render } from '../src/renderer.browser';
 import type { CanonicalArticle } from '../src/types/canonical-article';
 
 const nowIso = new Date().toISOString();
+const comingSoonContract = cronkiteManifest.systemPages.find((page) => page.layout === 'coming-soon');
+if (!comingSoonContract) throw new Error('coming-soon manifest entry missing');
+const spanishCopy = comingSoonContract.copy.es;
+if (!spanishCopy) throw new Error('coming-soon Spanish copy missing');
 
 const comingSoonFixture: CanonicalArticle = {
   id: 'coming-soon-story',
@@ -13,8 +18,8 @@ const comingSoonFixture: CanonicalArticle = {
   publishedAt: nowIso,
   updatedAt: nowIso,
   status: 'published',
-  title: 'Próximamente',
-  excerpt: 'Estamos preparando algo especial. Vuelve pronto para descubrirlo.',
+  title: spanishCopy.title,
+  excerpt: spanishCopy.description,
   language: 'es',
   featured: false,
   authors: [{ name: 'ModoItaliano Desk', slug: 'modoitaliano-desk' }],
