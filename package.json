@@ -24,6 +24,7 @@
   },
   "files": [
     "dist",
+    "dist/cronkite-manifest.json",
     "src/templates",
     "src/partial-deps.json",
     "src/styles/compiled.css"
@@ -35,6 +36,12 @@
       "types": "./dist/renderer.d.ts",
       "import": "./dist/renderer.js"
     },
+    "./cronkite-manifest.json": "./dist/cronkite-manifest.json",
+    "./schemas/canonical-document.schema.json": "./dist/schemas/canonical-document.schema.json",
+    "./schemas/cronkite-manifest.schema.json": "./dist/schemas/cronkite-manifest.schema.json",
+    "./schemas/search-index.schema.json": "./dist/schemas/search-index.schema.json",
+    "./schemas/search-manifest.schema.json": "./dist/schemas/search-manifest.schema.json",
+    "./video": "./dist/video/index.js",
     "./components/live-program": {
       "types": "./dist/components/live-program/LiveProgram.d.ts",
       "import": "./dist/components/live-program/LiveProgram.js"
@@ -52,13 +59,16 @@
     "build:css": "tailwindcss -i src/styles/global.css -o src/styles/compiled.css --minify",
     "build:live-program": "vite build --config vite.config.live-program.ts",
     "build:navigation": "vite build --config vite.config.navigation.ts",
-    "build": "npm run clean && npm run build:css && npm run build:live-program && npm run build:navigation && tsc -p tsconfig.build.json && node -e \"const fs=require('node:fs'); fs.cpSync('src/styles/fonts','dist/fonts',{recursive:true}); fs.copyFileSync('src/styles/fonts.css','dist/fonts/fonts.css'); fs.cpSync('src/templates/assets','dist/assets',{recursive:true})\"",
+    "generate:contract-types": "node scripts/generate-contract-types.mjs",
+    "build:contract": "node scripts/build-contract.mjs",
+    "build": "npm run clean && npm run build:css && npm run build:live-program && npm run build:navigation && npm run generate:contract-types && tsc -p tsconfig.build.json && node -e \"const fs=require('node:fs'); fs.cpSync('src/styles/fonts','dist/fonts',{recursive:true}); fs.copyFileSync('src/styles/fonts.css','dist/fonts/fonts.css'); fs.cpSync('src/templates/assets','dist/assets',{recursive:true})\" && npm run build:contract",
     "storybook": "npm run build:css && storybook dev -p 6006",
     "build-storybook": "npm run build:css && storybook build",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
-    "pretest:unit": "npm run build:css",
+    "typecheck": "npm run generate:contract-types && tsc --noEmit -p tsconfig.json",
+    "pretest:unit": "npm run generate:contract-types && npm run build:css",
     "test": "npm run test:unit",
     "test:unit": "vitest run --project unit",
+    "verify:packed-remotion": "npm run build && node scripts/verify-packed-remotion.mjs",
     "prepublishOnly": "npm run build",
     "publish:public": "npm run build && npm version patch && npm publish --access public"
   },
@@ -69,6 +79,7 @@
     "@swup/a11y-plugin": "^5.2.1",
     "@swup/head-plugin": "^2.3.1",
     "@swup/scripts-plugin": "^2.1.0",
+    "ajv": "^8.20.0",
     "date-fns": "^4.1.0",
     "fast-average-color": "^9.5.2",
     "framer-motion": "^12.38.0",
@@ -77,11 +88,12 @@
     "qrcode-generator": "^2.0.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "swup": "^4.9.2",
-    "zod": "^4.3.6"
+    "remotion": "4.0.524",
+    "swup": "^4.9.2"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.1",
+    "@remotion/bundler": "4.0.524",
     "@storybook/addon-a11y": "^10.2.16",
     "@storybook/addon-docs": "^10.2.16",
     "@storybook/addon-vitest": "^10.2.16",
@@ -95,6 +107,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "@vitest/browser-playwright": "^4.0.18",
     "@vitest/coverage-v8": "^4.0.18",
+    "json-schema-to-typescript": "^16.0.0",
     "playwright": "^1.58.2",
     "storybook": "^10.2.16",
     "tailwindcss": "^4.2.1",

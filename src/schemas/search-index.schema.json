@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://modoitaliano.invalid/schemas/search-index-v1.schema.json",
+  "title": "ModoItaliano search index shard",
+  "description": "One search-index shard referenced by the language-specific search manifest.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["articles"],
+  "properties": {
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "articles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["title", "slug"],
+        "properties": {
+          "title": { "type": "string" },
+          "slug": { "type": "string", "minLength": 1 },
+          "excerpt": { "type": "string" },
+          "photoUrl": { "type": "string" },
+          "publishedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}
