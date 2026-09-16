@@ -26,8 +26,7 @@ const requiredContract: Record<string, ExpectedType> = {
   searchDescriptions: 'record<string,string>',
   socialLanguages: 'string[]',
   socialUserAgent: 'string',
-  socialImageExport: 'string',
-  hashtagServiceBaseUrl: 'string'
+  socialImageExport: 'string'
 };
 
 function expectContractValue(key: string, expectedType: ExpectedType): void {
@@ -69,7 +68,7 @@ describe('outletConfig', () => {
     expect(outletConfig.contentPath).toBe('/content');
     expect(outletConfig.inventoryFilename).toBe('cronkite-inventory.json');
     expect(outletConfig.socialImageExport).toBe('buildInstagramImageHtml');
-    expect(outletConfig.hashtagServiceBaseUrl).toBe('http://192.168.0.99:8000');
+    expect(outletConfig).not.toHaveProperty('hashtagServiceBaseUrl');
   });
 
   it('advertises the complete localized publishing contract', () => {
