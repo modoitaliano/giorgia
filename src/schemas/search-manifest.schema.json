@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://modoitaliano.invalid/schemas/search-manifest-v1.schema.json",
+  "title": "ModoItaliano search manifest",
+  "description": "Language-specific manifest consumed by Giorgia's static search page.",
+  "x-referenced-payload-schema": "./search-index.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["files"],
+  "properties": {
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "files": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["currentMonth", "yearly"],
+      "properties": {
+        "currentMonth": { "$ref": "#/$defs/indexFile" },
+        "yearly": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/indexFile" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "indexFile": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*[\\\\?#]).+\\.json$",
+      "description": "Safe path, relative to the content root, whose payload validates against search-index.schema.json."
+    }
+  }
+}

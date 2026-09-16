@@ -5,8 +5,11 @@ Server-side renderer and Handlebars template bundle for ModoItaliano pages.
 ## What it does
 
 - Renders canonical content documents into HTML
-- Supports `article-page`, `homepage`, `category-page`, `live-story`, and `404` layouts
+- Supports the layouts declared by the packaged Cronkite manifest, including
+  article, homepage, category, search, 404, coming-soon, live-story,
+  link-in-bio, media, and standalone pages
 - Ships reusable Handlebars templates, partial dependency metadata, and compiled CSS
+- Ships provider-neutral social-image and Remotion short-video renderables
 - Preserves the masthead, footer, and radio player across same-language internal navigation
 
 ## Installation
@@ -18,17 +21,30 @@ npm install @gaulatti/giorgia
 ## Basic usage
 
 ```ts
-import { render } from '@gaulatti/giorgia';
+import { render } from "@gaulatti/giorgia";
 
 const html = render(doc);
 ```
 
-`doc` must match the canonical schema used by the renderer (see [src/types/canonical-article.ts](src/types/canonical-article.ts)).
+`doc` must match the normative canonical schema in
+[src/schemas/canonical-document.schema.json](src/schemas/canonical-document.schema.json).
+TypeScript declarations are generated from that schema; runtime rendering validates
+against the same artifact.
 
 ## Exports
 
 - `@gaulatti/giorgia` -> renderer entrypoint
+- `@gaulatti/giorgia/cronkite-manifest.json` -> data-only CLS capability manifest
+- `@gaulatti/giorgia/video` -> bundleable Remotion short-video entrypoint
+- `@gaulatti/giorgia/schemas/canonical-document.schema.json` -> canonical input contract
+- `@gaulatti/giorgia/schemas/search-manifest.schema.json` and
+  `@gaulatti/giorgia/schemas/search-index.schema.json` -> static-search resource contract
 - `@gaulatti/giorgia/partial-deps.json` -> partial-to-layout dependency map
+
+The root module also exports `cronkiteManifest`, `outletConfig`, `version`,
+`render`, `fontFiles`, `assetFiles`, and `buildInstagramImageHtml`. See
+[docs/cronkite-compatibility.md](docs/cronkite-compatibility.md) for ownership,
+validation, search, and asset-rendering details.
 
 ## Development
 
@@ -37,6 +53,7 @@ npm install
 npm run typecheck
 npm run test:unit
 npm run build
+npm run verify:packed-remotion
 npm run storybook
 ```
 
