@@ -8,7 +8,7 @@ on:
 
 jobs:
   quality:
-    runs-on: [self-hosted, linux, x64, helix]
+    runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:

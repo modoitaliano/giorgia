@@ -8,8 +8,8 @@ on:
 
 jobs:
   publish:
-    runs-on: [self-hosted, linux, x64, helix]
-    environment: brokaw
+    runs-on: ubuntu-latest
+    environment: giorgia-npm
     permissions:
       contents: read
       id-token: write
@@ -24,7 +24,7 @@ jobs:
           node-version: '22.14.0'
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
-          scope: '@fifthbell'
+          scope: '@gaulatti'
 
       - name: Upgrade npm CLI for trusted publishing
         run: npm install --global npm@^11.5.1
@@ -40,13 +40,17 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify release tag matches package version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: test "$GITHUB_REF_NAME" = "v$(node -p 'require("./package.json").version')"
+
       - name: Publish
         run: npm publish --access public --provenance
 
       - name: Summary
         run: |
           echo "## Publish Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **Package**: @fifthbell/brokaw" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: @gaulatti/giorgia" >> $GITHUB_STEP_SUMMARY
           VERSION=$(node -p 'require("./package.json").version')
           echo "- **Version**: ${VERSION}" >> $GITHUB_STEP_SUMMARY
           echo "- **Registry**: npmjs" >> $GITHUB_STEP_SUMMARY
