@@ -1,3 +1,11 @@
+const supportedLanguages = ['es', 'en', 'it'] as const;
+
+const searchTitle = {
+  es: 'Buscar',
+  en: 'Search',
+  it: 'Cerca',
+} satisfies Record<(typeof supportedLanguages)[number], string>;
+
 export const outletConfig = {
   siteName: 'ModoItaliano',
   publicSiteUrl: 'https://modoitaliano.fm',
@@ -5,7 +13,7 @@ export const outletConfig = {
   contentPath: '/content',
   inventoryFilename: 'cronkite-inventory.json',
   defaultLanguage: 'es',
-  supportedLanguages: ['es', 'en', 'it'],
+  supportedLanguages,
   prefixDefaultLocale: false,
   defaultAuthor: {
     name: 'Redacción de ModoItaliano',
@@ -16,7 +24,7 @@ export const outletConfig = {
     slug: 'noticias-destacadas'
   },
   linkInBioRoute: '/instagram',
-  searchTitle: 'Buscar',
+  searchTitle,
   searchDescriptions: {
     es: 'Busca noticias de ModoItaliano.',
     en: 'Search ModoItaliano news.',
