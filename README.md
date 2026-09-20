@@ -74,7 +74,11 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
   `modoitaliano/giorgia`, `publish.yml`, and `giorgia-npm` for direct publishing.
 - Verify the package version and `package-lock.json` match, merge the release
   commit to `main`, then tag that commit and push the tag. Confirm the publish
-  workflow succeeds and npm reports the new version.
+  workflow succeeds and `npm view @gaulatti/giorgia version` reports the new
+  version. The publish workflow rejects branch dispatches, mismatched tags, and
+  versions already present on npm before publishing. It reports success only
+  after npm serves the exact built version; a registry read failure or missing
+  version fails the job.
 - Storybook pull requests build an immutable artifact but receive no AWS token.
   A push or manual run on `main` deploys that exact artifact to
   `https://ui.modoitaliano.fm` through the `giorgia-storybook` GitHub
