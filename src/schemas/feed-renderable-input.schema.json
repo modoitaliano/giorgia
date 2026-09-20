@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://modoitaliano.invalid/schemas/feed-renderable-input-v1.schema.json",
+  "title": "ModoItaliano feed renderable input",
+  "description": "CMS-supplied document and feed consumed by Cronkite's feed-renderable publication path.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["document", "feed"],
+  "properties": {
+    "document": { "type": "object" },
+    "feed": { "type": "object" }
+  }
+}
