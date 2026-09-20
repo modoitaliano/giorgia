@@ -35,13 +35,15 @@ jobs:
       - name: Reject version already on npm
         run: |
           VERSION=$(node -p 'require("./package.json").version')
-          PUBLISHED_VERSIONS=$(npm view @modoitaliano/giorgia versions --json)
-          VERSION_STATUS=$(node -e 'const versions = JSON.parse(process.argv[1]); if (!Array.isArray(versions)) throw new Error("Invalid registry versions response"); console.log(versions.includes(process.argv[2]) ? "published" : "unpublished")' "$PUBLISHED_VERSIONS" "$VERSION")
+          # A first publish under a new scope 404s, and a package with exactly one
+          # version returns a bare string rather than an array. Treat both as "not published".
+          PUBLISHED_VERSIONS=$(npm view @modoitaliano/giorgia versions --json 2>/dev/null || echo '[]')
+          if [ -z "$PUBLISHED_VERSIONS" ]; then PUBLISHED_VERSIONS='[]'; fi
+          VERSION_STATUS=$(node -e 'let v; try { v = JSON.parse(process.argv[1]); } catch { v = []; } if (typeof v === "string") v = [v]; if (!Array.isArray(v)) v = []; console.log(v.includes(process.argv[2]) ? "published" : "unpublished")' "$PUBLISHED_VERSIONS" "$VERSION")
           if [[ "$VERSION_STATUS" == published ]]; then
             echo "::error::@modoitaliano/giorgia@$VERSION is already on npm"
             exit 1
           fi
-
       - name: Verify release tag matches package version
         run: |
           if [[ "$GITHUB_REF" != refs/tags/v* ]]; then
