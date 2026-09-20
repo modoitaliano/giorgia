@@ -2,6 +2,9 @@
   "name": "@modoitaliano/giorgia",
   "description": "Server-side Handlebars renderer and templates for ModoItaliano pages.",
   "version": "0.1.100",
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "author": "ModoItaliano",
   "repository": {
