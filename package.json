@@ -1,5 +1,5 @@
 {
-  "name": "@gaulatti/giorgia",
+  "name": "@modoitaliano/giorgia",
   "description": "Server-side Handlebars renderer and templates for ModoItaliano pages.",
   "version": "0.1.100",
   "license": "MIT",

@@ -73,7 +73,7 @@ const systemPages: NonNullable<CronkiteCLSManifest["systemPages"]> = [
 export const cronkiteManifest = {
   contract: "cronkite.cls",
   contractVersion: 1,
-  package: "@gaulatti/giorgia",
+  package: "@modoitaliano/giorgia",
   version,
   layouts: [...layoutNames],
   languages: [...outletConfig.supportedLanguages],
