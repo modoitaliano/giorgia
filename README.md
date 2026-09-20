@@ -1,4 +1,4 @@
-# @gaulatti/giorgia
+# @modoitaliano/giorgia
 
 Server-side renderer and Handlebars template bundle for ModoItaliano pages.
 
@@ -15,13 +15,13 @@ Server-side renderer and Handlebars template bundle for ModoItaliano pages.
 ## Installation
 
 ```bash
-npm install @gaulatti/giorgia
+npm install @modoitaliano/giorgia
 ```
 
 ## Basic usage
 
 ```ts
-import { render } from "@gaulatti/giorgia";
+import { render } from "@modoitaliano/giorgia";
 
 const html = render(doc);
 ```
@@ -33,14 +33,14 @@ against the same artifact.
 
 ## Exports
 
-- `@gaulatti/giorgia` -> renderer entrypoint
-- `@gaulatti/giorgia/cronkite-manifest.json` -> data-only CLS capability manifest
-- `@gaulatti/giorgia/video` -> bundleable Remotion short-video entrypoint
-- `@gaulatti/giorgia/schemas/canonical-document.schema.json` -> canonical input contract
-- `@gaulatti/giorgia/schemas/feed-renderable-input.schema.json` -> feed publication envelope
-- `@gaulatti/giorgia/schemas/search-manifest.schema.json` and
-  `@gaulatti/giorgia/schemas/search-index.schema.json` -> static-search resource contract
-- `@gaulatti/giorgia/partial-deps.json` -> partial-to-layout dependency map
+- `@modoitaliano/giorgia` -> renderer entrypoint
+- `@modoitaliano/giorgia/cronkite-manifest.json` -> data-only CLS capability manifest
+- `@modoitaliano/giorgia/video` -> bundleable Remotion short-video entrypoint
+- `@modoitaliano/giorgia/schemas/canonical-document.schema.json` -> canonical input contract
+- `@modoitaliano/giorgia/schemas/feed-renderable-input.schema.json` -> feed publication envelope
+- `@modoitaliano/giorgia/schemas/search-manifest.schema.json` and
+  `@modoitaliano/giorgia/schemas/search-index.schema.json` -> static-search resource contract
+- `@modoitaliano/giorgia/partial-deps.json` -> partial-to-layout dependency map
 
 The root module also exports `cronkiteManifest`, `outletConfig`, `version`,
 `render`, `fontFiles`, `assetFiles`, and `buildInstagramImageHtml`. See
@@ -70,12 +70,12 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
 - GitHub-hosted runners build, test, and deploy this public repository.
 - A `v*` tag matching the version in `package.json` triggers the package workflow
   on a GitHub-hosted runner. The workflow builds and publishes
-  `@gaulatti/giorgia` to npm with provenance through the `giorgia-npm` GitHub
+  `@modoitaliano/giorgia` to npm with provenance through the `giorgia` GitHub
   environment. The npm trusted publisher must authorize
-  `modoitaliano/giorgia`, `publish.yml`, and `giorgia-npm` for direct publishing.
+  `modoitaliano/giorgia`, `publish.yml`, and `giorgia` for direct publishing.
 - Verify the package version and `package-lock.json` match, merge the release
   commit to `main`, then tag that commit and push the tag. Confirm the publish
-  workflow succeeds and `npm view @gaulatti/giorgia version` reports the new
+  workflow succeeds and `npm view @modoitaliano/giorgia version` reports the new
   version. The publish workflow rejects branch dispatches, mismatched tags, and
   versions already present on npm before publishing. It reports success only
   after npm serves the exact built version; a registry read failure or missing
