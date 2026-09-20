@@ -66,7 +66,21 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
 ## Publish flow
 
 - CI validates typecheck, unit tests, and package build on pull requests and `main` pushes.
-- Package publish is triggered by pushing a `v*` tag.
+- GitHub-hosted runners build, test, and deploy this public repository.
+- A `v*` tag matching the version in `package.json` triggers the package workflow
+  on a GitHub-hosted runner. The workflow builds and publishes
+  `@gaulatti/giorgia` to npm with provenance through the `giorgia-npm` GitHub
+  environment. The npm trusted publisher must authorize
+  `modoitaliano/giorgia`, `publish.yml`, and `giorgia-npm` for direct publishing.
+- Verify the package version and `package-lock.json` match, merge the release
+  commit to `main`, then tag that commit and push the tag. Confirm the publish
+  workflow succeeds and `npm view @gaulatti/giorgia version` reports the new
+  version. The publish workflow rejects branch dispatches, mismatched tags, and
+  versions already present on npm before publishing. It reports success only
+  after npm serves the exact built version; a registry read failure or missing
+  version fails the job. The `0.1.100` cutover release is the one-time manual
+  exception tracked in [giorgia#12](https://github.com/modoitaliano/giorgia/issues/12);
+  do not use this workflow for that release.
 - Storybook pull requests build an immutable artifact but receive no AWS token.
   A push or manual run on `main` deploys that exact artifact to
   `https://ui.modoitaliano.fm` through the `giorgia-storybook` GitHub
