@@ -3,6 +3,7 @@ import { layoutNames, type LayoutName } from './layouts.js';
 import { canonicalArticleSchema, type CanonicalDocument } from './types/canonical-article.js';
 import { distributeHomepageArticles } from './homepage-distributor.js';
 import { buildSofascoreAttackMomentumUrl, buildSofascoreMatchUrl } from './utils/sofascore.js';
+import { outletConfig } from './outlet-config.js';
 
 export type { LayoutName } from './layouts.js';
 
@@ -278,7 +279,12 @@ function registerHelpers(): void {
     }
 
     if (page.layout === 'search-page') {
-      return 'Buscar | ModoItaliano';
+      const language = page.language;
+      if (!language || !Object.hasOwn(outletConfig.searchTitle, language)) {
+        throw new Error(`Unsupported search-page language: ${language ?? '(missing)'}`);
+      }
+      const title = outletConfig.searchTitle[language as keyof typeof outletConfig.searchTitle];
+      return `${title} | ModoItaliano`;
     }
 
     if (page.layout === 'article-page') {

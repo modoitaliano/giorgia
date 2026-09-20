@@ -22,7 +22,7 @@ const requiredContract: Record<string, ExpectedType> = {
   defaultAuthor: 'named-slug',
   defaultCategory: 'named-slug',
   linkInBioRoute: 'string',
-  searchTitle: 'string',
+  searchTitle: 'record<string,string>',
   searchDescriptions: 'record<string,string>',
   socialLanguages: 'string[]',
   socialUserAgent: 'string',
@@ -74,6 +74,8 @@ describe('outletConfig', () => {
   it('advertises the complete localized publishing contract', () => {
     expect(outletConfig.defaultLanguage).toBe('es');
     expect(outletConfig.supportedLanguages).toEqual(['es', 'en', 'it']);
+    expect(Object.keys(outletConfig.searchTitle).sort()).toEqual(['en', 'es', 'it']);
+    expect(outletConfig.searchTitle).toEqual({ es: 'Buscar', en: 'Search', it: 'Cerca' });
     expect(Object.keys(outletConfig.searchDescriptions).sort()).toEqual(['en', 'es', 'it']);
     expect(outletConfig.prefixDefaultLocale).toBe(false);
   });
