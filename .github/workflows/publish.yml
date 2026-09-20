@@ -68,12 +68,13 @@ jobs:
       - name: Verify registry
         run: |
           VERSION=$(node -p 'require("./package.json").version')
-          for ATTEMPT in 1 2 3 4 5; do
+          # npm processes a publish asynchronously; 25s was not enough for a 3.9 MB package.
+          for ATTEMPT in $(seq 1 20); do
             LIVE_VERSION=$(npm view "@modoitaliano/giorgia@$VERSION" version 2>/dev/null || true)
             if [[ "$LIVE_VERSION" == "$VERSION" ]]; then
               exit 0
             fi
-            sleep 5
+            sleep 15
           done
           echo "::error::@modoitaliano/giorgia@$VERSION is not on the registry"
           exit 1
