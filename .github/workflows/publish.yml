@@ -8,8 +8,8 @@ on:
 
 jobs:
   publish:
-    runs-on: [self-hosted, linux, x64, helix]
-    environment: brokaw
+    runs-on: ubuntu-latest
+    environment: giorgia-npm
     permissions:
       contents: read
       id-token: write
@@ -24,7 +24,7 @@ jobs:
           node-version: '22.14.0'
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
-          scope: '@fifthbell'
+          scope: '@gaulatti'
 
       - name: Upgrade npm CLI for trusted publishing
         run: npm install --global npm@^11.5.1
@@ -33,6 +33,28 @@ jobs:
         run: |
           node --version
           npm --version
+
+      - name: Reject version already on npm
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          PUBLISHED_VERSIONS=$(npm view @gaulatti/giorgia versions --json)
+          VERSION_STATUS=$(node -e 'const versions = JSON.parse(process.argv[1]); if (!Array.isArray(versions)) throw new Error("Invalid registry versions response"); console.log(versions.includes(process.argv[2]) ? "published" : "unpublished")' "$PUBLISHED_VERSIONS" "$VERSION")
+          if [[ "$VERSION_STATUS" == published ]]; then
+            echo "::error::@gaulatti/giorgia@$VERSION is already on npm"
+            exit 1
+          fi
+
+      - name: Verify release tag matches package version
+        run: |
+          if [[ "$GITHUB_REF" != refs/tags/v* ]]; then
+            echo "::error::Publish only from a version tag, not a branch"
+            exit 1
+          fi
+          VERSION=$(node -p 'require("./package.json").version')
+          if [[ "$GITHUB_REF_NAME" != "v$VERSION" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package version $VERSION"
+            exit 1
+          fi
 
       - name: Install dependencies
         run: npm ci
@@ -43,10 +65,23 @@ jobs:
       - name: Publish
         run: npm publish --access public --provenance
 
+      - name: Verify registry
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          for ATTEMPT in 1 2 3 4 5; do
+            LIVE_VERSION=$(npm view "@gaulatti/giorgia@$VERSION" version 2>/dev/null || true)
+            if [[ "$LIVE_VERSION" == "$VERSION" ]]; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::@gaulatti/giorgia@$VERSION is not on the registry"
+          exit 1
+
       - name: Summary
         run: |
           echo "## Publish Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **Package**: @fifthbell/brokaw" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: @gaulatti/giorgia" >> $GITHUB_STEP_SUMMARY
           VERSION=$(node -p 'require("./package.json").version')
           echo "- **Version**: ${VERSION}" >> $GITHUB_STEP_SUMMARY
           echo "- **Registry**: npmjs" >> $GITHUB_STEP_SUMMARY
