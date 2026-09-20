@@ -39,6 +39,7 @@ const meta = {
         <table style="border-collapse: collapse; width: 100%; font-size: 14px;">
           <tbody>${rows}</tbody>
         </table>
+        <p>Los archivos de fuentes y los recursos estáticos se publican una sola vez, en capacidades separadas.</p>
       </main>
     `;
   }

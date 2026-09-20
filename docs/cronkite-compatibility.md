@@ -75,6 +75,10 @@ Giorgia declares:
 - `fonts`, using `fontFiles`;
 - `assets`, using `assetFiles`.
 
+The capabilities return disjoint file sets: fonts and their stylesheet use
+`content/fonts/`, while template assets use `assets/`. Cronkite publishes both
+sets during basement publication, so each output key must appear exactly once.
+
 The short-video template accepts caller-owned brand colors, identity, URLs,
 logo/background assets, slide copy, and optional audio. It contains no
 Fifthbell or Sanremo branding. `npm run verify:packed-remotion` builds and packs
