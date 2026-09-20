@@ -19,6 +19,15 @@ The canonical-document TypeScript declaration is generated from
 Giorgia's runtime validation uses that same JSON Schema. The previous local Zod
 copy is not an independent contract.
 
+## Feed renderables
+
+`homepage`, `category-page`, `search-page`, and `link-in-bio` are request-scoped
+HTML renderables using the root `render` export. Spritz supplies a `document`
+and `feed` object for each; Cronkite validates that envelope against the packed
+`dist/schemas/feed-renderable-input.schema.json` before constructing the page
+document. The build checks the schema path and renderer export for every
+declaration, then emits the six-renderable manifest into `dist`.
+
 ## Declared system pages
 
 The manifest owns localized copy for 404, search, and coming-soon pages in
