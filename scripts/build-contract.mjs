@@ -89,6 +89,7 @@ for (const [name, capability] of Object.entries(
 
 for (const schemaName of [
   "canonical-document.schema.json",
+  "feed-renderable-input.schema.json",
   "search-index.schema.json",
   "search-manifest.schema.json",
 ]) {
