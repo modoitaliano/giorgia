@@ -12,6 +12,8 @@ import { version } from "./version.js";
 
 const require = createRequire(import.meta.url);
 const schema = require("./schemas/cronkite-manifest.schema.json") as object;
+const feedInputSchema =
+  require("./schemas/feed-renderable-input.schema.json") as object;
 const packageJson = require("../package.json") as {
   name: string;
   version: string;
@@ -58,6 +60,38 @@ describe("Cronkite manifest", () => {
         ).toBe("function");
       }
     }
+  });
+
+  it("declares all feed renderables with the packed input contract", () => {
+    expect(Object.keys(cronkiteManifest.renderables).sort()).toEqual([
+      "category-page",
+      "homepage",
+      "link-in-bio",
+      "search-page",
+      "short-video",
+      "social-image",
+    ]);
+
+    for (const name of [
+      "homepage",
+      "category-page",
+      "search-page",
+      "link-in-bio",
+    ] as const) {
+      expect(cronkiteManifest.layouts).toContain(name);
+      expect(cronkiteManifest.renderables[name]).toMatchObject({
+        engine: "handlebars",
+        export: "render",
+        contentType: "text/html; charset=utf-8",
+        inputSchema: "dist/schemas/feed-renderable-input.schema.json",
+      });
+    }
+
+    const ajv = new Ajv2020({ allErrors: true, strict: false });
+    const validate = ajv.compile(feedInputSchema);
+    expect(validate({ document: {}, feed: {} })).toBe(true);
+    expect(validate({ document: {} })).toBe(false);
+    expect(validate({ document: {}, feed: {}, unexpected: true })).toBe(false);
   });
 
   it("makes every drift boundary fail closed", () => {

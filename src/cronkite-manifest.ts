@@ -83,12 +83,25 @@ export const cronkiteManifest = {
   },
   systemPages,
   renderables: {
+    homepage: {
+      engine: "handlebars",
+      export: "render",
+      contentType: "text/html; charset=utf-8",
+      inputSchema: "dist/schemas/feed-renderable-input.schema.json",
+    },
+    "category-page": {
+      engine: "handlebars",
+      export: "render",
+      contentType: "text/html; charset=utf-8",
+      inputSchema: "dist/schemas/feed-renderable-input.schema.json",
+    },
     "search-page": {
       engine: "handlebars",
       export: "render",
       outputMode: "single",
       lifecycle: "request",
       contentType: "text/html; charset=utf-8",
+      inputSchema: "dist/schemas/feed-renderable-input.schema.json",
       resources: {
         "search-manifest": {
           key: "search-manifest-{language}.json",
@@ -97,6 +110,12 @@ export const cronkiteManifest = {
           perLanguage: true,
         },
       },
+    },
+    "link-in-bio": {
+      engine: "handlebars",
+      export: "render",
+      contentType: "text/html; charset=utf-8",
+      inputSchema: "dist/schemas/feed-renderable-input.schema.json",
     },
     "social-image": {
       engine: "html-raster",

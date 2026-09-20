@@ -37,6 +37,7 @@ against the same artifact.
 - `@gaulatti/giorgia/cronkite-manifest.json` -> data-only CLS capability manifest
 - `@gaulatti/giorgia/video` -> bundleable Remotion short-video entrypoint
 - `@gaulatti/giorgia/schemas/canonical-document.schema.json` -> canonical input contract
+- `@gaulatti/giorgia/schemas/feed-renderable-input.schema.json` -> feed publication envelope
 - `@gaulatti/giorgia/schemas/search-manifest.schema.json` and
   `@gaulatti/giorgia/schemas/search-index.schema.json` -> static-search resource contract
 - `@gaulatti/giorgia/partial-deps.json` -> partial-to-layout dependency map
