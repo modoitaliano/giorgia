@@ -41,6 +41,19 @@ The system-page descriptors include their routes, output keys, cache policy,
 language expansion, and copy. Giorgia declares `es` as its default and supports
 `es`, `en`, and `it`.
 
+## Localized search title
+
+`outletConfig.searchTitle` declares a title for each supported language:
+`Buscar`, `Search`, and `Cerca` for `es`, `en`, and `it`. The TypeScript contract
+requires complete language coverage. Giorgia's search page uses the map for its
+HTML, Open Graph, and Twitter titles; Cronkite #106 uses it for the canonical
+document title after that contract is deployed. Search controls in the page body
+remain Spanish and are tracked separately.
+
+The map can be released only after Cronkite accepts and uses per-language
+`searchTitle` values in production (fifthbell/cronkite#106). Until then, the
+published scalar package remains the compatible version.
+
 ## Search resource contract and known producer gap
 
 The browser search page fetches

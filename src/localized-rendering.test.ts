@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render } from './renderer.node.js';
+import { outletConfig } from './outlet-config.js';
 import type { CanonicalArticle } from './types/canonical-article.js';
 
 const article: CanonicalArticle = {
@@ -35,5 +36,26 @@ describe('localized renderer contract', () => {
 
     expect(html).toContain(`<html lang='${language}'`);
     expect(html).toContain(`https://modoitaliano.fm${route}`);
+  });
+
+  it.each([
+    ['es', '/search', 'Buscar'],
+    ['en', '/en/search', 'Search'],
+    ['it', '/it/search', 'Cerca'],
+  ] as const)('renders the %s search page title from outletConfig', (language, route, title) => {
+    const html = render({
+      ...article,
+      layout: 'search-page',
+      language,
+      title: 'Buscar',
+      slug: route,
+      canonicalUrl: `https://modoitaliano.fm${route}`,
+    });
+
+    expect(outletConfig.searchTitle[language]).toBe(title);
+    expect(html).toContain(`<html lang='${language}'`);
+    expect(html).toContain(`<title>${title} | ModoItaliano</title>`);
+    expect(html).toContain(`<meta property='og:title' content='${title} | ModoItaliano' />`);
+    expect(html).toContain(`<meta name='twitter:title' content='${title} | ModoItaliano' />`);
   });
 });

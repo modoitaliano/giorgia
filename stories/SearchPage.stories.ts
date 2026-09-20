@@ -46,6 +46,28 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const English: Story = {
+  args: {
+    ...searchPageFixture,
+    slug: '/en/search',
+    canonicalUrl: 'https://modoitaliano.fm/en/search',
+    title: 'Search',
+    language: 'en',
+    seo: { metaTitle: 'Search | ModoItaliano', metaDescription: 'Search ModoItaliano news.' }
+  }
+};
+
+export const Italian: Story = {
+  args: {
+    ...searchPageFixture,
+    slug: '/it/search',
+    canonicalUrl: 'https://modoitaliano.fm/it/search',
+    title: 'Cerca',
+    language: 'it',
+    seo: { metaTitle: 'Cerca | ModoItaliano', metaDescription: 'Cerca le notizie di ModoItaliano.' }
+  }
+};
+
 export const ClientSideOnly: Story = {
   name: 'Búsqueda del lado del cliente',
   args: {
