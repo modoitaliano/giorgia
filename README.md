@@ -78,7 +78,9 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
   version. The publish workflow rejects branch dispatches, mismatched tags, and
   versions already present on npm before publishing. It reports success only
   after npm serves the exact built version; a registry read failure or missing
-  version fails the job.
+  version fails the job. The `0.1.100` cutover release is the one-time manual
+  exception tracked in [giorgia#12](https://github.com/modoitaliano/giorgia/issues/12);
+  do not use this workflow for that release.
 - Storybook pull requests build an immutable artifact but receive no AWS token.
   A push or manual run on `main` deploys that exact artifact to
   `https://ui.modoitaliano.fm` through the `giorgia-storybook` GitHub
