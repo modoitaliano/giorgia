@@ -1,4 +1,5 @@
 import type { CanonicalArticle, SelfReference } from '../src/types/canonical-article';
+import { distributeHomepageArticles } from '../src/homepage-distributor';
 import { homepageFixture } from './fixtures/homepage.fixture';
 import { liveStoryFixture } from './fixtures/live-story.fixture';
 import { categoryFixture } from './fixtures/category.fixture';
@@ -728,6 +729,7 @@ function buildHomepagePreviewDocument(payload: HomepagePreviewPayload | null, br
       categories: navigationCategories
     },
     articles,
+    homepageSlots: distributeHomepageArticles(articles, new Date(generatedAt), Boolean(breakingNews)),
     heroSlides: heroSlides.length > 0 ? heroSlides : homepageFixture.heroSlides,
     breakingNews: breakingNews as CanonicalArticle['breakingNews'],
     seo: {
@@ -965,6 +967,7 @@ function buildLiveStoryDocument(payload: HomepagePreviewPayload | null, breaking
     publishedAt: toIsoDateTime(payload?.page?.publishedAt ?? payload?.generatedAt, liveStoryFixture.publishedAt),
     updatedAt: defaultTimestamp,
     status: 'published',
+    statusVariant: 'info',
     title: typeof mainCard.title === 'string' && mainCard.title.trim().length > 0 ? mainCard.title : liveStoryFixture.title,
     dek: liveStoryFixture.dek,
     excerpt: descriptionText || liveStoryFixture.excerpt,
@@ -1043,6 +1046,7 @@ function buildLiveStoryDocumentFromEvent(eventDoc: EventsPreviewDoc, payload: Ho
     publishedAt,
     updatedAt,
     status: 'published',
+    statusVariant: 'info',
     title,
     dek: liveStoryFixture.dek,
     excerpt,

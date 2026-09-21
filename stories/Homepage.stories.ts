@@ -4,6 +4,15 @@ import { render } from '../src/renderer.browser';
 import { homepageFixture, FIXTURE_NOW } from './fixtures/homepage.fixture';
 import type { CanonicalArticle } from '../src/types/canonical-article';
 import { loadHomepagePreviewData } from './preview-data';
+import { distributeHomepageArticles } from '../src/homepage-distributor';
+
+function withHomepageSlots(document: CanonicalArticle, now: Date): CanonicalArticle {
+  const showBreakingNews = Boolean(document.breakingNews) && (document as Record<string, unknown>).showBreakingNews !== false;
+  return {
+    ...document,
+    homepageSlots: distributeHomepageArticles(document.articles ?? [], now, showBreakingNews)
+  };
+}
 
 const sectionControls = {
   showHero: { control: 'boolean' },
@@ -24,7 +33,7 @@ const triangoloNowPlaying = {
 const meta = {
   title: 'Pages/Homepage',
   loaders: [async () => ({ homepage: await loadHomepagePreviewData() })],
-  render: (args, { loaded }) => render({ ...(loaded.homepage as CanonicalArticle), ...args }),
+  render: (args, { loaded }) => render(withHomepageSlots({ ...(loaded.homepage as CanonicalArticle), ...args }, new Date())),
   args: {
     showHero: true,
     showEditorialHero: false,
@@ -76,7 +85,7 @@ export const Default: Story = {
 
 export const Current: Story = {
   name: 'Current',
-  render: (_args, { loaded }) => render(loaded.homepage as CanonicalArticle),
+  render: (_args, { loaded }) => render(withHomepageSlots(loaded.homepage as CanonicalArticle, new Date())),
   parameters: {
     controls: {
       disable: true
@@ -104,7 +113,7 @@ export const FeaturedOverflow: Story = {
  */
 export const NoFeaturedArticles: Story = {
   name: 'Featured: none recent — all slots from queue',
-  render: (args) => render(args as CanonicalArticle),
+  render: (args) => render(withHomepageSlots(args as CanonicalArticle, FIXTURE_NOW)),
   args: {
     ...homepageFixture,
     showHero: false,
@@ -134,7 +143,7 @@ export const WithBreakingNews: Story = {
  */
 export const PartialFeatured: Story = {
   name: 'Featured: 3 recent — partial fill, rest from queue',
-  render: (args) => render(args as CanonicalArticle),
+  render: (args) => render(withHomepageSlots(args as CanonicalArticle, FIXTURE_NOW)),
   args: {
     ...homepageFixture,
     showHero: false,

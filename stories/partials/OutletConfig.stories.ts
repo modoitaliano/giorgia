@@ -16,7 +16,6 @@ const meta = {
       'defaultAuthor',
       'defaultCategory',
       'linkInBioRoute',
-      'searchTitle',
       'searchDescriptions',
       'socialLanguages',
       'socialUserAgent',
@@ -39,7 +38,7 @@ const meta = {
         <table style="border-collapse: collapse; width: 100%; font-size: 14px;">
           <tbody>${rows}</tbody>
         </table>
-        <p>Los archivos de fuentes y los recursos estáticos se publican una sola vez, en capacidades separadas.</p>
+        <p>Las plantillas declarativas publican fuentes y recursos estáticos desde el manifiesto de Cronkite.</p>
       </main>
     `;
   }

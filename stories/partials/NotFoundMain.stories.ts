@@ -8,7 +8,14 @@ const template = Handlebars.compile(notFoundMainHbs);
 const meta = {
   title: 'Partials/NotFound/Main',
   render: (args) => template(args),
-  args: { logoLink: '/', navigation: homepageFixture.navigation },
+  args: {
+    title: 'Página no encontrada',
+    excerpt: 'La página que buscas no existe.',
+    language: 'es',
+    homeLinkLabel: 'Ir al inicio',
+    categoriesLabel: 'También puedes explorar nuestras secciones:',
+    navigation: homepageFixture.navigation
+  },
 } satisfies Meta;
 
 export default meta;

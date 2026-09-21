@@ -105,6 +105,7 @@ export const liveStoryFixture: CanonicalArticle = {
   publishedAt: '2026-03-10T06:00:00.000Z',
   updatedAt: '2026-03-10T13:45:00.000Z',
   status: 'published',
+  statusVariant: 'info',
   title: 'Middle East Live Updates: U.S. Says It Struck 16 Mine-Laying Vessels Near the Strait of Hormuz',
   dek: 'Follow the latest on a fast-moving military and diplomatic situation.',
   excerpt:

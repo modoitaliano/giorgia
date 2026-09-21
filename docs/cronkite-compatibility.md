@@ -1,103 +1,73 @@
 # Cronkite compatibility
 
-Giorgia owns ModoItaliano's renderer identity and declares it through
-`cronkiteManifest`. The source object lives in `src/cronkite-manifest.ts`; the
-build validates it against the CPS-02 schema and emits
-`dist/cronkite-manifest.json`. Consumers can read the JSON export before they
-execute package code.
+Giorgia opts into Cronkite through the nested `templateRendering` object in
+`dist/cronkite-manifest.json`. This is the sole CPS rendering contract. Cronkite
+reads the JSON artifact, validates every referenced package file and input
+schema, inspects the declared partial graph, and compiles Handlebars itself.
+Page rendering does not import or execute Giorgia JavaScript.
 
-## Identity and drift boundaries
+## Declarative surface
 
-The manifest package and version must match `package.json` and the exported
-`version`. Its ordered layout list must match `src/layouts.ts`, and its language
-list must match `outletConfig.supportedLanguages`. The build also checks every
-declared function export and every packed entry or schema path. A mismatch fails
-the build instead of becoming a runtime renderer guess.
+Every layout in `src/layouts.ts` is a named renderable with:
 
-The canonical-document TypeScript declaration is generated from
-`src/schemas/canonical-document.schema.json`, the CPS-03 normative schema.
-Giorgia's runtime validation uses that same JSON Schema. The previous local Zod
-copy is not an independent contract.
+- a package-relative Handlebars entry;
+- the exact direct partials used by that entry;
+- the canonical-document input schema; and
+- an explicit response content type.
 
-## Feed renderables
+Every reachable partial is declared the same way. Dynamic partials, inline
+partial decorators, and partial blocks were replaced with static dependencies.
+The manifest also declares the retained `social-image` template as a 1080 by
+1350 JPEG raster. Remotion is not a CPS renderable.
 
-`homepage`, `category-page`, `search-page`, and `link-in-bio` are request-scoped
-HTML renderables using the root `render` export. Spritz supplies a `document`
-and `feed` object for each; Cronkite validates that envelope against the packed
-`dist/schemas/feed-renderable-input.schema.json` before constructing the page
-document. The build checks the schema path and renderer export for every
-declaration, then emits the six-renderable manifest into `dist`.
+## Helpers and document ownership
 
-## Declared system pages
+The templates use only Cronkite's built-in and closed helper set. Primitive
+helpers come from Cronkite; outlet-specific values come from `helperConfig`;
+provider URLs come from `embedRegistry`. Article URLs, homepage slot
+distribution, embed identifiers, search copy, status variants, and social-card
+QR markup are supplied as document data. The legacy local renderer remains only
+for Storybook and output-parity tests.
 
-The manifest owns localized copy for 404, search, and coming-soon pages in
-Spanish, English, and Italian. The current Spanish coming-soon copy is preserved
-exactly:
+Search copy is complete for Spanish, English, and Italian, including headings,
+form labels, empty and error states, result grammar, and pagination. It is
+serialized into the page for the client-side search script instead of being
+selected from `outletConfig`.
 
-- `Próximamente`
-- `Estamos preparando algo especial. Vuelve pronto para descubrirlo.`
+## System pages
 
-The system-page descriptors include their routes, output keys, cache policy,
-language expansion, and copy. Giorgia declares `es` as its default and supports
-`es`, `en`, and `it`.
+The manifest owns complete canonical documents for 404, search, and coming-soon
+pages in all three supported languages. Spanish is the unprefixed default:
 
-## Localized search title
+- `html/404/index.html`, `html/search/index.html`, and
+  `html/coming-soon/index.html`;
+- `html/en/...` for English; and
+- `html/it/...` for Italian.
 
-`outletConfig.searchTitle` declares a title for each supported language:
-`Buscar`, `Search`, and `Cerca` for `es`, `en`, and `it`. The TypeScript contract
-requires complete language coverage. Giorgia's search page uses the map for its
-HTML, Open Graph, and Twitter titles; Cronkite #106 uses it for the canonical
-document title after that contract is deployed. Search controls in the page body
-remain Spanish and are tracked separately.
+Each system-page group names its renderable, content type, cache policy, output
+key, and complete input document. The Spanish coming-soon copy remains:
+`Próximamente` and
+`Estamos preparando algo especial. Vuelve pronto para descubrirlo.`
 
-The map can be released only after Cronkite accepts and uses per-language
-`searchTitle` values in production (fifthbell/cronkite#106). Until then, the
-published scalar package remains the compatible version.
+## Static assets
 
-## Search resource contract and known producer gap
+Fonts, `fonts.css`, compiled Giorgia CSS, navigation JavaScript, the logo, and
+default social images are explicit `staticAssets`. Templates link to
+`/content/styles/giorgia.css`; CSS is no longer injected into each document.
+Every destination key maps to one package source with its content type and cache
+policy.
 
-The browser search page fetches
-`search-manifest-{language}.json` from the configured content root. That file
-contains `files.currentMonth` plus zero or more `files.yearly` shard paths. Each
-referenced shard contains an `articles` array; an article requires `title` and
-`slug` and may contain `excerpt`, `photoUrl`, and `publishedAt`.
+## Search resources
 
-The packed schemas are:
+The browser search page still reads `search-manifest-{language}.json` and its
+referenced index shards from the configured content origin. Spritz owns those
+CMS resources; they are not static assets or executable Giorgia capabilities.
 
-- `dist/schemas/search-manifest.schema.json`
-- `dist/schemas/search-index.schema.json`
+## Verification boundaries
 
-The `search-page` renderable declares the language-specific manifest as a
-CMS-owned resource. The manifest schema documents that every referenced file
-must validate against the index-shard schema and names that schema in its
-`x-referenced-payload-schema` annotation.
-
-Repository inspection on 2026-09-15 confirmed that Spritz does not currently
-produce either resource. The search layout remains declared because it is a
-real Giorgia capability, but the missing producer is now an explicit CMS-02
-compatibility gap rather than an invisible renderer failure.
-
-## Asset renderables and capabilities
-
-Giorgia declares:
-
-- `social-image`, using the existing `buildInstagramImageHtml` HTML-raster
-  export at 1080 by 1350 JPEG;
-- `short-video`, using the bundleable `dist/video/index.js` Remotion entry and
-  `ModoItalianoShort` composition;
-- `fonts`, using `fontFiles`;
-- `assets`, using `assetFiles`.
-
-The capabilities return disjoint file sets: fonts and their stylesheet use
-`content/fonts/`, while template assets use `assets/`. Cronkite publishes both
-sets during basement publication, so each output key must appear exactly once.
-
-The short-video template accepts caller-owned brand colors, identity, URLs,
-logo/background assets, slide copy, and optional audio. It contains no
-Fifthbell or Sanremo branding. `npm run verify:packed-remotion` builds and packs
-Giorgia, installs the tarball into a clean consumer directory, reads the
-data-only manifest, and bundles the declared entry from the installed package.
-
-Giorgia has live-program UI code, but it does not yet publish a generic
-program-template contract. The manifest therefore does not advertise a
-`live-program` renderable or write-ordering rule.
+The build validates the local manifest schema and package alignment. Unit tests
+also inspect every template dependency, validate all system documents, reject
+the retired executable contract, and compare declarative output with the local
+renderer for article, homepage, category, search, and link-in-bio fixtures.
+Deployment and live-runtime verification remain outside this repository's local
+verification boundary.

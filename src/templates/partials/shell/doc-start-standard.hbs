@@ -6,6 +6,7 @@
     <link rel='preload' as='font' type='font/woff2' href='/content/fonts/barlow-latin-400-normal.woff2' crossorigin />
     <link rel='preload' as='font' type='font/woff2' href='/content/fonts/barlow-latin-700-normal.woff2' crossorigin />
     <link href='/content/fonts/fonts.css' rel='stylesheet' />
+    <link href='/content/styles/giorgia.css' rel='stylesheet' />
     {{#if (eq layout 'homepage')}}
       {{#if hero.url}}
         <link rel='preload' as='image' href='{{hero.url}}' fetchpriority='high' />
@@ -15,9 +16,9 @@
         <link rel='preload' as='image' href='{{featuredImage.url}}' fetchpriority='high' />
       {{/if}}
     {{/if}}
-    <meta name='description' content='{{#if seo.metaDescription}}{{seo.metaDescription}}{{else if excerpt}}{{excerpt}}{{else}}{{resolveHeadTitle this}}{{/if}}' />
+    <meta name='description' content='{{#if seo.metaDescription}}{{seo.metaDescription}}{{else}}{{excerpt}}{{/if}}' />
     <link rel='canonical' href='{{canonicalUrl}}' />
-    <meta property='og:title' content='{{resolveHeadTitle this}}' />
+    <meta property='og:title' content='{{#if seo.metaTitle}}{{seo.metaTitle}}{{else}}{{title}} | ModoItaliano{{/if}}' />
     <meta property='og:description' content='{{#if seo.metaDescription}}{{seo.metaDescription}}{{else}}{{excerpt}}{{/if}}' />
     <meta property='og:url' content='{{canonicalUrl}}' />
     <meta property='og:site_name' content='ModoItaliano' />
@@ -26,7 +27,7 @@
     {{else}}
       <meta property='og:type' content='website' />
     {{/if}}
-    {{#with (socialImageUrl (socialImageCandidate this)) as |socialImage|}}
+    {{#with (socialImageUrl this) as |socialImage|}}
       {{#if socialImage}}
         <meta property='og:image' content='{{socialImage}}' />
         <meta property='og:image:type' content='image/jpeg' />
@@ -42,10 +43,9 @@
       {{/if}}
     {{/with}}
     <meta name='twitter:site' content='@modoitaliano' />
-    <meta name='twitter:title' content='{{resolveHeadTitle this}}' />
+    <meta name='twitter:title' content='{{#if seo.metaTitle}}{{seo.metaTitle}}{{else}}{{title}} | ModoItaliano{{/if}}' />
     <meta name='twitter:description' content='{{#if seo.metaDescription}}{{seo.metaDescription}}{{else}}{{excerpt}}{{/if}}' />
-    <title>{{resolveHeadTitle this}}</title>
-    <style>{{{styles}}}</style>
+    <title>{{#if seo.metaTitle}}{{seo.metaTitle}}{{else}}{{title}} | ModoItaliano{{/if}}</title>
     <script>
       document.documentElement.classList.add('spritz-highlights-pending');
       window.setTimeout(function () {

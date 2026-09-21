@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/html';
 import { render } from '../src/renderer.browser';
 import type { CanonicalArticle } from '../src/types/canonical-article';
+import { searchCopyByLanguage } from '../src/search-copy';
 
 const nowIso = new Date().toISOString();
 
@@ -31,7 +32,8 @@ const searchPageFixture: CanonicalArticle = {
       { name: 'Deportes', slug: 'deportes' }
     ]
   },
-  articles: []
+  articles: [],
+  searchCopy: searchCopyByLanguage.es
 };
 
 const meta = {
@@ -53,6 +55,7 @@ export const English: Story = {
     canonicalUrl: 'https://modoitaliano.fm/en/search',
     title: 'Search',
     language: 'en',
+    searchCopy: searchCopyByLanguage.en,
     seo: { metaTitle: 'Search | ModoItaliano', metaDescription: 'Search ModoItaliano news.' }
   }
 };
@@ -64,6 +67,7 @@ export const Italian: Story = {
     canonicalUrl: 'https://modoitaliano.fm/it/search',
     title: 'Cerca',
     language: 'it',
+    searchCopy: searchCopyByLanguage.it,
     seo: { metaTitle: 'Cerca | ModoItaliano', metaDescription: 'Cerca le notizie di ModoItaliano.' }
   }
 };

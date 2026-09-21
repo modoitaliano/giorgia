@@ -1,4 +1,5 @@
 import type { CanonicalArticle, SelfReference } from '../../src/types/canonical-article';
+import { distributeHomepageArticles } from '../../src/homepage-distributor';
 
 const categoryPool = [
   { name: 'Politics', slug: 'politics' },
@@ -110,6 +111,7 @@ export const homepageFixture: CanonicalArticle = {
     categories: categoryPool
   },
   articles,
+  homepageSlots: distributeHomepageArticles(articles, FIXTURE_NOW, true),
   heroSlides: [
     {
       image: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1600&h=900&fit=crop',

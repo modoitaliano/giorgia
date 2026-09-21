@@ -1,9 +1,6 @@
 import Handlebars from 'handlebars';
 import { layoutNames, type LayoutName } from './layouts.js';
 import { canonicalArticleSchema, type CanonicalDocument } from './types/canonical-article.js';
-import { distributeHomepageArticles } from './homepage-distributor.js';
-import { buildSofascoreAttackMomentumUrl, buildSofascoreMatchUrl } from './utils/sofascore.js';
-import { outletConfig } from './outlet-config.js';
 
 export type { LayoutName } from './layouts.js';
 
@@ -15,106 +12,9 @@ export type RendererAssets = {
 
 let initialized = false;
 const layoutCache = new Map<LayoutName, HandlebarsTemplateDelegate>();
-let runtimeStyles = '';
 const removedBlockTypes = new Set(['truthSocial', 'truthsocial', 'truth-social', 'truth_social']);
 const defaultSocialImageUrl = 'https://cdn.modoitaliano.fm/assets/default-og.jpg';
 const homepageTitle = 'ModoItaliano - Música italiana, noticias y lanzamientos';
-
-function normalizePathInput(value: unknown): string {
-  if (typeof value !== 'string') return '';
-
-  const trimmed = value.trim();
-  if (!trimmed) return '';
-
-  try {
-    if (/^https?:\/\//i.test(trimmed)) {
-      const parsed = new URL(trimmed);
-      const normalizedAbsolute = `/${(parsed.pathname || '').replace(/^\/+/, '')}`.replace(/\/{2,}/g, '/');
-      if (normalizedAbsolute !== '/' && normalizedAbsolute.endsWith('/')) {
-        return normalizedAbsolute.slice(0, -1);
-      }
-      return normalizedAbsolute || '/';
-    }
-  } catch {
-    // Fall back to raw string normalization below.
-  }
-
-  const withoutQueryOrHash = trimmed.split('#')[0].split('?')[0];
-  const normalized = `/${withoutQueryOrHash.replace(/^\/+/, '')}`.replace(/\/{2,}/g, '/');
-  if (normalized !== '/' && normalized.endsWith('/')) {
-    return normalized.slice(0, -1);
-  }
-  return normalized;
-}
-
-function cleanPathSegment(value: unknown): string {
-  if (typeof value !== 'string') return '';
-  return value.trim().replace(/^\/+|\/+$/g, '');
-}
-
-function buildLocalePath(path: string, language: unknown): string {
-  const normalizedLanguage = language === 'en' || language === 'it' ? language : 'es';
-  if (!path) return normalizedLanguage === 'es' ? '/' : `/${normalizedLanguage}`;
-
-  const normalized = String(path).startsWith('/') ? String(path) : `/${path}`;
-  const localizedPath = normalized.match(/^\/(en|es|it)(?=\/|$)/)?.[1];
-  if (localizedPath && localizedPath !== normalizedLanguage) {
-    return normalized;
-  }
-
-  if (localizedPath === 'es') {
-    return normalized.replace(/^\/es(?=\/|$)/, '') || '/';
-  }
-
-  if (localizedPath) return normalized;
-
-  if (normalizedLanguage === 'es') {
-    return normalized;
-  }
-
-  return `/${normalizedLanguage}${normalized}`;
-}
-
-function resolveArticleUrl(input: {
-  url?: unknown;
-  canonicalUrl?: unknown;
-  slug?: unknown;
-  categories?: unknown;
-  category?: unknown;
-  language?: unknown;
-}): string {
-  const explicitUrl = normalizePathInput(input.url);
-  if (explicitUrl && explicitUrl !== '/') {
-    return buildLocalePath(explicitUrl, input.language);
-  }
-
-  const canonicalUrl = normalizePathInput(input.canonicalUrl);
-  if (canonicalUrl && canonicalUrl !== '/') {
-    return buildLocalePath(canonicalUrl, input.language);
-  }
-
-  const slugRaw = typeof input.slug === 'string' ? input.slug : '';
-  const normalizedSlugPath = normalizePathInput(slugRaw);
-  const slugSegments = normalizedSlugPath.split('/').filter(Boolean);
-  if (slugSegments.length > 1) {
-    return buildLocalePath(normalizedSlugPath, input.language);
-  }
-
-  const slugSegment = cleanPathSegment(slugRaw);
-  const categories = Array.isArray(input.categories) ? input.categories : [];
-  const primaryCategorySlug =
-    cleanPathSegment((categories[0] as { slug?: unknown } | undefined)?.slug) || cleanPathSegment((input.category as { slug?: unknown } | undefined)?.slug);
-
-  if (slugSegment && primaryCategorySlug) {
-    return buildLocalePath(`/${primaryCategorySlug}/${slugSegment}`, input.language);
-  }
-
-  if (slugSegment) {
-    return buildLocalePath(`/${slugSegment}`, input.language);
-  }
-
-  return buildLocalePath('/', input.language);
-}
 
 function normalizeDocument(doc: CanonicalDocument): CanonicalDocument {
   const rawBody = (doc as { body?: unknown }).body;
@@ -138,128 +38,39 @@ function registerHelpers(): void {
     return items.slice(start, end);
   });
   Handlebars.registerHelper('uppercase', (value: unknown) => String(value ?? '').toUpperCase());
-  Handlebars.registerHelper('coalesce', (...args: unknown[]) => {
-    const values = args.slice(0, -1);
-    for (const value of values) {
-      if (value === null || value === undefined) continue;
-      if (typeof value === 'string' && value.trim().length === 0) continue;
-      if (Array.isArray(value) && value.length === 0) continue;
-      return value;
-    }
-    return '';
-  });
-  Handlebars.registerHelper('articleUrl', (...args: unknown[]) => {
-    const options = args[args.length - 1] as Handlebars.HelperOptions | undefined;
-    const hash = options?.hash as Record<string, unknown> | undefined;
-    const root = options?.data?.root as Record<string, unknown> | undefined;
-
-    return resolveArticleUrl({
-      url: hash?.url,
-      canonicalUrl: hash?.canonicalUrl,
-      slug: hash?.slug,
-      categories: hash?.categories,
-      category: hash?.category,
-      language: hash?.language ?? root?.language
-    });
-  });
+  Handlebars.registerHelper('coalesce', (...args: unknown[]) => args.slice(0, -1).find((value) => value !== null && value !== undefined) ?? null);
   Handlebars.registerHelper('formatDate', (isoString: string) => {
     if (!isoString) return '';
     try {
       const date = new Date(isoString);
-      const now = new Date();
-      const isWithin24h = now.getTime() - date.getTime() < 24 * 60 * 60 * 1000;
-      if (isWithin24h) {
-        return date.toLocaleTimeString('es-ES', {
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true,
-          timeZone: 'America/New_York'
-        });
-      } else {
-        return date.toLocaleDateString('es-ES', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          timeZone: 'America/New_York'
-        });
-      }
+      return new Intl.DateTimeFormat('es-ES', {
+        dateStyle: 'long',
+        timeZone: 'America/New_York'
+      }).format(date);
     } catch {
       return isoString;
     }
   });
-  Handlebars.registerHelper('xStatusUrl', (url: string) => {
-    if (!url) return '';
-    try {
-      const parsed = new URL(url);
-      if (parsed.hostname === 'x.com' || parsed.hostname === 'www.x.com') {
-        return `https://twitter.com${parsed.pathname}`;
+  Handlebars.registerHelper('embedUrl', (name: unknown, options: Handlebars.HelperOptions) => {
+    const templates: Record<string, string> = {
+      'x-status': 'https://twitter.com/{username}/status/{id}',
+      'x-embed': 'https://platform.twitter.com/embed/Tweet.html?id={id}&dnt=true',
+      instagram: 'https://www.instagram.com/p/{shortcode}/embed/',
+      tiktok: 'https://www.tiktok.com/embed/v2/{id}',
+      spotify: 'https://open.spotify.com/embed/{kind}/{id}',
+      'sofascore-widget': 'https://widgets.sofascore.com/embed/attackMomentum?id={id}&widgetTheme={widgetTheme}',
+      'sofascore-match': 'https://www.sofascore.com/football/match#id:{id}'
+    };
+    const template = typeof name === 'string' ? templates[name] : undefined;
+    if (!template) throw new Error(`Unknown embed provider "${String(name)}"`);
+    return template.replace(/\{([A-Za-z][A-Za-z0-9]*)\}/g, (_token, parameter: string) => {
+      const value = options.hash[parameter];
+      if (value === undefined || value === null || value === '') {
+        throw new Error(`Embed provider "${String(name)}" requires parameter ${parameter}`);
       }
-      return url;
-    } catch {
-      return url;
-    }
+      return encodeURIComponent(String(value));
+    });
   });
-  Handlebars.registerHelper('xEmbedUrl', (url: string) => {
-    if (!url) return '';
-
-    const buildEmbedUrl = (tweetId: string) => `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}&dnt=true`;
-    const idFromRaw = url.match(/status\/(\d+)/)?.[1];
-
-    try {
-      const parsed = new URL(url);
-      const host = parsed.hostname.replace(/^www\./, '');
-      if (host === 'x.com' || host === 'twitter.com') {
-        const tweetId = parsed.pathname.match(/\/[^/]+\/status\/(\d+)/)?.[1];
-        if (tweetId) return buildEmbedUrl(tweetId);
-      }
-      return idFromRaw ? buildEmbedUrl(idFromRaw) : '';
-    } catch {
-      return idFromRaw ? buildEmbedUrl(idFromRaw) : '';
-    }
-  });
-  Handlebars.registerHelper('xTweetId', (url: string) => {
-    if (!url) return '';
-    const idFromRaw = url.match(/status\/(\d+)/)?.[1];
-    if (idFromRaw) return idFromRaw;
-
-    try {
-      const parsed = new URL(url);
-      const host = parsed.hostname.replace(/^www\./, '');
-      if (host === 'x.com' || host === 'twitter.com') {
-        return parsed.pathname.match(/\/[^/]+\/status\/(\d+)/)?.[1] ?? '';
-      }
-      return '';
-    } catch {
-      return '';
-    }
-  });
-  Handlebars.registerHelper('instagramEmbedUrl', (url: string) => {
-    if (!url) return '';
-    const normalized = url.endsWith('/') ? url : `${url}/`;
-    return `${normalized}embed/`;
-  });
-  Handlebars.registerHelper('tiktokEmbedUrl', (url: string) => {
-    if (!url) return '';
-    const match = url.match(/\/video\/(\d+)/);
-    if (!match) return url;
-    return `https://www.tiktok.com/embed/v2/${match[1]}`;
-  });
-  Handlebars.registerHelper('spotifyEmbedUrl', (url: string) => {
-    if (!url) return '';
-
-    try {
-      const parsed = new URL(url);
-      if (parsed.hostname.replace(/^www\./, '') !== 'open.spotify.com') return url;
-      if (parsed.pathname.startsWith('/embed/')) return url;
-
-      parsed.pathname = `/embed${parsed.pathname}`;
-      return parsed.toString();
-    } catch {
-      return url;
-    }
-  });
-  Handlebars.registerHelper('sofascoreWidgetUrl', (id: unknown) => buildSofascoreAttackMomentumUrl(id));
-  Handlebars.registerHelper('sofascoreMatchUrl', (id: unknown) => buildSofascoreMatchUrl(id));
   Handlebars.registerHelper('jsonString', (value: unknown) => {
     if (value === undefined) return 'null';
     return JSON.stringify(value);
@@ -279,11 +90,7 @@ function registerHelpers(): void {
     }
 
     if (page.layout === 'search-page') {
-      const language = page.language;
-      if (!language || !Object.hasOwn(outletConfig.searchTitle, language)) {
-        throw new Error(`Unsupported search-page language: ${language ?? '(missing)'}`);
-      }
-      const title = outletConfig.searchTitle[language as keyof typeof outletConfig.searchTitle];
+      const title = page.title?.trim() || 'Buscar';
       return `${title} | ModoItaliano`;
     }
 
@@ -315,47 +122,22 @@ function registerHelpers(): void {
     const baseTitle = page.title?.trim() || 'ModoItaliano';
     return `${baseTitle} | ModoItaliano`;
   });
-  Handlebars.registerHelper('socialImageUrl', (value: unknown) => {
-    if (typeof value !== 'string') return '';
-    const raw = value.trim();
-    if (!raw) return '';
-
-    const normalizePath = (pathname: string): string =>
-      pathname.replace(/\.avif$/i, '.jpg');
-
-    try {
-      const parsed = new URL(raw);
-      parsed.pathname = normalizePath(parsed.pathname);
-      return parsed.toString();
-    } catch {
-      // Support relative URLs in template data.
-      return normalizePath(raw);
-    }
-  });
-  Handlebars.registerHelper('socialImageCandidate', (doc: unknown) => {
-    if (!doc || typeof doc !== 'object') return defaultSocialImageUrl;
-
-    const page = doc as Partial<CanonicalDocument>;
-    const seoImage = page.seo?.ogImage?.trim();
-    if (seoImage) return seoImage;
-
-    if (page.layout === 'article-page') {
-      const featuredImage = page.featuredImage?.url?.trim();
-      if (featuredImage) return featuredImage;
-    }
-
-    return defaultSocialImageUrl;
-  });
+  const socialImage = (doc: unknown) => {
+    if (!doc || typeof doc !== 'object') return null;
+    const seo = (doc as { seo?: { socialImage?: unknown } }).seo;
+    const image = seo?.socialImage;
+    if (!image || typeof image !== 'object' || Array.isArray(image)) return null;
+    const candidate = image as { url?: unknown; alt?: unknown };
+    return typeof candidate.url === 'string' && candidate.url.trim() ? candidate : null;
+  };
+  Handlebars.registerHelper('socialImageUrl', (doc: unknown) => socialImage(doc)?.url ?? defaultSocialImageUrl);
+  Handlebars.registerHelper('socialImageCandidate', socialImage);
   Handlebars.registerHelper('socialImageAlt', (doc: unknown) => {
     if (!doc || typeof doc !== 'object') return 'ModoItaliano';
 
     const page = doc as Partial<CanonicalDocument>;
-    if (page.layout === 'article-page') {
-      const featuredAlt = page.featuredImage?.alt?.trim();
-      if (featuredAlt) return featuredAlt;
-    }
-
-    const title = page.seo?.metaTitle?.trim() || page.title?.trim();
+    const image = socialImage(doc);
+    const title = typeof image?.alt === 'string' && image.alt.trim() ? image.alt : page.title?.trim();
     return title || 'ModoItaliano';
   });
 }
@@ -404,7 +186,6 @@ export function initializeHandlebars(assets: RendererAssets): void {
   registerHelpers();
   registerPartials(assets.partials);
   compileLayouts(assets.layouts);
-  runtimeStyles = assets.styles;
   initialized = true;
 }
 
@@ -424,17 +205,5 @@ export function renderWithAssets(doc: CanonicalDocument, assets: RendererAssets)
     throw new Error(`Layout template missing for \"${parsed.layout}\"`);
   }
 
-  // Build the template context, enriching homepage renders with pre-distributed
-  // article slots so templates do not need to perform index arithmetic.
-  const docExtra = doc as Record<string, unknown>;
-  const showBreakingNews = parsed.layout === 'homepage' && Boolean(parsed.breakingNews) && docExtra['showBreakingNews'] !== false;
-
-  const homepageSlots = parsed.layout === 'homepage' ? distributeHomepageArticles(parsed.articles ?? [], new Date(), showBreakingNews) : undefined;
-
-  return template({
-    ...parsed,
-    ...(homepageSlots !== undefined ? { homepageSlots } : {}),
-    styles: runtimeStyles,
-    logoLink: parsed.language === 'es' ? '/' : `/${parsed.language}`
-  });
+  return template(parsed);
 }

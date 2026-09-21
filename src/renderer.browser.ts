@@ -34,14 +34,19 @@ import blockSpotifyHbs from './templates/partials/blocks/spotify.hbs?raw';
 import blockPullQuoteHbs from './templates/partials/blocks/pull-quote.hbs?raw';
 
 import componentArticleMainHbs from './templates/partials/components/article-main.hbs?raw';
+import componentBodyBlockHbs from './templates/partials/components/body-block.hbs?raw';
 import standaloneMainHbs from './templates/partials/components/standalone-main.hbs?raw';
 import componentBreakingNewsHbs from './templates/partials/components/breaking-news.hbs?raw';
 import componentBreakingNewsLiveUpdatesColumnHbs from './templates/partials/components/breaking-news/live-updates-column.hbs?raw';
 import componentSnackHbs from './templates/partials/components/snack.hbs?raw';
+import componentSnackTopStoryHbs from './templates/partials/components/snack-top-story.hbs?raw';
+import componentSnackMetaImageRowHbs from './templates/partials/components/snack-meta-image-row.hbs?raw';
+import componentSnackMetaInlineHbs from './templates/partials/components/snack-meta-inline.hbs?raw';
 import componentHeadlineHbs from './templates/partials/components/headline.hbs?raw';
 import componentHeroHbs from './templates/partials/components/hero.hbs?raw';
 import componentHeroEditorialHbs from './templates/partials/components/hero-editorial.hbs?raw';
 import componentSpotlightHeroHbs from './templates/partials/components/spotlight-hero.hbs?raw';
+import componentSpotlightHeroSlidesHbs from './templates/partials/components/spotlight-hero-slides.hbs?raw';
 import componentEditorialHeroHbs from './templates/partials/components/editorial-hero.hbs?raw';
 import componentTrendingHbs from './templates/partials/components/trending.hbs?raw';
 import componentHomeMainHbs from './templates/partials/components/home/main.hbs?raw';
@@ -108,12 +113,17 @@ const assets: RendererAssets = {
     'blocks/spotify': blockSpotifyHbs,
     'blocks/pull-quote': blockPullQuoteHbs,
     'components/article-main': componentArticleMainHbs,
+    'components/body-block': componentBodyBlockHbs,
     'components/standalone-main': standaloneMainHbs,
     'components/breaking-news': componentBreakingNewsHbs,
     'components/breaking-news/live-updates-column': componentBreakingNewsLiveUpdatesColumnHbs,
     'components/snack': componentSnackHbs,
+    'components/snack-top-story': componentSnackTopStoryHbs,
+    'components/snack-meta-image-row': componentSnackMetaImageRowHbs,
+    'components/snack-meta-inline': componentSnackMetaInlineHbs,
     'components/headline': componentHeadlineHbs,
     'components/spotlight-hero': componentSpotlightHeroHbs,
+    'components/spotlight-hero-slides': componentSpotlightHeroSlidesHbs,
     'components/editorial-hero': componentEditorialHeroHbs,
     'components/hero': componentHeroHbs,
     'components/hero-editorial': componentHeroEditorialHbs,

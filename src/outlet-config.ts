@@ -1,11 +1,5 @@
 const supportedLanguages = ['es', 'en', 'it'] as const;
 
-const searchTitle = {
-  es: 'Buscar',
-  en: 'Search',
-  it: 'Cerca',
-} satisfies Record<(typeof supportedLanguages)[number], string>;
-
 export const outletConfig = {
   siteName: 'ModoItaliano',
   publicSiteUrl: 'https://modoitaliano.fm',
@@ -24,7 +18,6 @@ export const outletConfig = {
     slug: 'noticias-destacadas'
   },
   linkInBioRoute: '/instagram',
-  searchTitle,
   searchDescriptions: {
     es: 'Busca noticias de ModoItaliano.',
     en: 'Search ModoItaliano news.',

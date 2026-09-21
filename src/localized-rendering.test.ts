@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { render } from './renderer.node.js';
-import { outletConfig } from './outlet-config.js';
 import type { CanonicalArticle } from './types/canonical-article.js';
+import { searchCopyByLanguage } from './search-copy.js';
 
 const article: CanonicalArticle = {
   id: 'translation-contract',
@@ -47,15 +47,16 @@ describe('localized renderer contract', () => {
       ...article,
       layout: 'search-page',
       language,
-      title: 'Buscar',
+      title,
+      searchCopy: searchCopyByLanguage[language],
       slug: route,
       canonicalUrl: `https://modoitaliano.fm${route}`,
     });
 
-    expect(outletConfig.searchTitle[language]).toBe(title);
     expect(html).toContain(`<html lang='${language}'`);
     expect(html).toContain(`<title>${title} | ModoItaliano</title>`);
     expect(html).toContain(`<meta property='og:title' content='${title} | ModoItaliano' />`);
     expect(html).toContain(`<meta name='twitter:title' content='${title} | ModoItaliano' />`);
+    expect(html).toContain(searchCopyByLanguage[language].heading);
   });
 });

@@ -19,6 +19,7 @@ const baseDocument: CanonicalDocument = {
   body: [],
   navigation: { categories: [] },
   articles: [],
+  seo: { metaTitle: 'ModoItaliano - Música italiana, noticias y lanzamientos' },
   showHero: false,
   showEditorialHero: false,
   showBreakingNews: false,
@@ -117,7 +118,8 @@ describe('page shell', () => {
     expect(html).toContain("class='transition-page'");
     expect(html).toContain("style='view-transition-name: stream-player;'");
     expect(html).toContain("data-swup-persist='stream-player'");
-    expect(html).toContain('::view-transition-group(stream-player)');
+    expect(html).toContain("<link href='/content/styles/giorgia.css' rel='stylesheet' />");
+    expect(html).not.toContain('<style>@theme');
     expect(html).toContain("src='/assets/giorgia-navigation.js'");
     expect(html).toContain('data-swup-ignore-script');
   });

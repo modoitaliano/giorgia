@@ -75,7 +75,7 @@
 
   <div class='col-span-12 lg:col-span-7 prose dark:prose-invert max-w-none'>
     {{#each body}}
-      {{> (lookup . 'type')}}
+      {{> components/body-block}}
     {{/each}}
 
     {{#if articles.[1]}}

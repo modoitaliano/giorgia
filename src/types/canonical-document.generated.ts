@@ -140,6 +140,7 @@ export type CronkiteCanonicalDocument =
         | {
             type: "x";
             url: string;
+            tweetId: string;
             [k: string]: unknown;
           }
         | {
@@ -150,11 +151,14 @@ export type CronkiteCanonicalDocument =
         | {
             type: "tiktok";
             url: string;
+            videoId: string;
             [k: string]: unknown;
           }
         | {
             type: "spotify";
             url: string;
+            embedKind: "track" | "album" | "playlist" | "episode" | "show";
+            embedId: string;
             [k: string]: unknown;
           }
         | {
@@ -168,6 +172,11 @@ export type CronkiteCanonicalDocument =
         metaTitle?: string;
         metaDescription?: string;
         ogImage?: string;
+        socialImage?: {
+          url: string;
+          alt: string;
+          [k: string]: unknown;
+        };
         [k: string]: unknown;
       };
       navigation?: {
@@ -422,6 +431,7 @@ export type CronkiteCanonicalDocument =
         | {
             type: "x";
             url: string;
+            tweetId: string;
             [k: string]: unknown;
           }
         | {
@@ -432,11 +442,14 @@ export type CronkiteCanonicalDocument =
         | {
             type: "tiktok";
             url: string;
+            videoId: string;
             [k: string]: unknown;
           }
         | {
             type: "spotify";
             url: string;
+            embedKind: "track" | "album" | "playlist" | "episode" | "show";
+            embedId: string;
             [k: string]: unknown;
           }
         | {
@@ -450,6 +463,11 @@ export type CronkiteCanonicalDocument =
         metaTitle?: string;
         metaDescription?: string;
         ogImage?: string;
+        socialImage?: {
+          url: string;
+          alt: string;
+          [k: string]: unknown;
+        };
         [k: string]: unknown;
       };
       navigation?: {

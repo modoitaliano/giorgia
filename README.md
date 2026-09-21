@@ -8,8 +8,8 @@ Server-side renderer and Handlebars template bundle for ModoItaliano pages.
 - Supports the layouts declared by the packaged Cronkite manifest, including
   article, homepage, category, search, 404, coming-soon, live-story,
   link-in-bio, media, and standalone pages
-- Ships reusable Handlebars templates, partial dependency metadata, and compiled CSS
-- Ships provider-neutral social-image and Remotion short-video renderables
+- Ships declarative Handlebars templates, explicit partial dependencies, and static assets
+- Ships a provider-neutral social-card template for Cronkite rasterization
 - Preserves the masthead, footer, and radio player across same-language internal navigation
 
 ## Installation
@@ -18,32 +18,29 @@ Server-side renderer and Handlebars template bundle for ModoItaliano pages.
 npm install @modoitaliano/giorgia
 ```
 
-## Basic usage
+## Cronkite usage
 
-```ts
-import { render } from "@modoitaliano/giorgia";
+Cronkite reads `dist/cronkite-manifest.json`, validates the nested
+`templateRendering` contract, and compiles the declared package templates. Page
+publication does not import or execute Giorgia JavaScript.
 
-const html = render(doc);
-```
-
-`doc` must match the normative canonical schema in
+Each supplied document must match the normative canonical schema in
 [src/schemas/canonical-document.schema.json](src/schemas/canonical-document.schema.json).
-TypeScript declarations are generated from that schema; runtime rendering validates
-against the same artifact.
+TypeScript declarations and declarative runtime validation use that same artifact.
 
 ## Exports
 
 - `@modoitaliano/giorgia` -> renderer entrypoint
-- `@modoitaliano/giorgia/cronkite-manifest.json` -> data-only CLS capability manifest
-- `@modoitaliano/giorgia/video` -> bundleable Remotion short-video entrypoint
+- `@modoitaliano/giorgia/cronkite-manifest.json` -> data-only declarative template manifest
+- `@modoitaliano/giorgia/video` -> legacy non-CPS Remotion entrypoint
 - `@modoitaliano/giorgia/schemas/canonical-document.schema.json` -> canonical input contract
 - `@modoitaliano/giorgia/schemas/feed-renderable-input.schema.json` -> feed publication envelope
 - `@modoitaliano/giorgia/schemas/search-manifest.schema.json` and
   `@modoitaliano/giorgia/schemas/search-index.schema.json` -> static-search resource contract
 - `@modoitaliano/giorgia/partial-deps.json` -> partial-to-layout dependency map
 
-The root module also exports `cronkiteManifest`, `outletConfig`, `version`,
-`render`, `fontFiles`, `assetFiles`, and `buildInstagramImageHtml`. See
+The root module retains local renderer exports for Storybook and compatibility,
+but those exports are not part of Cronkite's opt-in path. See
 [docs/cronkite-compatibility.md](docs/cronkite-compatibility.md) for ownership,
 validation, search, and asset-rendering details.
 

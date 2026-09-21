@@ -4,10 +4,10 @@ import { render } from '../src/renderer.browser';
 import type { CanonicalArticle } from '../src/types/canonical-article';
 
 const nowIso = new Date().toISOString();
-const comingSoonContract = cronkiteManifest.systemPages.find((page) => page.layout === 'coming-soon');
+const comingSoonContract = cronkiteManifest.templateRendering.systemPages.find((page) => page.renderable === 'coming-soon');
 if (!comingSoonContract) throw new Error('coming-soon manifest entry missing');
-const spanishCopy = comingSoonContract.copy.es;
-if (!spanishCopy) throw new Error('coming-soon Spanish copy missing');
+const spanishDocument = comingSoonContract.variants.find((variant) => variant.document.language === 'es')?.document;
+if (!spanishDocument) throw new Error('coming-soon Spanish document missing');
 
 const comingSoonFixture: CanonicalArticle = {
   id: 'coming-soon-story',
@@ -18,8 +18,8 @@ const comingSoonFixture: CanonicalArticle = {
   publishedAt: nowIso,
   updatedAt: nowIso,
   status: 'published',
-  title: spanishCopy.title,
-  excerpt: spanishCopy.description,
+  title: String(spanishDocument.title),
+  excerpt: String(spanishDocument.excerpt),
   language: 'es',
   featured: false,
   authors: [{ name: 'ModoItaliano Desk', slug: 'modoitaliano-desk' }],

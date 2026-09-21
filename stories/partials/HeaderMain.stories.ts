@@ -112,7 +112,7 @@ const hydrateNowPlayingPreview = (item: NowPlayingStoryItem): void => {
 const meta = {
   title: 'Partials/Headers/Main',
   render: (args) => template(args),
-  args: { ...homepageFixture, logoLink: '/' }
+  args: homepageFixture
 } satisfies Meta;
 
 export default meta;

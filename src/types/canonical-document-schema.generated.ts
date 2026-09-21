@@ -421,8 +421,12 @@ export const canonicalDocumentSchema = {
                     type: "string",
                     format: "uri",
                   },
+                  tweetId: {
+                    type: "string",
+                    pattern: "^[0-9]+$",
+                  },
                 },
-                required: ["type", "url"],
+                required: ["type", "url", "tweetId"],
               },
               {
                 type: "object",
@@ -449,8 +453,12 @@ export const canonicalDocumentSchema = {
                     type: "string",
                     format: "uri",
                   },
+                  videoId: {
+                    type: "string",
+                    pattern: "^[0-9]+$",
+                  },
                 },
-                required: ["type", "url"],
+                required: ["type", "url", "videoId"],
               },
               {
                 type: "object",
@@ -463,8 +471,16 @@ export const canonicalDocumentSchema = {
                     type: "string",
                     format: "uri",
                   },
+                  embedKind: {
+                    type: "string",
+                    enum: ["track", "album", "playlist", "episode", "show"],
+                  },
+                  embedId: {
+                    type: "string",
+                    pattern: "^[A-Za-z0-9]+$",
+                  },
                 },
-                required: ["type", "url"],
+                required: ["type", "url", "embedKind", "embedId"],
               },
               {
                 type: "object",
@@ -496,6 +512,20 @@ export const canonicalDocumentSchema = {
             },
             ogImage: {
               type: "string",
+            },
+            socialImage: {
+              type: "object",
+              properties: {
+                url: {
+                  type: "string",
+                  minLength: 1,
+                },
+                alt: {
+                  type: "string",
+                  minLength: 1,
+                },
+              },
+              required: ["url", "alt"],
             },
           },
         },
@@ -1287,8 +1317,12 @@ export const canonicalDocumentSchema = {
                     type: "string",
                     format: "uri",
                   },
+                  tweetId: {
+                    type: "string",
+                    pattern: "^[0-9]+$",
+                  },
                 },
-                required: ["type", "url"],
+                required: ["type", "url", "tweetId"],
               },
               {
                 type: "object",
@@ -1315,8 +1349,12 @@ export const canonicalDocumentSchema = {
                     type: "string",
                     format: "uri",
                   },
+                  videoId: {
+                    type: "string",
+                    pattern: "^[0-9]+$",
+                  },
                 },
-                required: ["type", "url"],
+                required: ["type", "url", "videoId"],
               },
               {
                 type: "object",
@@ -1329,8 +1367,16 @@ export const canonicalDocumentSchema = {
                     type: "string",
                     format: "uri",
                   },
+                  embedKind: {
+                    type: "string",
+                    enum: ["track", "album", "playlist", "episode", "show"],
+                  },
+                  embedId: {
+                    type: "string",
+                    pattern: "^[A-Za-z0-9]+$",
+                  },
                 },
-                required: ["type", "url"],
+                required: ["type", "url", "embedKind", "embedId"],
               },
               {
                 type: "object",
@@ -1362,6 +1408,20 @@ export const canonicalDocumentSchema = {
             },
             ogImage: {
               type: "string",
+            },
+            socialImage: {
+              type: "object",
+              properties: {
+                url: {
+                  type: "string",
+                  minLength: 1,
+                },
+                alt: {
+                  type: "string",
+                  minLength: 1,
+                },
+              },
+              required: ["url", "alt"],
             },
           },
         },
