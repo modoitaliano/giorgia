@@ -19,6 +19,16 @@ const canonicalSchema = require('./schemas/canonical-document.schema.json') as o
 const packageJson = require('../package.json') as { name: string; version: string };
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+function sourceSchemaPath(packedPath: string): string {
+  expect(packedPath.startsWith('dist/schemas/'), packedPath).toBe(true);
+  return path.join(projectRoot, 'src', packedPath.slice('dist/'.length));
+}
+
+function expectSafePackagePath(packagePath: string): void {
+  expect(path.isAbsolute(packagePath), packagePath).toBe(false);
+  expect(packagePath.split('/'), packagePath).not.toContain('..');
+}
+
 const sources = () => ({
   layouts: Object.keys(layoutFiles),
   languages: outletConfig.supportedLanguages,
@@ -71,7 +81,7 @@ describe('Cronkite declarative template manifest', () => {
     });
   });
 
-  it('declares exact, static partial graphs and packed files', () => {
+  it('declares exact, static partial graphs and safe packed paths', () => {
     const rendering = cronkiteManifest.templateRendering;
     for (const [name, definition] of Object.entries(rendering.partials)) {
       const sourcePath = path.join(projectRoot, definition.entry);
@@ -82,10 +92,13 @@ describe('Cronkite declarative template manifest', () => {
       const sourcePath = path.join(projectRoot, definition.template.entry);
       expect(fs.statSync(sourcePath).isFile(), `${name} entry`).toBe(true);
       expect(directPartials(fs.readFileSync(sourcePath, 'utf8')), name).toEqual(definition.template.partials);
-      expect(fs.statSync(path.join(projectRoot, definition.inputSchema)).isFile(), `${name} schema`).toBe(true);
+      expect(fs.statSync(sourceSchemaPath(definition.inputSchema)).isFile(), `${name} schema`).toBe(true);
     }
     for (const [key, definition] of Object.entries(rendering.staticAssets)) {
-      expect(fs.statSync(path.join(projectRoot, definition.source)).isFile(), key).toBe(true);
+      expectSafePackagePath(definition.source);
+      if (definition.source.startsWith('src/')) {
+        expect(fs.statSync(path.join(projectRoot, definition.source)).isFile(), key).toBe(true);
+      }
     }
   });
 
