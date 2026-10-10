@@ -29,6 +29,16 @@ distribution, embed identifiers, search copy, status variants, and social-card
 QR markup are supplied as document data. The legacy local renderer remains only
 for Storybook and output-parity tests.
 
+Article pages display every supplied `authors[].name` in document order below
+the excerpt in the editorial red accent, with the publication date on a
+separate muted line. The shared color tokens retain the brighter red in dark
+mode. Names are
+escaped as ordinary Handlebars text and separated by commas. The byline uses no
+language-specific label, synthesized credit, or author-profile link; author
+identity remains CMS-owned. This uses the existing canonical-document schema
+and Cronkite helpers. Storybook includes single-author, multiple-author,
+long-credit, and dark-mode article examples.
+
 Search copy is complete for Spanish, English, and Italian, including headings,
 form labels, empty and error states, result grammar, and pagination. It is
 serialized into the page for the client-side search script instead of being

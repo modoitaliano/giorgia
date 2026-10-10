@@ -57,6 +57,16 @@ type Story = StoryObj;
 
 export const Default: Story = {};
 
+export const MultipleAuthors: Story = {
+  args: {
+    ...articleFixture,
+    authors: [
+      { name: 'Lucia Rossi', slug: 'lucia-rossi' },
+      { name: 'Marco Bianchi', slug: 'marco-bianchi' },
+    ],
+  },
+};
+
 export const WithoutRelatedArticles: Story = {
   args: {
     ...articleFixture,

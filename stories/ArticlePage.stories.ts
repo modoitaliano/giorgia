@@ -16,6 +16,38 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const Byline: Story = {
+  args: {
+    authors: [{ name: 'Lucia Rossi', slug: 'lucia-rossi' }],
+  },
+};
+
+export const MultipleAuthors: Story = {
+  args: {
+    authors: [
+      { name: 'Lucia Rossi', slug: 'lucia-rossi' },
+      { name: 'Marco Bianchi', slug: 'marco-bianchi' },
+    ],
+  },
+};
+
+export const LongByline: Story = {
+  args: {
+    authors: [
+      { name: 'Redacción de música y cultura de ModoItaliano', slug: 'redaccion-modoitaliano' },
+      { name: 'Lucia Rossi', slug: 'lucia-rossi' },
+    ],
+  },
+};
+
+export const BylineDark: Story = {
+  decorators: [(story) => `<div class="dark bg-slate-950 text-slate-100">${story()}</div>`],
+  args: {
+    mourningMode: true,
+    authors: [{ name: 'Lucia Rossi', slug: 'lucia-rossi' }],
+  },
+};
+
 export const Current: Story = {
   loaders: [async () => ({ articlePage: await loadArticlePreviewData() })],
   render: (_args, { loaded }) => render(loaded.articlePage as CanonicalArticle),
