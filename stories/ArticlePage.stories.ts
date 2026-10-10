@@ -17,6 +17,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const Byline: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'The author uses the same editorial red utilities as category labels, including with previously published CSS.',
+      },
+    },
+  },
   args: {
     authors: [{ name: 'Lucia Rossi', slug: 'lucia-rossi' }],
   },

@@ -31,9 +31,10 @@ for Storybook and output-parity tests.
 
 Article pages display every supplied `authors[].name` in document order below
 the excerpt in the editorial red accent, with the publication date on a
-separate muted line. The shared color tokens retain the brighter red in dark
-mode. Names are
-escaped as ordinary Handlebars text and separated by commas. The byline uses no
+separate muted line. It reuses the category labels' existing `text-[#8f0d00]`
+and `dark:text-[#ff2e1a]` utilities so the accent also works with previously
+published, immutable stylesheets. Names are escaped as ordinary Handlebars
+text and separated by commas. The byline uses no
 language-specific label, synthesized credit, or author-profile link; author
 identity remains CMS-owned. This uses the existing canonical-document schema
 and Cronkite helpers. Storybook includes single-author, multiple-author,

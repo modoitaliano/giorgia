@@ -20,7 +20,7 @@
     <h1 class='text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4 leading-tight font-encode'>{{title}}</h1>
     <p class='text-slate-600 dark:text-slate-400 text-xl mb-3 font-sans leading-relaxed'>{{excerpt}}</p>
     <div class='space-y-1 font-sans' data-article-metadata>
-      <p class='text-sm font-semibold text-editorial-accent dark:text-editorial-accent-dark' data-article-byline>{{#each authors}}{{#unless @first}}, {{/unless}}{{name}}{{/each}}</p>
+      <p class='text-sm font-semibold text-[#8f0d00] dark:text-[#ff2e1a]' data-article-byline>{{#each authors}}{{#unless @first}}, {{/unless}}{{name}}{{/each}}</p>
       <p class='text-sm text-slate-500 dark:text-slate-400'><span class='article-time' data-timestamp='{{publishedAt}}'>{{formatDate publishedAt}}</span></p>
     </div>
 

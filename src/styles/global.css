@@ -4,8 +4,6 @@
 @source not "./compiled.css";
 
 @theme {
-  --color-editorial-accent: #8f0d00;
-  --color-editorial-accent-dark: #ff2e1a;
   --font-sans: "Barlow", sans-serif;
   --font-serif: "Barlow", sans-serif;
   --font-encode: "Barlow Condensed", sans-serif;
