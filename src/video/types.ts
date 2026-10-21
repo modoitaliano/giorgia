@@ -40,3 +40,16 @@ export type ShortVideoProps = Record<string, unknown> & {
   audioUrl?: string | null;
   brand: ShortVideoBrand;
 };
+
+export type ArtistBumperImages = readonly [string, string, string, string];
+
+export type ArtistBumperProps = Record<string, unknown> & {
+  artist: string;
+  songTitle: string;
+  images: ArtistBumperImages;
+  audioUrl?: string | null;
+  eyebrow?: string;
+  contentType?: string;
+  creditLines?: readonly [string, string];
+  siteUrl?: string;
+};
