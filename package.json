@@ -96,6 +96,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.1",
     "@remotion/bundler": "4.0.524",
+    "@remotion/player": "4.0.524",
     "@storybook/addon-a11y": "^10.2.16",
     "@storybook/addon-docs": "^10.2.16",
     "@storybook/addon-vitest": "^10.2.16",
