@@ -110,7 +110,7 @@ describe('Storybook deployment boundary', () => {
   });
 
   it('uses the Giorgia OIDC role and no long-lived AWS key inputs', () => {
-    expect(workflow).toContain('role/giorgia-storybook-github-deploy');
+    expect(workflow).toContain('role/giorgia-github-deploy');
     expect(workflow).toContain('aws-actions/configure-aws-credentials@v6.2.3');
     expect(workflow).not.toContain('aws-access-key-id');
     expect(workflow).not.toContain('aws-secret-access-key');
@@ -118,8 +118,9 @@ describe('Storybook deployment boundary', () => {
   });
 
   it('resolves resources from the Loredana stack and never republishes npm', () => {
-    expect(workflow).toContain('LoredanaGiorgiaStorybookBucketName');
-    expect(workflow).toContain('LoredanaGiorgiaStorybookDistributionId');
+    expect(workflow).toContain('STORYBOOK_STACK_NAME: Loredana\n');
+    expect(workflow).toContain('LoredanaGiorgiaBucketName');
+    expect(workflow).toContain('LoredanaGiorgiaDistributionId');
     expect(workflow).toContain('https://ui.modoitaliano.fm');
     expect(workflow).not.toMatch(/npm (publish|version)/);
   });

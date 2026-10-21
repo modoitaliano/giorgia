@@ -100,15 +100,15 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
   A push or manual run on `main` deploys that exact artifact to
   `https://ui.modoitaliano.fm` through the `giorgia-storybook` GitHub
   environment and short-lived AWS OIDC role
-  `giorgia-storybook-github-deploy`. Storybook deployment never runs
+  `giorgia-github-deploy`. Storybook deployment never runs
   `npm publish` or changes the package version.
 
 ### Storybook infrastructure and rollback
 
 The existing Modo Italiano `Loredana` CloudFormation stack owns the Storybook
 bucket and CloudFront distribution. The workflow resolves outputs
-`LoredanaGiorgiaStorybookBucketName` and
-`LoredanaGiorgiaStorybookDistributionId`; it must never target the Fifthbell
+`LoredanaGiorgiaBucketName` and
+`LoredanaGiorgiaDistributionId`; it must never target the Fifthbell
 `ui.fifthbell.com` resources used by Brokaw.
 
 Each build carries `deployment.json` with its repository, package version, run,
