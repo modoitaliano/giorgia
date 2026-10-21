@@ -78,7 +78,7 @@ jobs:
       - name: Configure short-lived AWS credentials
         uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
-          role-to-assume: arn:aws:iam::792025092931:role/giorgia-storybook-github-deploy
+          role-to-assume: arn:aws:iam::792025092931:role/giorgia-github-deploy
           role-session-name: giorgia-storybook-${{ github.run_id }}
           role-duration-seconds: 900
           aws-region: us-east-1
@@ -91,11 +91,11 @@ jobs:
         run: |
           bucket=$(aws cloudformation describe-stacks \
             --stack-name "$STORYBOOK_STACK_NAME" \
-            --query "Stacks[0].Outputs[?OutputKey=='LoredanaGiorgiaStorybookBucketName'].OutputValue | [0]" \
+            --query "Stacks[0].Outputs[?OutputKey=='LoredanaGiorgiaBucketName'].OutputValue | [0]" \
             --output text)
           distribution=$(aws cloudformation describe-stacks \
             --stack-name "$STORYBOOK_STACK_NAME" \
-            --query "Stacks[0].Outputs[?OutputKey=='LoredanaGiorgiaStorybookDistributionId'].OutputValue | [0]" \
+            --query "Stacks[0].Outputs[?OutputKey=='LoredanaGiorgiaDistributionId'].OutputValue | [0]" \
             --output text)
           test -n "$bucket" && test "$bucket" != None
           test -n "$distribution" && test "$distribution" != None
