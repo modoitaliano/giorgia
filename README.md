@@ -44,6 +44,23 @@ but those exports are not part of Cronkite's opt-in path. See
 [docs/cronkite-compatibility.md](docs/cronkite-compatibility.md) for ownership,
 validation, search, and asset-rendering details.
 
+### Artist bumper
+
+The legacy Remotion entrypoint also registers `ModoItalianoArtistBumper`, a
+12-second, 1920x1080 artist-and-song introduction. Its contract accepts exactly
+four unique 16:9 image URLs, optional audio, artist and song text, credits, and
+the station URL. The first three images, the identity card, and the final
+`In onda ora` card use hard editorial cuts; only the final card's blue, violet,
+and magenta background light fields move.
+
+`robArtistBumperProps` is the bundled ROB / `Cento ragazze` reference fixture.
+The Remotion composition and the `React/ArtistBumper` Storybook stories use the
+same component and packaged assets. The timeline is fixed at 30 fps:
+
+- `00:00.000-00:02.066`: three image cuts
+- `00:02.066-00:07.366`: artist, song, and credits over the fourth image
+- `00:07.366-00:12.000`: animated `In onda ora` card
+
 ## Development
 
 ```bash

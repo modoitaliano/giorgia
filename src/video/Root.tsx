@@ -1,5 +1,13 @@
 import React from "react";
 import { Composition } from "remotion";
+import {
+  ARTIST_BUMPER_DURATION_IN_FRAMES,
+  ARTIST_BUMPER_FPS,
+  ARTIST_BUMPER_HEIGHT,
+  ARTIST_BUMPER_WIDTH,
+  ArtistBumper,
+  robArtistBumperProps,
+} from "./ArtistBumper.js";
 import { getDurationInFrames, ShortVideo } from "./ShortVideo.js";
 import type { ShortVideoProps } from "./types.js";
 
@@ -35,20 +43,31 @@ const defaultProps: ShortVideoProps = {
 
 export function RemotionRoot() {
   return (
-    <Composition
-      id="ModoItalianoShort"
-      component={ShortVideo}
-      calculateMetadata={({ props }) => ({
-        durationInFrames: getDurationInFrames(props.slides),
-        fps: 30,
-        width: 1080,
-        height: 1920,
-      })}
-      defaultProps={defaultProps}
-      durationInFrames={getDurationInFrames(defaultProps.slides)}
-      fps={30}
-      width={1080}
-      height={1920}
-    />
+    <>
+      <Composition
+        id="ModoItalianoShort"
+        component={ShortVideo}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: getDurationInFrames(props.slides),
+          fps: 30,
+          width: 1080,
+          height: 1920,
+        })}
+        defaultProps={defaultProps}
+        durationInFrames={getDurationInFrames(defaultProps.slides)}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="ModoItalianoArtistBumper"
+        component={ArtistBumper}
+        defaultProps={robArtistBumperProps}
+        durationInFrames={ARTIST_BUMPER_DURATION_IN_FRAMES}
+        fps={ARTIST_BUMPER_FPS}
+        width={ARTIST_BUMPER_WIDTH}
+        height={ARTIST_BUMPER_HEIGHT}
+      />
+    </>
   );
 }

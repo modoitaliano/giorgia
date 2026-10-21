@@ -1,7 +1,7 @@
 {
   "name": "@modoitaliano/giorgia",
   "description": "Server-side Handlebars renderer and templates for ModoItaliano pages.",
-  "version": "0.1.105",
+  "version": "0.1.106",
   "publishConfig": {
     "access": "public"
   },
@@ -65,7 +65,7 @@
     "build:navigation": "vite build --config vite.config.navigation.ts",
     "generate:contract-types": "node scripts/generate-contract-types.mjs",
     "build:contract": "node scripts/build-contract.mjs",
-    "build": "npm run clean && npm run build:css && npm run build:live-program && npm run build:navigation && npm run generate:contract-types && tsc -p tsconfig.build.json && node -e \"const fs=require('node:fs'); fs.cpSync('src/styles/fonts','dist/fonts',{recursive:true}); fs.copyFileSync('src/styles/fonts.css','dist/fonts/fonts.css'); fs.cpSync('src/templates/assets','dist/assets',{recursive:true})\" && npm run build:contract",
+    "build": "npm run clean && npm run build:css && npm run build:live-program && npm run build:navigation && npm run generate:contract-types && tsc -p tsconfig.build.json && node -e \"const fs=require('node:fs'); fs.cpSync('src/styles/fonts','dist/fonts',{recursive:true}); fs.copyFileSync('src/styles/fonts.css','dist/fonts/fonts.css'); fs.cpSync('src/templates/assets','dist/assets',{recursive:true}); fs.cpSync('src/video/assets','dist/video/assets',{recursive:true})\" && npm run build:contract",
     "storybook": "npm run build:css && storybook dev -p 6006",
     "build-storybook": "npm run build:css && storybook build",
     "typecheck": "npm run generate:contract-types && tsc --noEmit -p tsconfig.json",
