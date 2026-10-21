@@ -87,7 +87,7 @@ jobs:
 
       - name: Resolve Loredana-owned Storybook resources
         env:
-          STORYBOOK_STACK_NAME: Loredana
+          STORYBOOK_STACK_NAME: LoredanaGiorgiaStorybook
         run: |
           bucket=$(aws cloudformation describe-stacks \
             --stack-name "$STORYBOOK_STACK_NAME" \

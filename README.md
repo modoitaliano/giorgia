@@ -105,7 +105,8 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
 
 ### Storybook infrastructure and rollback
 
-The Modo Italiano `Loredana` CloudFormation stack owns the dedicated Storybook
+The Modo Italiano `LoredanaGiorgiaStorybook` CloudFormation stack, defined in
+the Loredana CDK project, owns the dedicated Storybook
 bucket and CloudFront distribution. The workflow resolves outputs
 `LoredanaGiorgiaStorybookBucketName` and
 `LoredanaGiorgiaStorybookDistributionId`; it must never target the Fifthbell
@@ -133,7 +134,8 @@ repository's current immutable GitHub OIDC subject:
 repo:modoitaliano@327696306/giorgia@1304750193:environment:giorgia-storybook
 ```
 
-Its permissions are limited to `cloudformation:DescribeStacks` for Loredana;
+Its permissions are limited to `cloudformation:DescribeStacks` for
+`LoredanaGiorgiaStorybook`;
 `s3:ListBucket` and `s3:GetBucketLocation` on the dedicated bucket;
 `s3:GetObject` and `s3:PutObject` on that bucket's `releases/*`; and
 `cloudfront:GetDistribution`,
