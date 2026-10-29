@@ -72,6 +72,7 @@
     "pretest:unit": "npm run generate:contract-types && npm run build:css",
     "test": "npm run test:unit",
     "test:unit": "vitest run --project unit",
+    "test:coverage": "npm run build:css && vitest run --project unit --coverage.enabled --coverage.provider=v8 --coverage.reporter=json --coverage.reportsDirectory=coverage \"--coverage.include=src/**/*.{ts,tsx}\"",
     "verify:packed-contract": "npm run build && node scripts/verify-packed-contract.mjs"
   },
   "dependencies": {
