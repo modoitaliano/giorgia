@@ -151,6 +151,7 @@ export function registerCommonHelpers(): void {
   for (const [name, source] of Object.entries(partials)) Handlebars.registerPartial(name, source);
   if (initialized) return;
 
+  Handlebars.registerHelper('add', (a: unknown, b: unknown) => Number(a) + Number(b));
   Handlebars.registerHelper('eq', (a: unknown, b: unknown) => a === b);
 
   Handlebars.registerHelper('slice', (items: unknown, start: number, end?: number) => {

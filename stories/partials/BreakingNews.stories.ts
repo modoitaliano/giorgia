@@ -1,3 +1,4 @@
+import { homepageFixture } from '../fixtures/homepage.fixture';
 import type { Meta, StoryObj } from '@storybook/html';
 import Handlebars from 'handlebars';
 import breakingNewsHbs from '../../src/templates/partials/components/breaking-news.hbs?raw';
@@ -28,8 +29,8 @@ function buildLongUpdates(updates: Array<Record<string, unknown>>): Array<Record
 
 const meta = {
   title: 'Partials/BreakingNews',
-  loaders: [async () => ({ breakingNews: await loadBreakingNewsPreviewData() })],
-  render: (args, { loaded }) => template({ ...loaded.breakingNews, ...args })
+  args: homepageFixture.breakingNews,
+  render: (args) => template(args)
 } satisfies Meta;
 
 export default meta;
@@ -39,10 +40,14 @@ type Story = StoryObj;
 export const Default: Story = {};
 
 export const OverflowingLiveUpdates: Story = {
-  render: (args, { loaded }) =>
+  render: (args) =>
     template({
-      ...loaded.breakingNews,
       ...args,
-      updates: buildLongUpdates((loaded.breakingNews.updates || []) as Array<Record<string, unknown>>)
+      updates: buildLongUpdates((args.updates || []) as Array<Record<string, unknown>>)
     })
+};
+
+export const Current: Story = {
+  loaders: [async () => ({ breakingNews: await loadBreakingNewsPreviewData() })],
+  render: (_args, { loaded }) => template(loaded.breakingNews)
 };

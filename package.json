@@ -66,14 +66,15 @@
     "generate:contract-types": "node scripts/generate-contract-types.mjs",
     "build:contract": "node scripts/build-contract.mjs",
     "build": "npm run clean && npm run build:css && npm run build:live-program && npm run build:navigation && npm run generate:contract-types && tsc -p tsconfig.build.json && node -e \"const fs=require('node:fs'); fs.cpSync('src/styles/fonts','dist/fonts',{recursive:true}); fs.copyFileSync('src/styles/fonts.css','dist/fonts/fonts.css'); fs.cpSync('src/templates/assets','dist/assets',{recursive:true}); fs.cpSync('src/video/assets','dist/video/assets',{recursive:true})\" && npm run build:contract",
-    "storybook": "npm run build:css && storybook dev -p 6006",
-    "build-storybook": "npm run build:css && storybook build",
+    "storybook": "npm run storybook:assets && storybook dev -p 6006",
+    "build-storybook": "npm run storybook:assets && storybook build",
     "typecheck": "npm run generate:contract-types && tsc --noEmit -p tsconfig.json",
     "pretest:unit": "npm run generate:contract-types && npm run build:css",
     "test": "npm run test:unit",
     "test:unit": "vitest run --project unit",
     "test:coverage": "npm run build:css && vitest run --project unit --coverage.enabled --coverage.provider=v8 --coverage.reporter=json --coverage.reportsDirectory=coverage \"--coverage.include=src/**/*.{ts,tsx}\"",
-    "verify:packed-contract": "npm run build && node scripts/verify-packed-contract.mjs"
+    "verify:packed-contract": "npm run build && node scripts/verify-packed-contract.mjs",
+    "storybook:assets": "npm run build:css && npm run build:navigation && node scripts/prepare-storybook-assets.mjs"
   },
   "dependencies": {
     "@fontsource/barlow": "^5.3.0",

@@ -72,6 +72,45 @@ npm run verify:packed-contract
 npm run storybook
 ```
 
+## Storybook fixtures and built assets
+
+`npm run storybook` and `npm run build-storybook` first run
+`npm run storybook:assets`. It uses the existing CSS/navigation builders and
+stages their output, template assets and local fonts in `.cache/storybook-public`.
+Storybook serves and packages that directory at the artifact root, including
+`/content/styles/giorgia.css`, `/content/fonts/fonts.css`, its referenced WOFF2
+files and `/assets/giorgia-navigation.js`. Re-run the command after changing
+staged assets. Direct `storybook build` without the preparation step is not the
+supported build command.
+
+Ordinary homepage/page and breaking-news/home partial examples use checked-in
+fixtures; homepage slot calculations use `FIXTURE_NOW`. Only explicitly named
+`Current` stories run editorial JSON loaders. The existing live-story page and
+partial previews are named `Current` because they use those feeds. Live network
+failures reject the loader and appear in Storybook's error display; they never
+turn an unavailable feed into a successful fixture article. Fixture images,
+third-party media and the existing radio shell's now-playing request remain
+external runtime dependencies, separate from editorial preview loaders.
+
+After building, run the browser/artifact regression against the exact output:
+
+```sh
+npm run build-storybook
+node scripts/verify-storybook-artifact.mjs
+```
+
+The check starts an isolated loopback static server and fresh Chromium contexts,
+verifies packaged asset bytes/MIME and applied styles/fonts, then exercises the
+manager, fixture pages/partials and explicit live-failure controls. All external
+requests are deliberately blocked: fixture stories must make no editorial feed
+requests, and Current stories must show an error rather than fixture success.
+Third-party diagnostics are recorded separately. The JSON report is printed to
+stdout; screenshots default to `.cache/storybook-artifact-evidence`. Optional
+positional arguments specify the artifact directory and screenshot directory.
+Use the project's installed Playwright Chromium (`npx playwright install chromium`
+if not already available). Local artifact verification does not prove public
+hosting or close the separate deployment/browser acceptance issue #7.
+
 ## Persistent navigation
 
 Standard page layouts replace only `#page-content` during same-origin, same-language navigation. The masthead, footer, and bottom radio player stay mounted, so an active stream continues without interruption. Each persistent shell surface has its own static View Transition identity, preventing the visible player bar from being redrawn with page content. Swup updates the URL, browser history, document metadata, focus announcement, and scroll position; native View Transitions animate the content where supported, with a CSS fallback and reduced-motion handling.

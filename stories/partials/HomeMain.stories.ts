@@ -1,3 +1,4 @@
+import { homepageFixture } from '../fixtures/homepage.fixture';
 import type { Meta, StoryObj } from '@storybook/html';
 import Handlebars from 'handlebars';
 import homeMainHbs from '../../src/templates/partials/components/home/main.hbs?raw';
@@ -39,9 +40,9 @@ const sectionControls = {
 
 const meta = {
   title: 'Partials/Home/Main',
-  loaders: [async () => ({ homepage: await loadHomepagePreviewData() })],
-  render: (args, { loaded }) => template({ ...loaded.homepage, ...args }),
+  render: (args) => template(args),
   args: {
+    ...homepageFixture,
     showHero: true,
     showEditorialHero: false,
     showBreakingNews: true,
@@ -62,3 +63,8 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {};
+
+export const Current: Story = {
+  loaders: [async () => ({ homepage: await loadHomepagePreviewData() })],
+  render: (_args, { loaded }) => template(loaded.homepage)
+};
