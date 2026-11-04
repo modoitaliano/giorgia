@@ -25,7 +25,7 @@ const server = createServer(async (request, response) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const origin = `http://127.0.0.1:${server.address().port}`;
 let browser;
-const report = { assets: [], fixtures: [], liveFailureControls: [] };
+const report = { assets: [], fixtures: [], liveFailureControls: [], downstreamFailureControls: [] };
 try {
   const assets = [
     ['/content/styles/giorgia.css', 'text/css', 'src/styles/compiled.css'],
@@ -44,15 +44,25 @@ try {
     report.assets.push({ path, type, bytes: bytes.length });
   }
   browser = await chromium.launch({ headless: true });
-  async function freshPage() {
+  async function freshPage(control) {
     const context = await browser.newContext({ serviceWorkers: 'block' });
     const page = await context.newPage();
-    const diagnostics = { firstPartyFailures: [], thirdPartyRequests: [], editorialRequests: [], consoleErrors: [] };
+    const diagnostics = { firstPartyFailures: [], thirdPartyRequests: [], editorialRequests: [], syntheticRequests: [], consoleErrors: [] };
     await context.route('**/*', route => {
       const url = route.request().url();
       if (/^https?:/.test(url) && !url.startsWith(origin + '/')) {
         diagnostics.thirdPartyRequests.push(url);
         if (/cdn\.modoitaliano\.fm\/(content|json)\/.*\.json(?:[?#]|$)/.test(url) && new URL(url).pathname !== '/content/now-playing.json') diagnostics.editorialRequests.push(url);
+        const synthetic = control?.(new URL(url));
+        if (synthetic) {
+          diagnostics.syntheticRequests.push({ url, method: route.request().method(), status: synthetic.status ?? 200 });
+          return route.fulfill({
+            status: route.request().method() === 'OPTIONS' ? 204 : synthetic.status ?? 200,
+            contentType: 'application/json',
+            headers: { 'access-control-allow-origin': origin, 'access-control-allow-headers': 'accept,cache-control,pragma', 'access-control-allow-methods': 'GET,OPTIONS' },
+            body: route.request().method() === 'OPTIONS' ? '' : JSON.stringify(synthetic.body)
+          });
+        }
         return route.abort('blockedbyclient');
       }
       return route.continue();
@@ -72,7 +82,7 @@ try {
   report.manager = manager.diagnostics;
   await manager.context.close();
 
-  const fixtureIds = ['pages-homepage--default', 'pages-homepage--featured-overflow', 'pages-articlepage--default', 'pages-categorypage--default', 'pages-searchpage--english', 'pages-searchpage--italian', 'partials-home-main--default', 'partials-breakingnews--default', 'partials-breakingnews--overflowing-live-updates', 'partials-breakingnews-liveupdatescolumn--default'];
+  const fixtureIds = ['pages-homepage--default', 'pages-homepage--featured-overflow', 'pages-homepage--with-breaking-news', 'pages-homepage--no-featured-articles', 'pages-homepage--partial-featured', 'pages-articlepage--default', 'pages-categorypage--default', 'pages-searchpage--english', 'pages-searchpage--italian', 'partials-home-main--default', 'partials-breakingnews--default', 'partials-breakingnews--overflowing-live-updates', 'partials-breakingnews-liveupdatescolumn--default'];
   for (const id of fixtureIds) {
     const { context, page, diagnostics } = await freshPage();
     await page.goto(`${origin}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle' });
@@ -84,6 +94,11 @@ try {
     assert.deepEqual(diagnostics.editorialRequests, [], `Fixture inherited a live loader: ${id}`);
     const assetErrors = diagnostics.consoleErrors.filter(text => /MIME|stylesheet|giorgia-navigation|\/content\/fonts\//i.test(text));
     assert.deepEqual(assetErrors, [], id);
+    if (id === 'pages-homepage--with-breaking-news') {
+      const widget = page.locator('iframe[title="SofaScore Attack Momentum"]');
+      assert.equal(await widget.count(), 1, 'Breaking-news fixture must exercise the real provider helper');
+      assert.equal(new URL(await widget.getAttribute('src')).searchParams.get('id'), '15388428');
+    }
     if (id.startsWith('pages-')) {
       assert(await page.evaluate(() => [...document.styleSheets].some(sheet => sheet.href?.endsWith('/content/styles/giorgia.css') && sheet.cssRules.length > 0)), `Page stylesheet not applied: ${id}`);
       assert(await page.evaluate(async () => (await document.fonts.load('16px Barlow')).length > 0), `Packaged Barlow font not loaded: ${id}`);
@@ -98,6 +113,43 @@ try {
     assert(diagnostics.editorialRequests.length > 0, `Live loader did not run: ${id}`);
     assert.equal((await page.locator('#storybook-root').innerText()).trim(), '', `Live failure rendered fixture content: ${id}`);
     report.liveFailureControls.push({ id, expected: 'External request deliberately blocked; loader error visible; no live-success claim', ...diagnostics });
+    await context.close();
+  }
+
+  // Synthetic indexes are negative regression inputs, never evidence of live
+  // content success. Canonical fetches then fail with an explicit HTTP 503.
+  const summary = { id: 'fixture-article', title: 'Synthetic index only', slug: 'fixture-story', url: '/sports/fixture-story', categories: [{ name: 'Sports', slug: 'sports' }] };
+  const home = { articles: [summary] };
+  const eventURL = 'https://cdn.modoitaliano.fm/json/articles/sports/fixture-event.json';
+  const homepageURL = 'https://cdn.modoitaliano.fm/json/articles/sports/fixture-breaking.json';
+  const controls = [
+    { name: 'empty homepage index', id: 'pages-homepage--current', home: { articles: [] }, events: { docs: [] }, expected: 'Current homepage feed contains no articles' },
+    { name: 'article canonical failure', id: 'pages-articlepage--current', category: { articles: [summary] }, expected: 'Current article JSON could not be loaded from its source URLs', canonicalCount: 2 },
+    { name: 'empty article index', id: 'pages-articlepage--current', category: { articles: [] }, expected: 'Current category feed contains no article summaries: sports' },
+    { name: 'null category index', id: 'pages-categorypage--current', category: null, expected: 'Current category feed is unavailable: sports' },
+    { name: 'event canonical failure', id: 'pages-livestorypage--current', home, events: { docs: [{ id: 'fixture-event', title: 'Synthetic event only', jsonUrl: eventURL }] }, expected: `Request failed for ${eventURL}: 503`, canonicalCount: 1 },
+    { name: 'homepage live canonical failure', id: 'pages-livestorypage--current', home: { ...home, breakingNews: { main: { title: 'Synthetic breaking news only', url: '/live/fixture', jsonUrl: homepageURL } } }, events: { docs: [] }, expected: `Request failed for ${homepageURL}: 503`, canonicalCount: 1 },
+    { name: 'absent current live story', id: 'pages-livestorypage--current', home, events: { docs: [] }, expected: 'Current feeds contain no live story' }
+  ];
+  for (const control of controls) {
+    const { context, page, diagnostics } = await freshPage(url => {
+      if (url.hostname !== 'cdn.modoitaliano.fm') return;
+      if (url.pathname === '/content/homepage-current-en.json' && 'home' in control) return { body: control.home };
+      if (url.pathname === '/content/events-current-en.json' && 'events' in control) return { body: control.events };
+      if (url.pathname === '/content/sports-current-en.json' && 'category' in control) return { body: control.category };
+      if (url.pathname.startsWith('/json/articles/')) return { status: 503, body: { message: 'Deliberate synthetic canonical failure' } };
+    });
+    await page.goto(`${origin}/iframe.html?id=${control.id}&viewMode=story`, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.body.classList.contains('sb-show-errordisplay') || document.querySelector('#storybook-root')?.childElementCount > 0);
+    const text = await page.locator('body').innerText();
+    assert(await page.locator('body').evaluate(el => el.classList.contains('sb-show-errordisplay')), `${control.name}: false successful fallback: ${text}`);
+    assert(text.includes(control.expected), `${control.name}: expected ${control.expected}, got ${text}`);
+    assert.equal((await page.locator('#storybook-root').innerText()).trim(), '', control.name);
+    assert.deepEqual(diagnostics.firstPartyFailures, [], control.name);
+    const canonical = diagnostics.syntheticRequests.filter(r => r.method === 'GET' && new URL(r.url).pathname.startsWith('/json/articles/'));
+    assert.equal(canonical.length, control.canonicalCount ?? 0, control.name);
+    if (control.name === 'empty homepage index') assert(!diagnostics.editorialRequests.some(url => new URL(url).pathname.includes('events-current')), 'Empty homepage rejection must precede further live loading');
+    report.downstreamFailureControls.push({ name: control.name, expected: control.expected, syntheticNegativeControl: true, ...diagnostics });
     await context.close();
   }
   console.log(JSON.stringify(report, null, 2));

@@ -146,12 +146,14 @@ export const homepageFixture: CanonicalArticle = {
       excerpt: 'Ports and ferry operators are revising schedules before peak traffic.'
     },
     main: {
-      category: 'Live Updates',
-      title: 'Minute-by-minute coverage of developing response',
-      url: '/world/live-response',
-      image: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200&h=800&fit=crop',
-      alt: 'Field reporting setup',
-      excerpt: 'Editors and correspondents are publishing confirmed updates in sequence.'
+      category: 'Sports fixture',
+      title: 'Sample match coverage',
+      url: '/sports/match-window-delays',
+      image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=640&h=480&fit=crop',
+      alt: 'Stadium under cloudy skies',
+      excerpt: 'Checked-in layout example; no current score or live match availability is asserted.',
+      // The existing sofascore helper tests use this sample provider ID.
+      sofascore_id: 15388428
     },
     updates: [
       { time: '12 min ago', text: 'Emergency managers opened two additional shelters.' },

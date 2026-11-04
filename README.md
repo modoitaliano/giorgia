@@ -90,7 +90,9 @@ partial previews are named `Current` because they use those feeds. Live network
 failures reject the loader and appear in Storybook's error display; they never
 turn an unavailable feed into a successful fixture article. Fixture images,
 third-party media and the existing radio shell's now-playing request remain
-external runtime dependencies, separate from editorial preview loaders.
+external runtime dependencies, separate from editorial preview loaders. The
+breaking-news fixture supplies the existing helper-test sample SofaScore ID and
+is labelled as a layout fixture, not a current score or live-match claim.
 
 After building, run the browser/artifact regression against the exact output:
 
@@ -104,6 +106,9 @@ verifies packaged asset bytes/MIME and applied styles/fonts, then exercises the
 manager, fixture pages/partials and explicit live-failure controls. All external
 requests are deliberately blocked: fixture stories must make no editorial feed
 requests, and Current stories must show an error rather than fixture success.
+Seven additional synthetic negative controls let indexes succeed, then fail
+canonical article/event JSON or supply empty/null indexes. They assert the
+exact error and request stage without claiming live-content success.
 Third-party diagnostics are recorded separately. The JSON report is printed to
 stdout; screenshots default to `.cache/storybook-artifact-evidence`. Optional
 positional arguments specify the artifact directory and screenshot directory.
