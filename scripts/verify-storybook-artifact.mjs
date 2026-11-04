@@ -123,6 +123,10 @@ try {
   const eventURL = 'https://cdn.modoitaliano.fm/json/articles/sports/fixture-event.json';
   const homepageURL = 'https://cdn.modoitaliano.fm/json/articles/sports/fixture-breaking.json';
   const controls = [
+    { name: 'events index failure', id: 'pages-homepage--current', home, events: { message: 'Deliberate synthetic events failure' }, eventsStatus: 503, expected: 'Request failed for https://cdn.modoitaliano.fm/content/events-current-en.json', expectedSuffix: ': 503' },
+    { name: 'invalid homepage index', id: 'pages-homepage--current', home: { articles: [{}] }, events: { docs: [] }, expected: 'Current homepage feed contains no articles' },
+    { name: 'empty category index', id: 'pages-categorypage--current', category: { articles: [] }, expected: 'Current category feed contains no articles: sports' },
+    { name: 'invalid category index', id: 'pages-categorypage--current', category: { articles: [{}] }, expected: 'Current category feed contains no articles: sports' },
     { name: 'empty homepage index', id: 'pages-homepage--current', home: { articles: [] }, events: { docs: [] }, expected: 'Current homepage feed contains no articles' },
     { name: 'article canonical failure', id: 'pages-articlepage--current', category: { articles: [summary] }, expected: 'Current article JSON could not be loaded from its source URLs', canonicalCount: 2 },
     { name: 'empty article index', id: 'pages-articlepage--current', category: { articles: [] }, expected: 'Current category feed contains no article summaries: sports' },
@@ -135,7 +139,7 @@ try {
     const { context, page, diagnostics } = await freshPage(url => {
       if (url.hostname !== 'cdn.modoitaliano.fm') return;
       if (url.pathname === '/content/homepage-current-en.json' && 'home' in control) return { body: control.home };
-      if (url.pathname === '/content/events-current-en.json' && 'events' in control) return { body: control.events };
+      if (url.pathname === '/content/events-current-en.json' && 'events' in control) return { body: control.events, status: control.eventsStatus ?? 200 };
       if (url.pathname === '/content/sports-current-en.json' && 'category' in control) return { body: control.category };
       if (url.pathname.startsWith('/json/articles/')) return { status: 503, body: { message: 'Deliberate synthetic canonical failure' } };
     });
@@ -144,11 +148,12 @@ try {
     const text = await page.locator('body').innerText();
     assert(await page.locator('body').evaluate(el => el.classList.contains('sb-show-errordisplay')), `${control.name}: false successful fallback: ${text}`);
     assert(text.includes(control.expected), `${control.name}: expected ${control.expected}, got ${text}`);
+    if (control.expectedSuffix) assert(text.includes(control.expectedSuffix), `${control.name}: wrong failure status: ${text}`);
     assert.equal((await page.locator('#storybook-root').innerText()).trim(), '', control.name);
     assert.deepEqual(diagnostics.firstPartyFailures, [], control.name);
     const canonical = diagnostics.syntheticRequests.filter(r => r.method === 'GET' && new URL(r.url).pathname.startsWith('/json/articles/'));
     assert.equal(canonical.length, control.canonicalCount ?? 0, control.name);
-    if (control.name === 'empty homepage index') assert(!diagnostics.editorialRequests.some(url => new URL(url).pathname.includes('events-current')), 'Empty homepage rejection must precede further live loading');
+    if (['empty homepage index', 'invalid homepage index'].includes(control.name)) assert(!diagnostics.editorialRequests.some(url => new URL(url).pathname.includes('events-current')), 'Empty homepage rejection must precede further live loading');
     report.downstreamFailureControls.push({ name: control.name, expected: control.expected, syntheticNegativeControl: true, ...diagnostics });
     await context.close();
   }

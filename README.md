@@ -106,8 +106,9 @@ verifies packaged asset bytes/MIME and applied styles/fonts, then exercises the
 manager, fixture pages/partials and explicit live-failure controls. All external
 requests are deliberately blocked: fixture stories must make no editorial feed
 requests, and Current stories must show an error rather than fixture success.
-Seven additional synthetic negative controls let indexes succeed, then fail
-canonical article/event JSON or supply empty/null indexes. They assert the
+Eleven additional synthetic negative controls fail the events index after a
+successful homepage fetch, fail canonical article/event JSON, or supply
+empty/null/invalid indexes. They assert the
 exact error and request stage without claiming live-content success.
 Third-party diagnostics are recorded separately. The JSON report is printed to
 stdout; screenshots default to `.cache/storybook-artifact-evidence`. Optional
@@ -115,6 +116,13 @@ positional arguments specify the artifact directory and screenshot directory.
 Use the project's installed Playwright Chromium (`npx playwright install chromium`
 if not already available). Local artifact verification does not prove public
 hosting or close the separate deployment/browser acceptance issue #7.
+
+Loader contracts also exercise missing optional breaking-news fields, events
+errors, and empty or invalid article collections without outbound requests:
+
+```sh
+node --import tsx --test scripts/preview-loader-contract.test.mjs
+```
 
 The mandatory managed-updater refresh is also covered by a local boundary check:
 

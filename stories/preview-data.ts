@@ -616,7 +616,7 @@ function buildHomepageCategories(payload: HomepagePreviewPayload | null): Canoni
 function buildHomepageArticles(payload: HomepagePreviewPayload | null): SelfReference[] {
   const articles = Array.isArray(payload?.articles) ? payload.articles : [];
   if (articles.length === 0) {
-    return homepageFixture.articles || [];
+    return [];
   }
 
   const mapped: SelfReference[] = [];
@@ -669,7 +669,7 @@ function buildHomepageArticles(payload: HomepagePreviewPayload | null): SelfRefe
     });
   });
 
-  return mapped.length > 0 ? mapped : homepageFixture.articles || [];
+  return mapped;
 }
 
 function buildHomepagePreviewDocument(payload: HomepagePreviewPayload | null, breakingNews: BreakingNewsStoryData): CanonicalArticle {
@@ -782,7 +782,7 @@ function buildCategoryPreviewDocument(categorySlug: string, payload: CategoryPre
     navigation: {
       categories: navigationCategories
     },
-    articles: mappedArticles.length > 0 ? mappedArticles : categoryFixture.articles,
+    articles: mappedArticles,
     seo: {
       metaTitle: `${categoryName} | ModoItaliano`,
       metaDescription: categoryDescription
@@ -1034,7 +1034,7 @@ export async function loadBreakingNewsPreviewData(): Promise<BreakingNewsStoryDa
 
 export async function loadHomepagePreviewData(): Promise<CanonicalArticle> {
   const payload = await getHomepagePayload();
-  if (!Array.isArray(payload?.articles) || payload.articles.length === 0) {
+  if (buildHomepageArticles(payload).length === 0) {
     throw new Error('Current homepage feed contains no articles');
   }
   const breakingNews = await loadBreakingNewsPreviewData();
@@ -1045,6 +1045,9 @@ export async function loadCategoryPreviewData(categorySlug = DEFAULT_CURRENT_CAT
   const payload = await getCategoryPayload(categorySlug);
   if (!payload) {
     throw new Error(`Current category feed is unavailable: ${categorySlug}`);
+  }
+  if (buildHomepageArticles(payload).length === 0) {
+    throw new Error(`Current category feed contains no articles: ${categorySlug}`);
   }
 
   return buildCategoryPreviewDocument(categorySlug, payload);
