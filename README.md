@@ -116,6 +116,18 @@ Use the project's installed Playwright Chromium (`npx playwright install chromiu
 if not already available). Local artifact verification does not prove public
 hosting or close the separate deployment/browser acceptance issue #7.
 
+The mandatory managed-updater refresh is also covered by a local boundary check:
+
+```sh
+node --test scripts/agent-updater-boundary.test.mjs
+```
+
+It invokes the actual installed updater with disposable local Git remotes and
+snapshots. Four cases assert strict missing/non-executable-sync failures,
+preserved no-fetch failure, valid sync delegation and snapshot cleanup. Child
+Git configuration is isolated, and downstream startup is a fixture observer;
+this check does not claim real Clouseau installation or hosting verification.
+
 ## Persistent navigation
 
 Standard page layouts replace only `#page-content` during same-origin, same-language navigation. The masthead, footer, and bottom radio player stay mounted, so an active stream continues without interruption. Each persistent shell surface has its own static View Transition identity, preventing the visible player bar from being redrawn with page content. Swup updates the URL, browser history, document metadata, focus announcement, and scroll position; native View Transitions animate the content where supported, with a CSS fallback and reduced-motion handling.
