@@ -14,6 +14,9 @@
   "merge_mode": "automatic",
   "repository_policy": ".github/clouseau.md",
   "readme": "README.md",
+  "coverage": {
+    "mode": "changed_lines"
+  },
   "sensitive_paths": [
     ".clouseau-local.json",
     "vitest.config.ts"
