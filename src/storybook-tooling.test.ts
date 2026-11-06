@@ -105,8 +105,8 @@ describe('Storybook tooling', () => {
 
     it('fails when a served asset differs from its producer', async () => {
       const directory = await artifactCopy();
-      await writeFile(path.join(directory, 'content/styles/giorgia.css'), 'body{}');
+      await writeFile(path.join(directory, 'content/fonts/fonts.css'), `${await readFile(path.join(root, 'src/styles/fonts.css'), 'utf8')}\n/* drift */`);
       await expect(runScript('scripts/verify-storybook-artifact.mjs', [directory, path.join(directory, 'evidence')])).rejects.toThrow(/differs from its existing producer/);
-    }, 120_000); // assert.deepEqual renders a large buffer diff before throwing
+    });
   });
 });
