@@ -61,6 +61,8 @@ describe('client navigation', () => {
     vi.stubGlobal('window', win);
     vi.stubGlobal('document', { querySelector: () => page, title: 'T', documentElement: { lang: 'es' } });
 
+    // client/ sits outside the tsconfig rootDir (src); the module is only loaded here to exercise its hooks.
+    // @ts-ignore TS6059 is a program-level diagnostic
     await import('../client/navigation.js');
 
     handlers['page:view']();
