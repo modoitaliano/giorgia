@@ -1,19 +1,42 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { readFile, mkdir, stat } from 'node:fs/promises';
 import { extname, resolve, relative, isAbsolute } from 'node:path';
-import { chromium } from 'playwright';
+import { chromium, type Browser, type BrowserContext, type Route } from 'playwright';
 import { fileURLToPath } from 'node:url';
 
-export async function main(rootArgument, evidenceArgument) {
+
+interface SyntheticResponse { status?: number; body: unknown }
+type Control = (url: URL) => SyntheticResponse | undefined;
+interface Diagnostics {
+  firstPartyFailures: Array<{ url: string; status?: number; error?: string }>;
+  thirdPartyRequests: string[];
+  editorialRequests: string[];
+  syntheticRequests: Array<{ url: string; method: string; status: number }>;
+  consoleErrors: string[];
+}
+interface FailureControl {
+  name: string;
+  id: string;
+  home?: unknown;
+  events?: unknown;
+  eventsStatus?: number;
+  category?: unknown;
+  expected: string;
+  expectedSuffix?: string;
+  canonicalCount?: number;
+}
+
+export async function main(rootArgument?: string, evidenceArgument?: string): Promise<void> {
   // Exercise the immutable output, never a Vite development-server fallback.
   const root = resolve(rootArgument ?? 'storybook-static');
   const evidence = resolve(evidenceArgument ?? '.cache/storybook-artifact-evidence');
   await mkdir(evidence, { recursive: true });
-  const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.ico': 'image/x-icon' };
+  const mime: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.ico': 'image/x-icon' };
   const server = createServer(async (request, response) => {
     try {
-      const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+      const pathname = decodeURIComponent(new URL(request.url ?? '/', 'http://localhost').pathname);
       const filename = resolve(root, `.${pathname === '/' ? '/index.html' : pathname}`);
       const path = relative(root, filename);
       if (path.startsWith('..') || isAbsolute(path) || !(await stat(filename)).isFile()) throw new Error('Missing artifact file');
@@ -24,18 +47,24 @@ export async function main(rootArgument, evidenceArgument) {
       response.end('Artifact file not found');
     }
   });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const origin = `http://127.0.0.1:${server.address().port}`;
-  let browser;
-  const report = { assets: [], fixtures: [], liveFailureControls: [], downstreamFailureControls: [] };
+  await new Promise<void>(done => server.listen(0, '127.0.0.1', done));
+  const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  let browser: Browser | undefined;
+  const report: {
+    assets: Array<{ path: string; type: string; bytes: number }>;
+    fixtures: unknown[];
+    liveFailureControls: unknown[];
+    downstreamFailureControls: unknown[];
+    manager?: Diagnostics;
+  } = { assets: [], fixtures: [], liveFailureControls: [], downstreamFailureControls: [] };
   try {
-    const assets = [
+    const assets: Array<[string, string, string]> = [
       ['/content/styles/giorgia.css', 'text/css', 'src/styles/compiled.css'],
       ['/content/fonts/fonts.css', 'text/css', 'src/styles/fonts.css'],
       ['/assets/giorgia-navigation.js', 'text/javascript', 'dist/assets/giorgia-navigation.js']
     ];
     const fonts = await readFile(resolve(root, 'content/fonts/fonts.css'), 'utf8');
-    for (const match of fonts.matchAll(/url\(['"]?([^)'"\s]+)['"]?\)/g)) assets.push([match[1], 'font/woff2', `src/styles/fonts/${match[1].split('/').at(-1)}`]);
+    for (const match of fonts.matchAll(/url\(['"]?([^)'"\s]+)['"]?\)/g)) assets.push([match[1]!, 'font/woff2', `src/styles/fonts/${match[1]!.split('/').at(-1)}`]);
     for (const [path, type, source] of assets) {
       const response = await fetch(origin + path);
       assert.equal(response.status, 200, path);
@@ -45,12 +74,13 @@ export async function main(rootArgument, evidenceArgument) {
       assert(bytes.length > 0, path);
       report.assets.push({ path, type, bytes: bytes.length });
     }
-    browser = await chromium.launch({ headless: true });
-    async function freshPage(control) {
-      const context = await browser.newContext({ serviceWorkers: 'block' });
+    const launched = await chromium.launch({ headless: true });
+    browser = launched;
+    async function freshPage(control?: Control) {
+      const context = await launched.newContext({ serviceWorkers: 'block' });
       const page = await context.newPage();
-      const diagnostics = { firstPartyFailures: [], thirdPartyRequests: [], editorialRequests: [], syntheticRequests: [], consoleErrors: [] };
-      await context.route('**/*', route => {
+      const diagnostics: Diagnostics = { firstPartyFailures: [], thirdPartyRequests: [], editorialRequests: [], syntheticRequests: [], consoleErrors: [] };
+      await context.route('**/*', (route: Route) => {
         const url = route.request().url();
         if (/^https?:/.test(url) && !url.startsWith(origin + '/')) {
           diagnostics.thirdPartyRequests.push(url);
@@ -88,7 +118,7 @@ export async function main(rootArgument, evidenceArgument) {
     for (const id of fixtureIds) {
       const { context, page, diagnostics } = await freshPage();
       await page.goto(`${origin}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle' });
-      await page.waitForFunction(() => document.querySelector('#storybook-root')?.childElementCount > 0 || document.querySelector('.sb-errordisplay')?.textContent?.trim());
+      await page.waitForFunction(() => (document.querySelector('#storybook-root')?.childElementCount ?? 0) > 0 || document.querySelector('.sb-errordisplay')?.textContent?.trim());
       await page.screenshot({ path: resolve(evidence, `${id}.png`), fullPage: true });
       assert.equal(await page.locator('body').evaluate(el => el.classList.contains('sb-show-errordisplay')), false, `${id}: ${await page.locator('body').innerText()}`);
       assert((await page.locator('#storybook-root').innerText()).trim().length > 0, `Empty fixture ${id}`);
@@ -119,7 +149,7 @@ export async function main(rootArgument, evidenceArgument) {
     const home = { articles: [summary] };
     const eventURL = 'https://cdn.modoitaliano.fm/json/articles/sports/fixture-event.json';
     const homepageURL = 'https://cdn.modoitaliano.fm/json/articles/sports/fixture-breaking.json';
-    const controls = [
+    const controls: FailureControl[] = [
       { name: 'events index failure', id: 'pages-homepage--current', home, events: { message: 'Deliberate synthetic events failure' }, eventsStatus: 503, expected: 'Request failed for https://cdn.modoitaliano.fm/content/events-current-en.json', expectedSuffix: ': 503' },
       { name: 'invalid homepage index', id: 'pages-homepage--current', home: { articles: [{}] }, events: { docs: [] }, expected: 'Current homepage feed contains no articles' },
       { name: 'empty category index', id: 'pages-categorypage--current', category: { articles: [] }, expected: 'Current category feed contains no articles: sports' },
@@ -133,7 +163,7 @@ export async function main(rootArgument, evidenceArgument) {
       { name: 'absent current live story', id: 'pages-livestorypage--current', home, events: { docs: [] }, expected: 'Current feeds contain no live story' }
     ];
     for (const control of controls) {
-      const { context, page, diagnostics } = await freshPage(url => {
+      const { context, page, diagnostics } = await freshPage((url: URL) => {
         if (url.hostname !== 'cdn.modoitaliano.fm') return;
         if (url.pathname === '/content/homepage-current-en.json' && 'home' in control) return { body: control.home };
         if (url.pathname === '/content/events-current-en.json' && 'events' in control) return { body: control.events, status: control.eventsStatus ?? 200 };
@@ -141,7 +171,7 @@ export async function main(rootArgument, evidenceArgument) {
         if (url.pathname.startsWith('/json/articles/')) return { status: 503, body: { message: 'Deliberate synthetic canonical failure' } };
       });
       await page.goto(`${origin}/iframe.html?id=${control.id}&viewMode=story`, { waitUntil: 'networkidle' });
-      await page.waitForFunction(() => document.body.classList.contains('sb-show-errordisplay') || document.querySelector('#storybook-root')?.childElementCount > 0);
+      await page.waitForFunction(() => document.body.classList.contains('sb-show-errordisplay') || (document.querySelector('#storybook-root')?.childElementCount ?? 0) > 0);
       const text = await page.locator('body').innerText();
       assert(await page.locator('body').evaluate(el => el.classList.contains('sb-show-errordisplay')), `${control.name}: false successful fallback: ${text}`);
       assert(text.includes(control.expected), `${control.name}: expected ${control.expected}, got ${text}`);
@@ -157,7 +187,7 @@ export async function main(rootArgument, evidenceArgument) {
     console.log(JSON.stringify(report, null, 2));
   } finally {
     await browser?.close();
-    await new Promise(resolve => server.close(resolve));
+    await new Promise<void>(done => server.close(() => done()));
   }
 }
 

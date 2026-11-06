@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Only generated Storybook staging is reset; package assets remain untouched.
-export async function main() {
+export async function main(): Promise<void> {
   const root = new URL('../', import.meta.url);
   const output = new URL('.cache/storybook-public/', root);
   await rm(output, { recursive: true, force: true });

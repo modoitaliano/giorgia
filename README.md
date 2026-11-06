@@ -98,7 +98,7 @@ After building, run the browser/artifact regression against the exact output:
 
 ```sh
 npm run build-storybook
-node scripts/verify-storybook-artifact.mjs
+npx tsx scripts/verify-storybook-artifact.ts
 ```
 
 The check starts an isolated loopback static server and fresh Chromium contexts,

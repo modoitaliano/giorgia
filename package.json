@@ -74,7 +74,7 @@
     "test:unit": "vitest run --project unit",
     "test:coverage": "npm run build:css && npm run build:navigation && vitest run --project unit --coverage.enabled --coverage.provider=v8 --coverage.reporter=json --coverage.reportsDirectory=coverage \"--coverage.include=src/**/*.{ts,tsx}\"",
     "verify:packed-contract": "npm run build && node scripts/verify-packed-contract.mjs",
-    "storybook:assets": "npm run build:css && npm run build:navigation && node scripts/prepare-storybook-assets.mjs"
+    "storybook:assets": "npm run build:css && npm run build:navigation && tsx scripts/prepare-storybook-assets.ts"
   },
   "dependencies": {
     "@fontsource/barlow": "^5.3.0",

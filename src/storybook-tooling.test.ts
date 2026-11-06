@@ -2,8 +2,8 @@ import { cp, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import storybookConfig from '../.storybook/main.js';
-import { main as prepareAssets } from '../scripts/prepare-storybook-assets.mjs';
-import { main as verifyArtifact } from '../scripts/verify-storybook-artifact.mjs';
+import { main as prepareAssets } from '../scripts/prepare-storybook-assets.js';
+import { main as verifyArtifact } from '../scripts/verify-storybook-artifact.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 
@@ -47,7 +47,7 @@ describe('Storybook tooling', () => {
     });
   });
 
-  describe('scripts/prepare-storybook-assets.mjs', () => {
+  describe('scripts/prepare-storybook-assets.ts', () => {
     it('stages packaged assets at the paths the page stories request', async () => {
       const pairs: Array<[string, string]> = [
         ['content/styles/giorgia.css', 'src/styles/compiled.css'],
@@ -70,7 +70,7 @@ describe('Storybook tooling', () => {
     });
   });
 
-  describe('scripts/verify-storybook-artifact.mjs', () => {
+  describe('scripts/verify-storybook-artifact.ts', () => {
     it('fails when the artifact lacks the packaged font stylesheet', async () => {
       const directory = await artifactCopy();
       await rm(path.join(directory, 'content/fonts/fonts.css'));
