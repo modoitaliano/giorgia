@@ -135,7 +135,7 @@ test('the scored route, repair bound, protected purpose and deployment handoff r
   assert.deepEqual(config.acceptance, {examiner: 'deepseek-flash', challenger: 'deepseek-v4-pro', grader: 'routed', grading_model: 'deepseek-flash', repair_attempts: 2});
   assert.ok(config.sensitive_paths.includes(".clouseau-local.json"));
   const contract = readFileSync(new URL('../clouseau.md', import.meta.url), 'utf8');
-  assert.match(contract, /exactly 100%/); assert.match(contract, /explicit owner confirmation/);
+  assert.match(contract, /changed-line coverage/); assert.deepEqual(config.coverage, {mode: 'changed_lines'}); assert.match(contract, /explicit owner confirmation/);
   assert.equal(config.deployment, null);
   assert.equal(workflow.jobs['finalize-merge'].permissions.actions, 'write');
 });
