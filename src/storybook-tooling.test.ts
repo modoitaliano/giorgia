@@ -1,35 +1,15 @@
-import { execFileSync } from 'node:child_process';
 import { cp, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import storybookConfig from '../.storybook/main.js';
+import { main as prepareAssets } from '../scripts/prepare-storybook-assets.mjs';
+import { main as verifyArtifact } from '../scripts/verify-storybook-artifact.mjs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 
 const root = path.resolve(import.meta.dirname, '..');
 const staged = path.join(root, '.cache/storybook-public');
-const navigation = path.join(root, 'dist/assets/giorgia-navigation.js');
 const temporary: string[] = [];
-let imports = 0;
-// Loaded by path: .storybook sits outside the typecheck rootDir.
-type StorybookConfigShape = {
-  staticDirs: string[];
-  stories: string[];
-  framework: string;
-  viteFinal(config: Record<string, unknown>): Promise<Record<string, unknown>>;
-};
-let storybookConfig: StorybookConfigShape;
-
-async function runScript(script: string, argv: string[] = []) {
-  const original = process.argv;
-  process.argv = [original[0], script, ...argv];
-  try {
-    // A unique query re-evaluates the top-level script on every call.
-    return await import(/* @vite-ignore */ `${pathToFileURL(path.join(root, script)).href}?run=${imports++}`);
-  } finally {
-    process.argv = original;
-  }
-}
 
 async function artifactCopy() {
   const directory = await mkdtemp(path.join(tmpdir(), 'giorgia-artifact-'));
@@ -44,10 +24,8 @@ async function exists(file: string) {
 
 describe('Storybook tooling', () => {
   beforeAll(async () => {
-    storybookConfig = (await import(/* @vite-ignore */ pathToFileURL(path.join(root, '.storybook/main.ts')).href)).default;
-    // The staging script consumes the navigation bundle produced by the package build.
-    if (!(await exists(navigation))) execFileSync('npm', ['run', 'build:navigation'], { cwd: root, stdio: 'pipe' });
-    await runScript('scripts/prepare-storybook-assets.mjs');
+    // The staging script consumes dist/assets/giorgia-navigation.js, built by pretest:unit and test:coverage.
+    await prepareAssets();
   }, 120_000);
 
   afterAll(async () => {
@@ -62,7 +40,9 @@ describe('Storybook tooling', () => {
     });
 
     it('lets Vite treat Handlebars templates as assets', async () => {
-      const resolved = await storybookConfig.viteFinal({ base: '/' });
+      const { viteFinal } = storybookConfig;
+      if (!viteFinal) throw new Error('viteFinal is not configured');
+      const resolved = await viteFinal({ base: '/' }, { configType: 'DEVELOPMENT' } as Parameters<typeof viteFinal>[1]);
       expect(resolved).toMatchObject({ base: '/', assetsInclude: ['**/*.hbs'] });
     });
   });
@@ -84,7 +64,7 @@ describe('Storybook tooling', () => {
     it('resets only the generated staging directory on every run', async () => {
       const stale = path.join(staged, 'stale.txt');
       await writeFile(stale, 'stale');
-      await runScript('scripts/prepare-storybook-assets.mjs');
+      await prepareAssets();
       expect(await exists(stale)).toBe(false);
       expect(await exists(path.join(root, 'src/styles/compiled.css'))).toBe(true);
     });
@@ -94,19 +74,19 @@ describe('Storybook tooling', () => {
     it('fails when the artifact lacks the packaged font stylesheet', async () => {
       const directory = await artifactCopy();
       await rm(path.join(directory, 'content/fonts/fonts.css'));
-      await expect(runScript('scripts/verify-storybook-artifact.mjs', [directory, path.join(directory, 'evidence')])).rejects.toThrow(/ENOENT/);
+      await expect(verifyArtifact(directory, path.join(directory, 'evidence'))).rejects.toThrow(/ENOENT/);
     });
 
     it('fails when a font referenced by fonts.css is not served', async () => {
       const directory = await artifactCopy();
       await rm(path.join(directory, 'content/fonts/barlow-latin-400-normal.woff2'));
-      await expect(runScript('scripts/verify-storybook-artifact.mjs', [directory, path.join(directory, 'evidence')])).rejects.toThrow(/barlow-latin-400-normal\.woff2/);
+      await expect(verifyArtifact(directory, path.join(directory, 'evidence'))).rejects.toThrow(/barlow-latin-400-normal\.woff2/);
     });
 
     it('fails when a served asset differs from its producer', async () => {
       const directory = await artifactCopy();
       await writeFile(path.join(directory, 'content/fonts/fonts.css'), `${await readFile(path.join(root, 'src/styles/fonts.css'), 'utf8')}\n/* drift */`);
-      await expect(runScript('scripts/verify-storybook-artifact.mjs', [directory, path.join(directory, 'evidence')])).rejects.toThrow(/differs from its existing producer/);
+      await expect(verifyArtifact(directory, path.join(directory, 'evidence'))).rejects.toThrow(/differs from its existing producer/);
     });
   });
 });
