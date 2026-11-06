@@ -91,8 +91,8 @@ failures reject the loader and appear in Storybook's error display; they never
 turn an unavailable feed into a successful fixture article. Fixture images,
 third-party media and the existing radio shell's now-playing request remain
 external runtime dependencies, separate from editorial preview loaders. The
-breaking-news fixture supplies the existing helper-test sample SofaScore ID and
-is labelled as a layout fixture, not a current score or live-match claim.
+breaking-news fixture is labelled as a layout fixture, not a current score or
+live-match claim.
 
 After building, run the browser/artifact regression against the exact output:
 

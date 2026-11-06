@@ -151,9 +151,7 @@ export const homepageFixture: CanonicalArticle = {
       url: '/sports/match-window-delays',
       image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=640&h=480&fit=crop',
       alt: 'Stadium under cloudy skies',
-      excerpt: 'Checked-in layout example; no current score or live match availability is asserted.',
-      // The existing sofascore helper tests use this sample provider ID.
-      sofascore_id: 15388428
+      excerpt: 'Checked-in layout example; no current score or live match availability is asserted.'
     },
     updates: [
       { time: '12 min ago', text: 'Emergency managers opened two additional shelters.' },

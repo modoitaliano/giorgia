@@ -38,7 +38,7 @@ test('absent breaking news does not acquire checked-in current-news cards', asyn
 });
 
 test('partial breaking news retains supplied main data without fixture sidebar or snack fallback', async () => {
-  const main = { title: 'Synthetic main', url: '/sports/fixture', category: 'Sports fixture', image: 'https://example.test/fixture.jpg', sofascore_id: 15388428 };
+  const main = { title: 'Synthetic main', url: '/sports/fixture', category: 'Sports fixture', image: 'https://example.test/fixture.jpg' };
   await withSyntheticFeeds({ breakingNews: { main, updates: [] } }, { docs: [] }, async loader => {
     const result = await loader.loadBreakingNewsPreviewData();
     assert.equal(result.main.title, main.title);

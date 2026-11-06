@@ -94,11 +94,6 @@ try {
     assert.deepEqual(diagnostics.editorialRequests, [], `Fixture inherited a live loader: ${id}`);
     const assetErrors = diagnostics.consoleErrors.filter(text => /MIME|stylesheet|giorgia-navigation|\/content\/fonts\//i.test(text));
     assert.deepEqual(assetErrors, [], id);
-    if (id === 'pages-homepage--with-breaking-news') {
-      const widget = page.locator('iframe[title="SofaScore Attack Momentum"]');
-      assert.equal(await widget.count(), 1, 'Breaking-news fixture must exercise the real provider helper');
-      assert.equal(new URL(await widget.getAttribute('src')).searchParams.get('id'), '15388428');
-    }
     if (id.startsWith('pages-')) {
       assert(await page.evaluate(() => [...document.styleSheets].some(sheet => sheet.href?.endsWith('/content/styles/giorgia.css') && sheet.cssRules.length > 0)), `Page stylesheet not applied: ${id}`);
       assert(await page.evaluate(async () => (await document.fonts.load('16px Barlow')).length > 0), `Packaged Barlow font not loaded: ${id}`);
