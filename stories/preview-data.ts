@@ -41,7 +41,6 @@ interface EventsPreviewDoc {
   language?: string;
   eventDate?: string;
   updatedAt?: string;
-  sofascore_id?: number | string;
   updates?: unknown[];
   categories?: Array<{ name?: string; slug?: string }>;
   featuredImage?: { url?: string; alt?: string };
@@ -478,13 +477,6 @@ function buildBreakingNewsMainFromEvent(eventDoc: EventsPreviewDoc): Record<stri
     typeof eventDoc.categories?.[0]?.name === 'string' && eventDoc.categories[0].name.trim().length > 0
       ? eventDoc.categories[0].name
       : 'Live Updates';
-  const sofascoreId =
-    typeof eventDoc.sofascore_id === 'number'
-      ? eventDoc.sofascore_id
-      : typeof eventDoc.sofascore_id === 'string' && /^\d+$/.test(eventDoc.sofascore_id.trim())
-        ? Number.parseInt(eventDoc.sofascore_id, 10)
-        : undefined;
-
   return {
     category,
     title: typeof eventDoc.title === 'string' && eventDoc.title.trim().length > 0 ? eventDoc.title : liveStoryFixture.title,
@@ -492,7 +484,6 @@ function buildBreakingNewsMainFromEvent(eventDoc: EventsPreviewDoc): Record<stri
     liveUrl: buildLiveEventPath(
       resolveHref(eventDoc.url ?? eventDoc.slug ?? liveStoryFixture.slug),
     ),
-    sofascore_id: sofascoreId,
     image:
       typeof eventDoc.featuredImage?.url === 'string' && eventDoc.featuredImage.url.trim().length > 0
         ? eventDoc.featuredImage.url
@@ -980,13 +971,6 @@ function buildLiveStoryDocumentFromEvent(eventDoc: EventsPreviewDoc, payload: Ho
     dek: liveStoryFixture.dek,
     excerpt,
     language: normalizeLanguage(eventDoc.language),
-    sofascore_id:
-      typeof eventDoc.sofascore_id === 'number'
-        ? eventDoc.sofascore_id
-        : typeof eventDoc.sofascore_id === 'string' &&
-            /^\d+$/.test(eventDoc.sofascore_id.trim())
-          ? Number.parseInt(eventDoc.sofascore_id, 10)
-          : undefined,
     featured: true,
     authors: liveStoryFixture.authors,
     categories,

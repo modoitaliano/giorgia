@@ -1,5 +1,4 @@
 import Handlebars from 'handlebars';
-import { buildSofascoreAttackMomentumUrl, buildSofascoreMatchUrl } from '../../src/utils/sofascore';
 import bodyBlockHbs from '../../src/templates/partials/components/body-block.hbs?raw';
 import snackHbs from '../../src/templates/partials/components/snack.hbs?raw';
 import snackMetaImageRowHbs from '../../src/templates/partials/components/snack-meta-image-row.hbs?raw';
@@ -175,9 +174,7 @@ export function registerCommonHelpers(): void {
     const templates: Record<string, string> = {
       'x-embed': 'https://platform.twitter.com/embed/Tweet.html?id={id}&dnt=true',
       tiktok: 'https://www.tiktok.com/embed/v2/{id}',
-      spotify: 'https://open.spotify.com/embed/{kind}/{id}',
-      'sofascore-widget': 'https://widgets.sofascore.com/embed/attackMomentum?id={id}&widgetTheme={widgetTheme}',
-      'sofascore-match': 'https://www.sofascore.com/football/match#id:{id}'
+      spotify: 'https://open.spotify.com/embed/{kind}/{id}'
     };
     const template = typeof name === 'string' ? templates[name] : undefined;
     if (!template) throw new Error(`Unknown embed provider "${String(name)}"`);
@@ -281,8 +278,6 @@ export function registerCommonHelpers(): void {
     if (!match) return url;
     return `https://www.tiktok.com/embed/v2/${match[1]}`;
   });
-  Handlebars.registerHelper('sofascoreWidgetUrl', (id: unknown) => buildSofascoreAttackMomentumUrl(id));
-  Handlebars.registerHelper('sofascoreMatchUrl', (id: unknown) => buildSofascoreMatchUrl(id));
   Handlebars.registerHelper('jsonString', (value: unknown) => {
     if (value === undefined) return 'null';
     return JSON.stringify(value);

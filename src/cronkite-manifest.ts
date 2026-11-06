@@ -223,17 +223,6 @@ export const cronkiteManifest = {
           id: { type: 'string', pattern: '^[A-Za-z0-9]+$' },
         },
       },
-      'sofascore-widget': {
-        urlTemplate: 'https://widgets.sofascore.com/embed/attackMomentum?id={id}&widgetTheme={widgetTheme}',
-        parameters: {
-          id: { type: 'integer', minimum: 1 },
-          widgetTheme: { type: 'string', enum: ['light', 'dark'], default: 'light' },
-        },
-      },
-      'sofascore-match': {
-        urlTemplate: 'https://www.sofascore.com/football/match#id:{id}',
-        parameters: { id: { type: 'integer', minimum: 1 } },
-      },
     },
     renderables: {
       'article-page': page('article-page', [pagePartials[0], pagePartials[1], 'components/article-main', pagePartials[2], pagePartials[3]]),
