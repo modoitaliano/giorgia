@@ -218,14 +218,16 @@ receipt in the initial ready PR body. Never push directly to `main`.
 Every PR runs:
 
 - `npm run typecheck`,
-- `npm run test:coverage`: the Vitest `unit` project under V8 coverage with exactly 100% line and branch coverage required over `src`,
+- `npm run test:coverage`: the Vitest `unit` project under V8 coverage; the Clouseau gate measures changed-line coverage of `src` (see below),
 - `npm run build` and the packed declarative contract check (`node scripts/verify-packed-contract.mjs`),
 - the workflow-contract tests in `.github/tests`.
 
-The Clouseau gate requires exactly 100% line and branch coverage over every
-non-test file in `src`; new behaviour needs a test, never a coverage pragma.
-Until the suite reaches that bar the coverage step fails, so a PR stays in
-human review and is merged by the owner rather than automatically.
+The Clouseau gate (`coverage.mode: changed_lines` in `.github/clouseau.json`)
+requires every line and branch a PR adds or modifies under `src` to be covered,
+and repository-wide line and branch coverage must not fall below the base
+revision's, which CI measures on the PR base. New behaviour needs a test, never
+a coverage pragma. The mode is read from the base revision's configuration, so
+a PR that changes it is itself judged by the previous mode.
 
 A PR carrying an authenticated local review stamp is verified by the pinned
 Clouseau engine without AI credentials; unstamped PRs use the CI reviewer.
