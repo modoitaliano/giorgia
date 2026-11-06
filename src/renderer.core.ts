@@ -57,9 +57,7 @@ function registerHelpers(): void {
       'x-embed': 'https://platform.twitter.com/embed/Tweet.html?id={id}&dnt=true',
       instagram: 'https://www.instagram.com/p/{shortcode}/embed/',
       tiktok: 'https://www.tiktok.com/embed/v2/{id}',
-      spotify: 'https://open.spotify.com/embed/{kind}/{id}',
-      'sofascore-widget': 'https://widgets.sofascore.com/embed/attackMomentum?id={id}&widgetTheme={widgetTheme}',
-      'sofascore-match': 'https://www.sofascore.com/football/match#id:{id}'
+      spotify: 'https://open.spotify.com/embed/{kind}/{id}'
     };
     const template = typeof name === 'string' ? templates[name] : undefined;
     if (!template) throw new Error(`Unknown embed provider "${String(name)}"`);

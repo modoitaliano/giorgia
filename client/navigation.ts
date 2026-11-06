@@ -9,7 +9,6 @@ declare global {
     __brokawInitAnimatedHighlights?: () => void;
     __brokawInitCarousels?: (root?: ParentNode) => void;
     __brokawPageCleanup?: () => void;
-    __brokawSyncSofascoreTheme?: () => void;
     gtag?: (...args: unknown[]) => void;
   }
 }
@@ -46,7 +45,6 @@ function hydratePage(): void {
   window.__brokawHydrateRelativeTimes?.(page);
   window.__brokawInitCarousels?.(page);
   window.__brokawInitAnimatedHighlights?.();
-  window.__brokawSyncSofascoreTheme?.();
 }
 
 function trackPageView(): void {
