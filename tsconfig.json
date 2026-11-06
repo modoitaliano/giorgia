@@ -7,12 +7,12 @@
     "strict": true,
     "declaration": true,
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "react", "react-dom"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "scripts/prepare-storybook-assets.ts", "scripts/verify-storybook-artifact.ts"],
   "exclude": ["dist", "node_modules", "stories"]
 }

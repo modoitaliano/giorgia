@@ -45,7 +45,6 @@ const template = Handlebars.compile(liveStoryMainHbs);
 
 const meta = {
   title: 'Partials/LiveStory/Main',
-  loaders: [async () => ({ liveStory: await loadLiveStoryPreviewData() })],
   render: (_args, { loaded }) => template(loaded.liveStory)
 } satisfies Meta;
 
@@ -53,4 +52,7 @@ export default meta;
 
 type Story = StoryObj;
 
-export const Default: Story = {};
+export const Current: Story = {
+  loaders: [async () => ({ liveStory: await loadLiveStoryPreviewData() })],
+  render: (_args, { loaded }) => template(loaded.liveStory)
+};

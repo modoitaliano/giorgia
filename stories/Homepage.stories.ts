@@ -32,9 +32,9 @@ const triangoloNowPlaying = {
 
 const meta = {
   title: 'Pages/Homepage',
-  loaders: [async () => ({ homepage: await loadHomepagePreviewData() })],
-  render: (args, { loaded }) => render(withHomepageSlots({ ...(loaded.homepage as CanonicalArticle), ...args }, new Date())),
+  render: (args) => render(withHomepageSlots(args as CanonicalArticle, FIXTURE_NOW)),
   args: {
+    ...homepageFixture,
     showHero: true,
     showEditorialHero: false,
     showBreakingNews: true,
@@ -85,6 +85,7 @@ export const Default: Story = {
 
 export const Current: Story = {
   name: 'Current',
+  loaders: [async () => ({ homepage: await loadHomepagePreviewData() })],
   render: (_args, { loaded }) => render(withHomepageSlots(loaded.homepage as CanonicalArticle, new Date())),
   parameters: {
     controls: {

@@ -4,7 +4,6 @@ import { loadLiveStoryPreviewData } from './preview-data';
 
 const meta = {
   title: 'Pages/LiveStoryPage',
-  loaders: [async () => ({ liveStory: await loadLiveStoryPreviewData() })],
   render: (_args, { loaded }) => render(loaded.liveStory)
 } satisfies Meta;
 
@@ -12,4 +11,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Current: Story = {
+  loaders: [async () => ({ liveStory: await loadLiveStoryPreviewData() })]
+};

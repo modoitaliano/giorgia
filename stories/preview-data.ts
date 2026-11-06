@@ -3,7 +3,6 @@ import { distributeHomepageArticles } from '../src/homepage-distributor';
 import { homepageFixture } from './fixtures/homepage.fixture';
 import { liveStoryFixture } from './fixtures/live-story.fixture';
 import { categoryFixture } from './fixtures/category.fixture';
-import { articleFixture } from './fixtures/article.fixture';
 
 const HOMEPAGE_JSON_URL = 'https://cdn.modoitaliano.fm/content/homepage-current-en.json';
 const EVENTS_JSON_URL = 'https://cdn.modoitaliano.fm/content/events-current-en.json';
@@ -59,8 +58,6 @@ interface BreakingNewsStoryData {
   updates?: Array<{ timestamp?: string; time?: string; text?: string; html?: string }>;
   snacks?: Array<Record<string, unknown>>;
 }
-
-const breakingNewsFixture: BreakingNewsStoryData = homepageFixture.breakingNews ?? {};
 
 let homepagePayloadPromise: Promise<HomepagePreviewPayload | null> | null = null;
 let eventsPayloadPromise: Promise<EventsPreviewPayload | null> | null = null;
@@ -135,10 +132,7 @@ function getHomepagePayload(): Promise<HomepagePreviewPayload | null> {
   if (!homepagePayloadPromise || now - homepagePayloadFetchedAt > PREVIEW_CACHE_TTL_MS) {
     homepagePayloadFetchedAt = now;
     const cacheBuster = Math.floor(now / PREVIEW_CACHE_TTL_MS);
-    homepagePayloadPromise = fetchJson<HomepagePreviewPayload>(`${HOMEPAGE_JSON_URL}?v=${cacheBuster}`).catch((error) => {
-      console.warn('[storybook] Failed to fetch homepage preview JSON:', error);
-      return null;
-    });
+    homepagePayloadPromise = fetchJson<HomepagePreviewPayload>(`${HOMEPAGE_JSON_URL}?v=${cacheBuster}`);
   }
 
   return homepagePayloadPromise;
@@ -149,10 +143,7 @@ function getEventsPayload(): Promise<EventsPreviewPayload | null> {
   if (!eventsPayloadPromise || now - eventsPayloadFetchedAt > PREVIEW_CACHE_TTL_MS) {
     eventsPayloadFetchedAt = now;
     const cacheBuster = Math.floor(now / PREVIEW_CACHE_TTL_MS);
-    eventsPayloadPromise = fetchJson<EventsPreviewPayload>(`${EVENTS_JSON_URL}?v=${cacheBuster}`).catch((error) => {
-      console.warn('[storybook] Failed to fetch aggregate events preview JSON:', error);
-      return null;
-    });
+    eventsPayloadPromise = fetchJson<EventsPreviewPayload>(`${EVENTS_JSON_URL}?v=${cacheBuster}`);
   }
 
   return eventsPayloadPromise;
@@ -172,10 +163,7 @@ function getCategoryPayload(categorySlug: string): Promise<CategoryPreviewPayloa
     categoryPayloadFetchedAt.set(normalizedSlug, now);
     const cacheBuster = Math.floor(now / PREVIEW_CACHE_TTL_MS);
     const url = `${CATEGORY_JSON_BASE_URL}/${normalizedSlug}-current-en.json?v=${cacheBuster}`;
-    const nextPromise = fetchJson<CategoryPreviewPayload>(url).catch((error) => {
-      console.warn(`[storybook] Failed to fetch ${normalizedSlug} category preview JSON:`, error);
-      return null;
-    });
+    const nextPromise = fetchJson<CategoryPreviewPayload>(url);
     categoryPayloadPromises.set(normalizedSlug, nextPromise);
     return nextPromise;
   }
@@ -187,7 +175,6 @@ function normalizeBreakingNewsData(payload: HomepagePreviewPayload | null): Brea
   const record = payload?.breakingNews;
   if (!record || typeof record !== 'object') {
     return {
-      ...breakingNewsFixture,
       main: undefined,
       updates: []
     };
@@ -222,13 +209,13 @@ function normalizeBreakingNewsData(payload: HomepagePreviewPayload | null): Brea
 
   return {
     ...record,
-    sidebarFeature: normalizeBreakingNewsCard(record.sidebarFeature) ?? breakingNewsFixture.sidebarFeature,
-    sidebarSub: normalizeBreakingNewsCard(record.sidebarSub) ?? breakingNewsFixture.sidebarSub,
-    main: normalizeBreakingNewsCard(record.main) ?? breakingNewsFixture.main,
+    sidebarFeature: normalizeBreakingNewsCard(record.sidebarFeature),
+    sidebarSub: normalizeBreakingNewsCard(record.sidebarSub),
+    main: normalizeBreakingNewsCard(record.main),
     updates,
     snacks: Array.isArray(record.snacks)
       ? record.snacks.map((snack) => normalizeBreakingNewsCard(snack)).filter((snack): snack is Record<string, unknown> => Boolean(snack))
-      : breakingNewsFixture.snacks
+      : []
   };
 }
 
@@ -620,7 +607,7 @@ function buildHomepageCategories(payload: HomepagePreviewPayload | null): Canoni
 function buildHomepageArticles(payload: HomepagePreviewPayload | null): SelfReference[] {
   const articles = Array.isArray(payload?.articles) ? payload.articles : [];
   if (articles.length === 0) {
-    return homepageFixture.articles || [];
+    return [];
   }
 
   const mapped: SelfReference[] = [];
@@ -673,7 +660,7 @@ function buildHomepageArticles(payload: HomepagePreviewPayload | null): SelfRefe
     });
   });
 
-  return mapped.length > 0 ? mapped : homepageFixture.articles || [];
+  return mapped;
 }
 
 function buildHomepagePreviewDocument(payload: HomepagePreviewPayload | null, breakingNews: BreakingNewsStoryData): CanonicalArticle {
@@ -786,7 +773,7 @@ function buildCategoryPreviewDocument(categorySlug: string, payload: CategoryPre
     navigation: {
       categories: navigationCategories
     },
-    articles: mappedArticles.length > 0 ? mappedArticles : categoryFixture.articles,
+    articles: mappedArticles,
     seo: {
       metaTitle: `${categoryName} | ModoItaliano`,
       metaDescription: categoryDescription
@@ -836,64 +823,6 @@ function buildArticleJsonUrlCandidates(articleSummary: Record<string, unknown>):
 
   candidates.add(`${ARTICLE_JSON_BASE_URL}/${slugWithoutPrefix}.json`);
   return [...candidates];
-}
-
-function buildFallbackArticlePreviewDocument(articleSummary: Record<string, unknown>): CanonicalArticle {
-  const rawSlug = typeof articleSummary.slug === 'string' ? articleSummary.slug.trim().replace(/^\/+/, '') : '';
-  const primaryCategorySlug = getPrimaryCategorySlug(articleSummary) || categoryFixture.categories?.[0]?.slug || 'news';
-  const canonicalSlug = rawSlug.includes('/') ? `/${rawSlug}` : `/${primaryCategorySlug}/${rawSlug || 'story'}`;
-  const title =
-    typeof articleSummary.title === 'string' && articleSummary.title.trim().length > 0
-      ? articleSummary.title.trim()
-      : articleFixture.title;
-  const excerpt =
-    typeof articleSummary.excerpt === 'string' && articleSummary.excerpt.trim().length > 0
-      ? articleSummary.excerpt.trim()
-      : articleFixture.excerpt;
-  const categories = Array.isArray(articleSummary.categories)
-    ? articleSummary.categories
-        .map((category) => {
-          if (!category || typeof category !== 'object') return null;
-          const record = category as Record<string, unknown>;
-          const name = typeof record.name === 'string' ? record.name : '';
-          const slug = typeof record.slug === 'string' ? record.slug : '';
-          if (!name || !slug) return null;
-          return { name, slug };
-        })
-        .filter((category): category is CanonicalArticle['categories'][number] => Boolean(category))
-    : [];
-
-  const featuredImageRecord =
-    articleSummary.featuredImage && typeof articleSummary.featuredImage === 'object'
-      ? (articleSummary.featuredImage as Record<string, unknown>)
-      : null;
-  const featuredImageUrl = typeof featuredImageRecord?.url === 'string' ? featuredImageRecord.url : '';
-  const featuredImageAlt = typeof featuredImageRecord?.alt === 'string' ? featuredImageRecord.alt : title;
-  const updatedAt = toIsoDateTime(articleSummary.updatedAt, articleFixture.updatedAt);
-  const publishedAt = toIsoDateTime(articleSummary.publishedAt, articleFixture.publishedAt);
-  const summaryLanguage: CanonicalArticle['language'] =
-    articleSummary.language === 'es' || articleSummary.language === 'it'
-      ? articleSummary.language
-      : 'en';
-
-  return {
-    ...articleFixture,
-    id: String(articleSummary.id ?? articleFixture.id),
-    slug: canonicalSlug,
-    canonicalUrl: `https://modoitaliano.fm${canonicalSlug}`,
-    contentVersion: updatedAt,
-    publishedAt,
-    updatedAt,
-    title,
-    excerpt,
-    language: summaryLanguage,
-    featured: articleSummary.featured === true,
-    categories: categories.length > 0 ? categories : articleFixture.categories,
-    featuredImage: featuredImageUrl
-      ? { url: featuredImageUrl, alt: featuredImageAlt }
-      : articleFixture.featuredImage,
-    body: articleFixture.body
-  };
 }
 
 function buildLiveStoryDocument(payload: HomepagePreviewPayload | null, breakingNews: BreakingNewsStoryData): CanonicalArticle {
@@ -1089,6 +1018,9 @@ export async function loadBreakingNewsPreviewData(): Promise<BreakingNewsStoryDa
 
 export async function loadHomepagePreviewData(): Promise<CanonicalArticle> {
   const payload = await getHomepagePayload();
+  if (buildHomepageArticles(payload).length === 0) {
+    throw new Error('Current homepage feed contains no articles');
+  }
   const breakingNews = await loadBreakingNewsPreviewData();
   return buildHomepagePreviewDocument(payload, breakingNews);
 }
@@ -1096,8 +1028,10 @@ export async function loadHomepagePreviewData(): Promise<CanonicalArticle> {
 export async function loadCategoryPreviewData(categorySlug = DEFAULT_CURRENT_CATEGORY_SLUG): Promise<CanonicalArticle> {
   const payload = await getCategoryPayload(categorySlug);
   if (!payload) {
-    console.warn(`[storybook] Falling back to category fixture for slug "${categorySlug}"`);
-    return categoryFixture;
+    throw new Error(`Current category feed is unavailable: ${categorySlug}`);
+  }
+  if (buildHomepageArticles(payload).length === 0) {
+    throw new Error(`Current category feed contains no articles: ${categorySlug}`);
   }
 
   return buildCategoryPreviewDocument(categorySlug, payload);
@@ -1111,8 +1045,7 @@ export async function loadArticlePreviewData(categorySlug = DEFAULT_CURRENT_CATE
       : null;
 
   if (!articleSummary) {
-    console.warn(`[storybook] No article summaries found in ${categorySlug} feed; falling back to article fixture.`);
-    return articleFixture;
+    throw new Error(`Current category feed contains no article summaries: ${categorySlug}`);
   }
 
   const urlCandidates = buildArticleJsonUrlCandidates(articleSummary);
@@ -1124,8 +1057,7 @@ export async function loadArticlePreviewData(categorySlug = DEFAULT_CURRENT_CATE
     }
   }
 
-  console.warn('[storybook] Falling back to synthesized current article preview document from summary payload.');
-  return buildFallbackArticlePreviewDocument(articleSummary);
+  throw new Error('Current article JSON could not be loaded from its source URLs');
 }
 
 export async function loadLiveStoryPreviewData(): Promise<CanonicalArticle> {
@@ -1135,11 +1067,7 @@ export async function loadLiveStoryPreviewData(): Promise<CanonicalArticle> {
   if (mostRecentEvent) {
     const jsonUrl = typeof mostRecentEvent.jsonUrl === 'string' ? mostRecentEvent.jsonUrl : '';
     if (jsonUrl) {
-      try {
-        return await fetchJson<CanonicalArticle>(jsonUrl);
-      } catch (error) {
-        console.warn('[storybook] Failed to fetch live story from latest events feed jsonUrl; falling back to event summary payload:', error);
-      }
+      return fetchJson<CanonicalArticle>(jsonUrl);
     }
 
     return buildLiveStoryDocumentFromEvent(mostRecentEvent, payload);
@@ -1147,18 +1075,13 @@ export async function loadLiveStoryPreviewData(): Promise<CanonicalArticle> {
 
   const breakingNews = normalizeBreakingNewsData(payload);
   if (!breakingNews.main) {
-    console.warn('[storybook] Events feed did not include docs and homepage JSON did not include breakingNews.main; falling back to fixture.');
-    return liveStoryFixture;
+    throw new Error('Current feeds contain no live story');
   }
 
   const mainCard = breakingNews.main as Record<string, unknown>;
   const jsonUrl = typeof mainCard.jsonUrl === 'string' ? mainCard.jsonUrl : '';
   if (jsonUrl) {
-    try {
-      return await fetchJson<CanonicalArticle>(jsonUrl);
-    } catch (error) {
-      console.warn('[storybook] Failed to fetch CDN live story JSON; falling back to reconstructed homepage payload:', error);
-    }
+    return fetchJson<CanonicalArticle>(jsonUrl);
   }
 
   return buildLiveStoryDocument(payload, breakingNews);
