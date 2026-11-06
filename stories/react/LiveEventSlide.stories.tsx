@@ -4,24 +4,6 @@ import { createRoot } from 'react-dom/client';
 import { LiveEventSlide } from '../../src/components/live-program/components/slides/LiveEventSlide';
 import type { LiveEventData } from '../../src/components/live-program/segments/fetchLiveEvents';
 
-const sportsEvent: LiveEventData = {
-  category: 'MLS',
-  title: 'New York City FC vs. Inter Miami CF',
-  excerpt: 'Live updates from the decisive semifinal match at Yankee Stadium.',
-  image: 'https://picsum.photos/seed/sports-event/1920/1080',
-  alt: 'Soccer match at Yankee Stadium',
-  url: 'https://modoitaliano.fm/sports/nycfc-vs-miami',
-  sofascore_id: 1234567,
-  updatedAt: new Date().toISOString(),
-  updates: [
-    { timestamp: new Date(Date.now() - 5000).toISOString(), text: 'GOAL! Miami takes the lead with a brilliant strike from Messi.' },
-    { timestamp: new Date(Date.now() - 30000).toISOString(), text: 'Yellow card for NYC FC defender after a late tackle.' },
-    { timestamp: new Date(Date.now() - 120000).toISOString(), text: 'Second half underway. Miami with possession early.' },
-    { timestamp: new Date(Date.now() - 300000).toISOString(), text: 'Halftime: NYCFC 1-1 Inter Miami. An intense first half.' },
-    { timestamp: new Date(Date.now() - 600000).toISOString(), text: 'Miami equalizes in the 38th minute! 1-1.' },
-  ],
-};
-
 const breakingEvent: LiveEventData = {
   category: 'U.S.',
   title: 'Major Winter Storm Moves Across the Northeast',
@@ -43,7 +25,6 @@ const meta: Meta = {
   title: 'React/LiveEventSlide',
   parameters: { layout: 'fullscreen' },
   argTypes: {
-    variant: { control: 'select', options: ['sports', 'breaking'] },
     progress: { control: { type: 'range', min: 0, max: 100, step: 1 } },
   },
   render: (args) => {
@@ -53,8 +34,7 @@ const meta: Meta = {
     container.style.overflow = 'hidden';
 
     const root = createRoot(container);
-    const event = args.variant === 'sports' ? sportsEvent : breakingEvent;
-    root.render(<LiveEventSlide event={event} progress={args.progress ?? 45} language='en' />);
+    root.render(<LiveEventSlide event={breakingEvent} progress={args.progress ?? 45} language='en' />);
 
     return container;
   },
@@ -62,10 +42,6 @@ const meta: Meta = {
 
 export default meta;
 
-export const Sports: StoryObj = {
-  args: { variant: 'sports', progress: 45 },
-};
-
 export const BreakingNews: StoryObj = {
-  args: { variant: 'breaking', progress: 30 },
+  args: { progress: 30 },
 };

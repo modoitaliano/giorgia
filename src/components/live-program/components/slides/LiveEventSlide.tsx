@@ -4,7 +4,6 @@ import qrcode from 'qrcode-generator';
 import type { LiveEventData, LiveEventUpdate } from '../../segments/fetchLiveEvents.js';
 import type { SupportedLanguage } from '../../i18n.js';
 import { t } from '../../i18n.js';
-import { buildSofascoreAttackMomentumUrl } from '../../../../utils/sofascore.js';
 
 const fac = new FastAverageColor();
 
@@ -25,36 +24,6 @@ function formatUpdateTime(update: LiveEventUpdate): string {
     return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
   }
   return update.time || '';
-}
-
-function LatestUpdates({ updates, language }: { updates: LiveEventUpdate[]; language: SupportedLanguage }) {
-  const latest = useMemo(() => updates.slice(0, 5), [updates]);
-
-  if (latest.length === 0) {
-    return (
-      <p className="text-white/50 font-['Barlow'] text-xl">{t('liveEvent.noUpdates', language)}</p>
-    );
-  }
-
-  return (
-    <div className='flex flex-col gap-3'>
-      {latest.map((update, i) => (
-        <div key={i} className='flex gap-3 items-start'>
-          <div className='w-2 h-2 rounded-full bg-[#4FC3F7] flex-shrink-0 mt-2' />
-          <div className='flex flex-col gap-0.5 min-w-0'>
-            {formatUpdateTime(update) && (
-              <span className="text-sm font-semibold text-[#0ea5e9] font-['Barlow']">{formatUpdateTime(update)}</span>
-            )}
-            {update.html ? (
-              <div className="text-white/90 text-lg leading-snug font-['Barlow'] [&_img]:hidden">{update.html.replace(/<[^>]*>/g, '')}</div>
-            ) : update.text ? (
-              <p className="text-white/90 text-lg leading-snug font-['Barlow'] truncate">{update.text}</p>
-            ) : null}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
 }
 
 function ScrollingTimeline({ updates, language }: { updates: LiveEventUpdate[]; language: SupportedLanguage }) {
@@ -120,12 +89,7 @@ interface LiveEventSlideProps {
 
 export function LiveEventSlide({ event, progress, language }: LiveEventSlideProps) {
   const [dominantColor, setDominantColor] = useState('#b21100');
-  const isSports = typeof event.sofascore_id === 'number' && event.sofascore_id > 0;
   const qrCodeUrl = useMemo(() => buildQrCodeUrl(event.liveUrl || event.url), [event.liveUrl, event.url]);
-  const sofascoreWidgetUrl = useMemo(() => {
-    if (!isSports) return '';
-    return buildSofascoreAttackMomentumUrl(event.sofascore_id!, 'dark');
-  }, [isSports, event.sofascore_id]);
 
   const handleImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     try {
@@ -135,73 +99,6 @@ export function LiveEventSlide({ event, progress, language }: LiveEventSlideProp
       setDominantColor('#b21100');
     }
   }, []);
-
-  if (isSports) {
-    return (
-      <div className='absolute inset-0'>
-        <div className='absolute inset-0'>
-          <img key={event.image} src={event.image} alt='' crossOrigin='anonymous' onLoad={handleImageLoad} className='w-full h-full object-cover blur-xl scale-105' />
-        </div>
-        <div className='absolute inset-0 opacity-75 mix-blend-multiply transition-all duration-1000' style={{ background: `linear-gradient(to bottom right, ${dominantColor}, #000000)` }} />
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.1),transparent_60%)]' />
-
-        <div className='relative z-10 grid grid-cols-12 h-full'>
-          <div className='col-span-5 flex flex-col justify-center p-16 relative bg-black/35 backdrop-blur-2xl'>
-            <div className='animate-slide-up flex flex-col items-start'>
-              <span className="inline-flex items-center px-4 py-1.5 bg-[#cc0000] text-white text-xl font-bold tracking-[0.08em] uppercase font-['Barlow_Condensed'] mb-4">LIVE</span>
-              <span className="text-white/80 text-2xl font-semibold uppercase tracking-wider mb-2 font-['Barlow_Condensed']">{event.category}</span>
-              <div className='w-16 h-1.5 bg-[#b21100] mb-6' />
-              <h1 className="text-4xl font-bold leading-tight mb-4 tracking-tight line-clamp-5 font-['Barlow_Condensed'] [text-wrap:balance] text-white">{event.title}</h1>
-              {event.excerpt && (
-                <p className="text-2xl font-light leading-relaxed opacity-80 line-clamp-3 font-['Barlow'] text-white mb-6">{event.excerpt}</p>
-              )}
-              <LatestUpdates updates={event.updates} language={language} />
-            </div>
-          </div>
-
-          <div className='col-span-7 relative h-full flex items-center justify-center p-12 pb-32'>
-            <div className='relative w-full max-w-lg flex flex-col gap-4'>
-              <div className='relative aspect-video shadow-2xl overflow-hidden border border-white/10'>
-                <div className='absolute top-0 left-0 h-1 bg-white/30 w-full z-20'>
-                  <div className='h-full bg-white transition-all duration-100 ease-linear' style={{ width: `${progress}%` }} />
-                </div>
-                <img
-                  key={event.image}
-                  src={event.image}
-                  alt={event.alt}
-                  className='w-full h-full object-cover'
-                  style={{ animation: 'kenburns 20s infinite alternate' }}
-                  crossOrigin='anonymous'
-                />
-              </div>
-
-              {sofascoreWidgetUrl && (
-                <div className='w-full overflow-hidden border border-white/10 bg-black/40'>
-                  <iframe
-                    width='100%'
-                    height='180'
-                    src={sofascoreWidgetUrl}
-                    title='SofaScore Attack Momentum'
-                    frameBorder='0'
-                    scrolling='no'
-                    loading='lazy'
-                    referrerPolicy='no-referrer-when-downgrade'
-                    style={{ border: 0 }}
-                  />
-                </div>
-              )}
-
-              <div className='absolute bottom-4 right-4 z-30'>
-                <div className='p-2 rounded-sm backdrop-blur-md shadow-2xl' style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
-                  <img src={qrCodeUrl} alt='QR code' className='block w-24 h-24' />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className='absolute inset-0'>
