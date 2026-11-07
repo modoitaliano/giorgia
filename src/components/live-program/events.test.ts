@@ -55,9 +55,10 @@ describe('fetchEvents', () => {
       event('from-post-lang', '2026-03-11T05:00:00Z', [post('q', 1, { lang: 'es' })]),
       event('from-post-locale', '2026-03-11T06:00:00Z', [post('r', 1, { locale: 'es' })]),
       event('italian', '2026-03-11T07:00:00Z', [], { language: 'it' }),
+      event('unlabelled-post', '2026-03-11T08:00:00Z', [post('s', 1)]),
     ]);
     const kept = await fetchEvents({ allowedLanguages: ['es', 'es-MX' as never, 'it', 7 as never] });
-    expect(kept.map((e) => e.uuid)).toEqual(['none', 'es-direct', 'lang', 'locale', 'from-post', 'from-post-lang', 'from-post-locale', 'italian']);
+    expect(kept.map((e) => e.uuid)).toEqual(['none', 'es-direct', 'lang', 'locale', 'from-post', 'from-post-lang', 'from-post-locale', 'italian', 'unlabelled-post']);
   });
 
   it('ignores a non-array allowed language list', async () => {
