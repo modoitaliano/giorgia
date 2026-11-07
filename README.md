@@ -72,6 +72,10 @@ npm run verify:packed-contract
 npm run storybook
 ```
 
+Unit tests run in Node. A test that renders React components or hooks opts into a
+DOM by starting the file with `// @vitest-environment happy-dom` and uses
+`@testing-library/react` (pinned in `devDependencies`); other tests are unaffected.
+
 ## Storybook fixtures and built assets
 
 `npm run storybook` and `npm run build-storybook` first run
