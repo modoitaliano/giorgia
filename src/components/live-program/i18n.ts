@@ -303,7 +303,7 @@ export function t(key: string, language: SupportedLanguage, replacements?: Recor
     return key;
   }
 
-  let text = translation[language] || translation.es || key;
+  let text = translation[language] || translation.es;
 
   if (replacements) {
     Object.entries(replacements).forEach(([placeholder, value]) => {
