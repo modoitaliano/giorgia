@@ -195,3 +195,14 @@ describe('distributeHomepageArticles', () => {
     });
   });
 });
+
+describe('distributeHomepageArticles timestamp fallbacks', () => {
+  it('orders by updatedAt when publishedAt is missing and treats undated articles as oldest', () => {
+    const base = (id: number) => ({ ...makeRef(id), publishedAt: undefined, updatedAt: undefined });
+    const updatedOnly = { ...base(1), updatedAt: recent(1) };
+    const undated = base(2);
+    const slots = distributeHomepageArticles([undated, updatedOnly], NOW);
+    expect(slots.landing.headline1?.id).toBe(updatedOnly.id);
+    expect(slots.landing.sub1[0]?.id).toBe(undated.id);
+  });
+});
