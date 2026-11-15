@@ -4,9 +4,17 @@ import tailwindcss from '@tailwindcss/vite';
 import { readFileSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  collectBundleFiles,
+  createLiveProgramManifest,
+  discoverLiveProgramComponents,
+  validateLiveProgramManifest,
+} from './src/live-program-manifest.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const outDir = resolve(__dirname, 'dist', 'live-program-page');
+const packageJson = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf8'));
+const packageVersion = packageJson.version as string;
 
 export default defineConfig({
   base: './',
@@ -16,7 +24,7 @@ export default defineConfig({
     tailwindcss(),
     react(),
     {
-      name: 'flatten-html',
+      name: 'flatten-html-and-emit-manifest',
       closeBundle() {
         const nested = join(outDir, 'src', 'live-program', 'index.html');
         const flat = join(outDir, 'index.html');
@@ -26,6 +34,29 @@ export default defineConfig({
           html = html.replace(/href="\.\.\/\.\.\//g, 'href="./');
           writeFileSync(flat, html);
           rmSync(join(outDir, 'src'), { recursive: true, force: true });
+        }
+
+        const files = collectBundleFiles(outDir);
+        const components = discoverLiveProgramComponents(
+          'src/live-program/components/**/*.{tsx,ts}',
+          __dirname
+        );
+
+        const manifest = createLiveProgramManifest({
+          packageVersion,
+          files,
+          components,
+        });
+
+        const manifestPath = join(outDir, 'live-program-manifest.json');
+        writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+        const schemaPath = resolve(__dirname, 'docs/contracts/program-template-v2.schema.json');
+        const validation = validateLiveProgramManifest(manifest, schemaPath);
+        if (!validation.valid) {
+          throw new Error(
+            `Live program manifest schema validation failed: ${validation.errors?.join('; ')}`
+          );
         }
       },
     },
