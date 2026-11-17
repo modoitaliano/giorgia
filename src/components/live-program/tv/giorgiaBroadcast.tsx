@@ -93,6 +93,29 @@ export function GiorgiaMark({ width = 172, keySafe = false }: { width?: number; 
   );
 }
 
+/**
+ * The cover box for a song without a cover image: a navy square from the look's own tokens, with the
+ * magenta signal rule along its foot. Key-safe it is a solid plate, with no gradient that could key as
+ * a soft edge.
+ */
+export function GiorgiaCoverPlaceholder({ size, keySafe = false }: { size: number; keySafe?: boolean }) {
+  return (
+    <div
+      aria-hidden='true'
+      data-giorgia-cover-placeholder
+      style={{
+        position: 'relative',
+        width: `${size}px`,
+        height: `${size}px`,
+        flexShrink: 0,
+        background: keySafe ? GIORGIA.plate : `linear-gradient(160deg, ${GIORGIA.navy} 0%, ${GIORGIA.plate} 100%)`
+      }}
+    >
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: `${GIORGIA.ruleWidth}px`, background: GIORGIA.signal }} />
+    </div>
+  );
+}
+
 /** The magenta signal rule that every Giorgia text block hangs from. */
 export function GiorgiaRule({ left = 0, keySafe = false }: { left?: number; keySafe?: boolean }) {
   return (

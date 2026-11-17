@@ -55,4 +55,30 @@ describe('built live-program bundle', () => {
     });
     expect(manifest.files.filter((entry) => RETIRED_MARKS.some((name) => entry.key.endsWith(name)))).toEqual([]);
   });
+
+  // giorgia#53: the page never requests a site-absolute asset the bundle does not contain (it used to fall back to
+  // /cover.jpg, which only Alcantara's own site serves). Every quoted or url() path that starts with one slash and
+  // ends in an asset extension must be a file of the bundle.
+  it('references no site-absolute asset path that the bundle does not contain', () => {
+    const missing = unbundledAbsoluteAssetPaths(OUT_DIR, files);
+    expect(missing).toEqual([]);
+  });
 });
+
+const ASSET_EXTENSIONS = 'jpe?g|png|gif|webp|avif|svg|ico|mp3|ogg|wav|m4a|mp4|webm|woff2?|ttf|otf|json';
+const ABSOLUTE_ASSET_PATH = new RegExp(`(?:["'\`(]|url\\(\\s*["']?)(/(?!/)[^"'\`()\\s?#]+\\.(?:${ASSET_EXTENSIONS}))(?=[?#"'\`)\\s])`, 'gi');
+
+/** Site-absolute asset paths referenced by the bundle's scripts, styles and pages that are not files of the bundle. */
+function unbundledAbsoluteAssetPaths(outDir: string, bundleFiles: string[]): string[] {
+  const contained = new Set(bundleFiles);
+  const missing = new Set<string>();
+  for (const key of bundleFiles.filter((file) => /\.(?:m?js|css|html)$/.test(file))) {
+    const text = readFileSync(join(outDir, key), 'utf8');
+    for (const match of text.matchAll(ABSOLUTE_ASSET_PATH)) {
+      const path = match[1]!;
+      if (!contained.has(path.slice(1))) missing.add(path);
+    }
+  }
+  return [...missing].sort();
+}
+

@@ -1,6 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { BellRing } from 'lucide-react';
-import { GIORGIA, GiorgiaGrade, GiorgiaMark, GiorgiaRule, fitGiorgiaText, giorgiaLabelStyle, useElementHeight } from './giorgiaBroadcast.js';
+import {
+  GIORGIA,
+  GiorgiaCoverPlaceholder,
+  GiorgiaGrade,
+  GiorgiaMark,
+  GiorgiaRule,
+  fitGiorgiaText,
+  giorgiaLabelStyle,
+  useElementHeight
+} from './giorgiaBroadcast.js';
 import type { GlobalTimeOverride } from './broadcastTime.js';
 import { getOverrideClockParts } from './broadcastTime.js';
 import { normalizeProgramSongSequence, resolveProgramSongLeaf, type ProgramSongSequence } from './programSequence.js';
@@ -195,10 +204,10 @@ export const ModoItalianoGiorgiaClock: React.FC<ModoItalianoGiorgiaClockProps> =
   const songGateEnabled = typeof playingSong === 'boolean' ? playingSong : true;
   const liveSong = songGateEnabled ? audioBus.track : null;
   // A confirmed playing track replaces the sequence's song entirely: its own null title or artist stays empty
-  // rather than borrowing the sequence's, and it carries no cover.
+  // rather than borrowing the sequence's, and its cover is its own coverUrl or none.
   const artist = (playingTrack ? (playingTrack.artist ?? '') : (liveSong?.artist ?? resolvedSong?.artist ?? '')).trim();
   const title = (playingTrack ? (playingTrack.title ?? '') : (liveSong?.title ?? resolvedSong?.title ?? '')).trim();
-  const coverUrl = (playingTrack ? '' : (liveSong?.coverUrl ?? resolvedSong?.coverUrl ?? songCoverUrl)).trim();
+  const coverUrl = (playingTrack ? (playingTrack.coverUrl ?? '') : (liveSong?.coverUrl ?? resolvedSong?.coverUrl ?? songCoverUrl)).trim();
   const hasSong =
     songGateEnabled && Boolean(artist || title) && (Boolean(playingTrack) || !liveSong || audioBus.endedToken !== liveSong.token);
   const progress = Math.max(0, Math.min(1, !playingTrack && liveSong ? audioBus.progress : 0));
@@ -209,6 +218,9 @@ export const ModoItalianoGiorgiaClock: React.FC<ModoItalianoGiorgiaClockProps> =
   const [shownSong, setShownSong] = useState({ artist, title, coverUrl });
   const [onAirMounted, setOnAirMounted] = useState(hasSong);
   const [onAirVisible, setOnAirVisible] = useState(hasSong);
+  // The cover address whose image failed to load; that address shows the placeholder until the cover changes.
+  const [failedCoverUrl, setFailedCoverUrl] = useState('');
+  const showCoverImage = Boolean(shownSong.coverUrl) && shownSong.coverUrl !== failedCoverUrl;
   useEffect(() => {
     if (hasSong) setShownSong({ artist, title, coverUrl });
   }, [hasSong, artist, title, coverUrl]);
@@ -301,14 +313,20 @@ export const ModoItalianoGiorgiaClock: React.FC<ModoItalianoGiorgiaClockProps> =
             transition: `opacity ${ON_AIR_TRANSITION_MS}ms ease, transform ${ON_AIR_TRANSITION_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1)`
           }}
         >
-        <img
-          src={shownSong.coverUrl || '/cover.jpg'}
-          alt=''
-          // The cover is a square exactly as tall as the text beside it, so it and the magenta rule always
-          // start and end together. A fixed size left the rule standing taller than the cover whenever the
-          // text was taller.
-          style={{ width: `${coverSize}px`, height: `${coverSize}px`, objectFit: 'cover', display: 'block', flexShrink: 0 }}
-        />
+        {/* The cover is a square exactly as tall as the text beside it, so it and the magenta rule always
+            start and end together. A fixed size left the rule standing taller than the cover whenever the
+            text was taller. Without a cover address, or when the image fails to load, the same box holds
+            a placeholder drawn in CSS, so no request goes to a path the bundle does not contain. */}
+        {showCoverImage ? (
+          <img
+            src={shownSong.coverUrl}
+            alt=''
+            onError={() => setFailedCoverUrl(shownSong.coverUrl)}
+            style={{ width: `${coverSize}px`, height: `${coverSize}px`, objectFit: 'cover', display: 'block', flexShrink: 0 }}
+          />
+        ) : (
+          <GiorgiaCoverPlaceholder size={coverSize} keySafe={keySafe} />
+        )}
         <div
           ref={textColumnRef}
           style={{

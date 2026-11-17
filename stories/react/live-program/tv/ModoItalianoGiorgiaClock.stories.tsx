@@ -70,7 +70,7 @@ const harborSequence = {
 
 /**
  * A confirmed playing track (the v2 state's playingTrack, giorgia#51): it replaces the sequence's song.
- * It carries no cover, so the cover falls back to the component's default.
+ * It has no coverUrl, so the cover box holds the CSS placeholder (giorgia#53).
  */
 export const PlayingTrack: StoryObj = {
   args: {
@@ -88,4 +88,45 @@ export const PlayingTrackAbsent: StoryObj = {
 /** A playing track whose artist the playout engine omitted: the title leads, and the sequence's artist is not borrowed. */
 export const PlayingTrackWithoutArtist: StoryObj = {
   args: { ...PlayingTrack.args, playingTrack: { playbackId: 'harbor-playback-2', title: 'Low Tide', artist: null, startedAt: '2026-11-17T09:58:00.000Z' } }
+};
+
+/** A playing track with its own coverUrl (alcantara#179): the cover is drawn. */
+export const PlayingTrackWithCover: StoryObj = {
+  args: {
+    ...PlayingTrack.args,
+    playingTrack: {
+      playbackId: 'harbor-playback-3',
+      title: 'Low Tide',
+      artist: 'Pier Choir',
+      startedAt: '2026-11-17T09:58:00.000Z',
+      coverUrl: '/assets/default-og.jpg'
+    }
+  }
+};
+
+/** A sequence song without a cover (giorgia#53): the box keeps its size and holds the navy placeholder. */
+export const CoverPlaceholder: StoryObj = {
+  args: {
+    programId: HARBOR_LIGHT_TV_PROGRAM,
+    songSequence: { ...harborSequence, items: [{ ...harborSequence.items[0], coverUrl: undefined }] }
+  }
+};
+
+/** The placeholder key-safe, over chroma green: a solid plate with no gradient. */
+export const CoverPlaceholderKeySafe: StoryObj = {
+  args: { ...CoverPlaceholder.args, keySafe: true }
+};
+
+/** A cover that fails to load (an undecodable image, so nothing is fetched): the placeholder replaces it. */
+export const CoverLoadError: StoryObj = {
+  args: {
+    ...PlayingTrack.args,
+    playingTrack: {
+      playbackId: 'harbor-playback-4',
+      title: 'Low Tide',
+      artist: 'Pier Choir',
+      startedAt: '2026-11-17T09:58:00.000Z',
+      coverUrl: 'data:image/png;base64,AAAA'
+    }
+  }
 };

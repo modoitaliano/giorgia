@@ -179,7 +179,9 @@ describe('Giorgia clock', () => {
     expect(container.querySelector('.modoitaliano-giorgia-clock-header')).toBeNull();
     expect(container.querySelector('.modoitaliano-giorgia-clock-progress')).toBeNull();
     expect((container.querySelector('.modoitaliano-giorgia-clock-hero') as HTMLElement).style.fontSize).toBe('54px');
-    expect(container.querySelector('img')!.getAttribute('src')).toBe('/cover.jpg');
+    // giorgia#53: without a cover the box holds the CSS placeholder and requests nothing.
+    expect(container.querySelector('img')).toBeNull();
+    expect(container.querySelector('[data-giorgia-cover-placeholder]')).not.toBeNull();
     rerender(h(ModoItalianoGiorgiaClock, { programId, songArtist: 'Harbor', songTitle: `${long} ${long}`, songCoverUrl: ' /harbor.jpg ' }));
     expect(container.textContent).toContain('HARBOR');
     expect(container.querySelector('img')!.getAttribute('src')).toBe('/harbor.jpg');

@@ -12,6 +12,8 @@ export interface PlayingTrack {
   artist: string | null;
   /** ISO-8601 time the engine accepted the start. */
   startedAt: string;
+  /** The track's cover as an absolute public https address (alcantara#179); absent when there is none. */
+  coverUrl?: string;
 }
 
 function nullableText(value: unknown): string | null | undefined {
@@ -31,8 +33,20 @@ export function readPlayingTrack(state: unknown): PlayingTrack | null {
   const record = track as Record<string, unknown>;
   const title = nullableText(record.title);
   const artist = nullableText(record.artist);
-  if (typeof record.playbackId !== 'string' || typeof record.startedAt !== 'string' || title === undefined || artist === undefined) {
+  if (
+    typeof record.playbackId !== 'string' ||
+    typeof record.startedAt !== 'string' ||
+    title === undefined ||
+    artist === undefined ||
+    (record.coverUrl !== undefined && typeof record.coverUrl !== 'string')
+  ) {
     return null;
   }
-  return { playbackId: record.playbackId, title, artist, startedAt: record.startedAt };
+  return {
+    playbackId: record.playbackId,
+    title,
+    artist,
+    startedAt: record.startedAt,
+    ...(typeof record.coverUrl === 'string' ? { coverUrl: record.coverUrl } : {})
+  };
 }
