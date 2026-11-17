@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ClockWidget.css';
+import { MODOITALIANO_ASSETS } from '../assets.js';
 import type { GlobalTimeOverride } from './broadcastTime.js';
 import { formatClockParts, getOverrideClockParts } from './broadcastTime.js';
 
@@ -54,7 +55,7 @@ export const ClockWidget: React.FC<ClockWidgetProps> = ({
   }, [timezone, timeOverride?.startTime, timeOverride?.startedAt]);
 
   return (
-    <div className='clock-widget'>
+    <div className='clock-widget' style={{ backgroundImage: `url(${MODOITALIANO_ASSETS.tv.clockPlate})` }}>
       <div className='clock-time'>{time}</div>
       {showIcon && <div className='clock-icon'>{iconUrl ? <img src={iconUrl} alt='icon' /> : null}</div>}
     </div>

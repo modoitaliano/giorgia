@@ -80,7 +80,8 @@ DOM by starting the file with `// @vitest-environment happy-dom` and uses
 
 `npm run storybook` and `npm run build-storybook` first run
 `npm run storybook:assets`. It uses the existing CSS/navigation builders and
-stages their output, template assets and local fonts in `.cache/storybook-public`.
+stages their output, template assets, local fonts and the live-program
+`modoitaliano/` public assets in `.cache/storybook-public`.
 Storybook serves and packages that directory at the artifact root, including
 `/content/styles/giorgia.css`, `/content/fonts/fonts.css`, its referenced WOFF2
 files and `/assets/giorgia-navigation.js`. Re-run the command after changing
@@ -179,6 +180,8 @@ The top-right corner (world clocks and the red bell box) follows Alcantara's own
 So a scene listing only `modoitaliano-podcast-player`, `modoitaliano-giorgia-podcast-player`, `earone`, `reloj-loop-clock` or a Crónica type shows no clocks and no bell. Every other scene keeps its corner exactly as before: its clocks and bell follow only `showWorldClocks` and `showBellIcon` (both on by default), whatever its list names. Making every scene follow its component list is separate, future work.
 
 The TV graphics components live in `src/components/live-program/tv/`: `ModoItalianoChyron`, `ModoItalianoGiorgiaChyron`, `ModoItalianoClock`, `ModoItalianoGiorgiaClock`, `ModoItalianoDisclaimer`, `ModoItalianoBracket` (with `modoItalianoBracket.ts`), `CronicaChyron`, `CronicaBackground`, `CronicaReiteramos`, `CronicaLayout`, `RelojClone`, `RelojLoopClock` and `RelojDigitalLoopClock`, with stories under `stories/react/live-program/tv/` on the fictional `harbor-light` fixtures. Discovery finds them all; `LiveProgram` draws `RelojLoopClock`, `CronicaBackground`, `CronicaChyron` and `CronicaReiteramos` for the scene types above, and no scene type maps to the others yet. Their stylesheets are part of the bundle (one imports the Barlow fonts from Google Fonts). The bracket reads `audience_interaction_draw_*` payloads and still accepts `modoitaliano_bracket_draw_*`. Two components reach the program's API, and only with an explicit `apiBaseUrl` prop: the bracket reads `/songs?limit=0` when it is given no songs, and `RelojDigitalLoopClock` posts `/program/:programId/activate` when its countdown ends. Without that prop neither makes a request.
+
+TV images ship in the bundle under `modoitaliano/tv/` and are referenced bundle-relative through `MODOITALIANO_ASSETS.tv` (`src/components/live-program/assets.ts`), so they load when the bundle is served from a sub-path. Only `reloj.png`, the `ClockWidget` plate (byte-identical to `gaulatti/alcantara` `frontend/public/reloj.png` at `f13ee4d`, sha256 `3b62d40e…ce04823`), is carried; `ClockWidget` sets it as an inline `backgroundImage` so Vite does not resolve it at build time. Alcantara's three ModoRadio marks (`bug-sm.svg`, `bug-big.svg`, `reloj-modoradio_full_negro.svg`) are retired from Giorgia and are not bundled: `LogoWidget` draws only a scene-supplied `logoUrl` and draws nothing without one (so `CronicaLayout`, which passes none, shows no logo), and `RelojClone` draws its analogue clock without the wordmark plate beneath it. `src/live-program-bundle.test.ts` builds the bundle with the real config and checks that none of the retired marks or their names are in the output and that the manifest lists `reloj.png` with its sha256.
 
 ## Publish flow
 

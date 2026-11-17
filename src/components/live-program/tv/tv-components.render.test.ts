@@ -99,7 +99,8 @@ describe('TV Components Render Tests with harbor-light Fixtures', () => {
   });
 
   it('renders LogoWidget with animation transitions', () => {
-    const { container } = render(h(LogoWidget));
+    // The bundled ModoRadio bug is retired (#48); the widget only draws with a scene logo.
+    const { container } = render(h(LogoWidget, { logoUrl: '/harbor-logo.svg' }));
     expect(container.querySelector('.logo-widget')).toBeTruthy();
     act(() => {
       vi.advanceTimersByTime(3500);
@@ -140,7 +141,8 @@ describe('TV Components Render Tests with harbor-light Fixtures', () => {
     expect(container.textContent).toContain('HARBOR LIGHT');
     expect(container.textContent).toContain('HARBOR LIGHT SPECIAL');
     expect(container.querySelectorAll('.cronica-chyron-line')).toHaveLength(2);
-    expect(container.querySelector('.logo-widget')).toBeTruthy();
+    // CronicaLayout passes no logoUrl, and the bundled ModoRadio bug is retired (#48).
+    expect(container.querySelector('.logo-widget')).toBeNull();
     expect(container.querySelector('.clock-widget')).toBeTruthy();
   });
 

@@ -78,22 +78,16 @@ export const LogoWidget: React.FC<LogoWidgetProps> = ({ logoUrl, position = 'bot
     return () => clearInterval(interval);
   }, []);
 
+  // The ModoRadio bugs are retired from Giorgia (#48): without a scene logo there is nothing to draw.
+  if (!logoUrl) {
+    return null;
+  }
+
   return (
     <div
       className={`logo-widget ${position} variant-${variant} ${showGradient ? 'gradient-active' : ''} ${showBigBug ? 'big-mode' : ''} ${isResizing ? 'resizing' : ''}`}
     >
-      {logoUrl ? (
-        <img src={logoUrl} alt='Logo' className='logo-image' />
-      ) : (
-        <>
-          <img
-            src='/bug-sm.svg'
-            alt='Logo'
-            className={`logo-svg logo-small ${variant === 'white' ? 'red-filter' : ''} ${showBigBug || isResizing ? 'fade-out' : 'fade-in'}`}
-          />
-          <img src='/bug-big.svg' alt='Logo' className={`logo-svg logo-big ${showBigBug && !isResizing ? 'fade-in' : 'fade-out'}`} />
-        </>
-      )}
+      <img src={logoUrl} alt='Logo' className='logo-image' />
     </div>
   );
 };

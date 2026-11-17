@@ -87,7 +87,6 @@ export default function RelojClone({
             <div ref={secondHandRef} className='hand second-hand'></div>
           </div>
         </div>
-        <img style={{ width: '640px' }} src='/reloj-modoradio_full_negro.svg' alt='Modo Radio' />
       </div>
     </div>
   );

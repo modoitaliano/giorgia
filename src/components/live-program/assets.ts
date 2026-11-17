@@ -10,5 +10,8 @@ export const MODOITALIANO_ASSETS = {
     tokyo: './modoitaliano/images/tokyo.jpg',
     nyse: './modoitaliano/images/nyse.jpg',
     seismograph: './modoitaliano/images/seismograph.jpg'
+  },
+  tv: {
+    clockPlate: './modoitaliano/tv/reloj.png'
   }
 } as const;

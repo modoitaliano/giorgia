@@ -10,6 +10,8 @@ export async function main(): Promise<void> {
   await mkdir(new URL('content/styles/', output), { recursive: true });
   await cp(new URL('src/templates/assets/', root), new URL('assets/', output), { recursive: true });
   await cp(new URL('src/styles/fonts/', root), new URL('content/fonts/', output), { recursive: true });
+  // Live-program stories load their bundle-relative assets (./modoitaliano/...) from the iframe root.
+  await cp(new URL('src/live-program/public/modoitaliano/', root), new URL('modoitaliano/', output), { recursive: true });
   await copyFile(new URL('src/styles/compiled.css', root), new URL('content/styles/giorgia.css', output));
   await copyFile(new URL('src/styles/fonts.css', root), new URL('content/fonts/fonts.css', output));
   await copyFile(new URL('dist/assets/giorgia-navigation.js', root), new URL('assets/giorgia-navigation.js', output));

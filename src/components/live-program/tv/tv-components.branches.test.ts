@@ -86,12 +86,13 @@ describe('ModoItalianoDisclaimer branches', () => {
 });
 
 describe('LogoWidget branches', () => {
-  it('cycles white, black, big and red with a custom logo or the bundled bug', () => {
+  it('cycles white, black, big and red around the scene logo', () => {
     const custom = render(h(LogoWidget, { logoUrl: '/harbor-logo.svg', position: 'top-right' }));
     expect(custom.container.querySelector('.logo-image')!.getAttribute('src')).toBe('/harbor-logo.svg');
     custom.unmount();
 
-    const { container } = render(h(LogoWidget));
+    // The bundled ModoRadio bug is retired (#48); the plate only draws around a scene logo.
+    const { container } = render(h(LogoWidget, { logoUrl: '/harbor-logo.svg' }));
     const root = () => container.querySelector('.logo-widget')!.className;
     const step = (ms: number) =>
       act(() => {
