@@ -29,8 +29,9 @@ describe('canonicalArticleSchema.parse error summarising', () => {
     });
     const mod = await import('./types/canonical-article.js');
     expect(() => mod.canonicalArticleSchema.parse({})).toThrow('Canonical document validation failed: ');
-    vi.doUnmock('ajv/dist/2020.js');
 
+    // Re-mock without unmocking in between: a doUnmock and a doMock of the same path pending together are applied in
+    // whichever order their resolution finishes, so the real validator could load (modoitaliano/giorgia#44).
     vi.resetModules();
     vi.doMock('ajv/dist/2020.js', () => {
       const compile = () => Object.assign(() => false, { errors: [{ instancePath: '/a' }] });
@@ -39,6 +40,7 @@ describe('canonicalArticleSchema.parse error summarising', () => {
     const withoutMessage = await import('./types/canonical-article.js');
     expect(() => withoutMessage.canonicalArticleSchema.parse({})).toThrow('/a is invalid');
     vi.doUnmock('ajv/dist/2020.js');
+    await import('ajv/dist/2020.js'); // apply the unmock now, for the same reason
     vi.resetModules();
   });
 });

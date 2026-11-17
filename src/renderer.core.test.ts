@@ -18,8 +18,12 @@ async function freshCore() {
 
 const helper = (name: string) => Handlebars.helpers[name] as (...args: unknown[]) => unknown;
 
-afterEach(() => {
+afterEach(async () => {
   vi.doUnmock('./types/canonical-article.js');
+  // Apply the unmock before anything can queue a new mock of the same path. Vitest drains its queued doMock/doUnmock
+  // calls concurrently at the next import (resolveMocks: Promise.all over resolveId), so an unmock still pending when a
+  // doMock of the same path is queued can be applied after it and win, loading the real module (modoitaliano/giorgia#44).
+  await import('./types/canonical-article.js');
   vi.resetModules();
 });
 
