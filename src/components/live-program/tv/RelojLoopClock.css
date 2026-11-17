@@ -15,8 +15,9 @@
   position: absolute;
   inset: 0;
   background: rgba(10, 18, 52, 0.7);
-  backdrop-filter: blur(14px);
+  /* Prefixed first: the minifier keeps only the last of the pair, and Chromium needs the unprefixed one. */
   -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   z-index: 0;
 }
 
