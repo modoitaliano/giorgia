@@ -193,3 +193,61 @@ describe('LiveProgram radio scenes', () => {
     expect(container.querySelector('.earone-box')).toBeNull();
   });
 });
+
+// giorgia#46: the world clocks and the bell follow Alcantara's rule on radio
+// scenes (program.tsx at 8bca10b); every other scene keeps today's corner.
+describe('LiveProgram corner on radio scenes', () => {
+  const corner = (container: HTMLElement) => ({
+    clocks: container.querySelector('.absolute.top-16.right-24 .pt-1\\.5') !== null,
+    bell: container.querySelector('.absolute.top-16.right-24 .bg-\\[\\#b21100\\] svg') !== null,
+  });
+
+  it.each([
+    ['modoitaliano-podcast-player', { 'modoitaliano-podcast-player': podcastScene }],
+    ['modoitaliano-giorgia-podcast-player', { 'modoitaliano-giorgia-podcast-player': podcastScene }],
+    ['earone', { earone: { label: 'HARBOR CHART' } }],
+  ])('draws neither the world clocks nor the bell on a %s scene', async (componentType, metadata) => {
+    routes['/state'] = programState(componentType, metadata);
+    const { container } = await mount();
+    await emit(songPlaybackActive);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(200);
+    });
+    expect(container.textContent).toMatch(componentType === 'earone' ? /#3/ : /Harbor Light, episode 12/);
+    expect(corner(container)).toEqual({ clocks: false, bell: false });
+  });
+
+  it('keeps the world clocks and the bell on a news scene', async () => {
+    routes['/state'] = programState('modoitaliano', { 'modoitaliano-content': ONLY_ARTICLES });
+    const { container } = await mount();
+    expect(container.textContent).toContain('Headline A');
+    expect(corner(container)).toEqual({ clocks: true, bell: true });
+  });
+
+  it.each([
+    ['fifthbell-corner', {}, { clocks: true, bell: true }],
+    ['fifthbell-clock', {}, { clocks: true, bell: true }],
+    ['toni-clock', {}, { clocks: true, bell: false }],
+    ['toni-clock', { 'toni-clock': { showBellIcon: true } }, { clocks: true, bell: true }],
+    ['toni-clock', { fifthbell: { showBellIcon: true }, 'toni-clock': { showBellIcon: false } }, { clocks: true, bell: false }],
+    ['clock-widget', {}, { clocks: true, bell: false }],
+    ['reloj-digital-loop-clock', {}, { clocks: true, bell: false }],
+    ['modoitaliano-giorgia-clock', { 'modoitaliano-corner': { showWorldClocks: false } }, { clocks: false, bell: false }],
+  ])('on a radio scene that also lists %s, draws the corner Alcantara draws', async (clockType, metadata, expected) => {
+    routes['/state'] = programState(`modoitaliano-podcast-player,${clockType}`, {
+      'modoitaliano-podcast-player': podcastScene,
+      ...metadata,
+    });
+    const { container } = await mount();
+    expect(corner(container)).toEqual(expected);
+  });
+
+  it('follows the scene renderer component list when embedded', async () => {
+    const { container } = await mount({
+      embedded: true,
+      sceneMetadata: { earone: { label: 'HARBOR CHART' }, 'fifthbell-corner': {} },
+      activeComponents: ['earone', 'fifthbell-corner'],
+    });
+    expect(corner(container)).toEqual({ clocks: true, bell: true });
+  });
+});

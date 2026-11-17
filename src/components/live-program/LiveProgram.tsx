@@ -269,6 +269,38 @@ function parseSceneMetadata(scene: Scene | null): Record<string, unknown> {
   }
 }
 
+// Alcantara's program renderer (gaulatti/alcantara frontend/app/routes/program.tsx at
+// 8bca10b) draws a clock only for a clock type the scene lists (:2291, :2362-2366,
+// :2401, :2426, :2459) and the bell only through the first listed toni-clock,
+// fifthbell-clock or fifthbell-corner (:2196-2198, :2401-2425): always for the
+// fifthbell types, and for toni-clock only when its metadata turns showBellIcon on.
+const ALCANTARA_CLOCK_COMPONENT_TYPES = [
+  'clock-widget',
+  'reloj-clock',
+  'reloj-loop-clock',
+  'reloj-digital-loop-clock',
+  'toni-clock',
+  'fifthbell-clock',
+  'fifthbell-corner',
+  'modoitaliano-clock',
+  'modoitaliano-giorgia-clock'
+];
+const ALCANTARA_BELL_COMPONENT_TYPES = ['toni-clock', 'fifthbell-clock', 'fifthbell-corner'];
+
+/** The corner a radio scene asks for, by Alcantara's rules; other scenes keep their corner. */
+function resolveRadioSceneCorner(componentTypes: string[], metadata: Record<string, unknown>) {
+  const clocks = componentTypes.some((componentType) => ALCANTARA_CLOCK_COMPONENT_TYPES.includes(componentType));
+  const bellType = componentTypes.find((componentType) => ALCANTARA_BELL_COMPONENT_TYPES.includes(componentType));
+  const bellProps = {
+    ...toRecord(metadata['fifthbell']),
+    ...toRecord(metadata['fifthbell-corner']),
+    ...toRecord(metadata['fifthbell-clock']),
+    ...toRecord(metadata['toni-clock'])
+  };
+  const bell = bellType === 'toni-clock' ? bellProps.showBellIcon === true : bellType !== undefined;
+  return { clocks, bell };
+}
+
 function resolveModoItalianoLayerAvailability(activeComponents?: string[]) {
   const defaultAvailability = {
     content: true,
@@ -416,6 +448,10 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
     () => resolveModoItalianoLayerAvailability(isRadioScene ? componentTypes : activeComponents),
     [isRadioScene, componentTypes, activeComponents]
   );
+  // A radio scene draws the world clocks and the bell only as Alcantara would for its list; every other scene keeps today's corner.
+  const radioCorner = useMemo(() => resolveRadioSceneCorner(componentTypes, effectiveSceneMetadata), [componentTypes, effectiveSceneMetadata]);
+  const showWorldClocks = config.showWorldClocks && (!isRadioScene || radioCorner.clocks);
+  const showBellIcon = isRadioScene ? radioCorner.bell : config.showBellIcon;
   const languageRotation = config.languageRotation;
   const currentLanguage: SupportedLanguage = languageRotation[languageIndex] ?? languageRotation[0] ?? 'es';
   const resolvedApiBaseUrl =
@@ -959,9 +995,9 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
         </div>
       )}
 
-      {(config.showWorldClocks || config.showBellIcon) && (
+      {(showWorldClocks || showBellIcon) && (
         <div className='absolute top-16 right-24 z-50 flex items-start gap-6'>
-          {config.showWorldClocks && (
+          {showWorldClocks && (
             <div className='flex items-start pt-1.5'>
               <WorldClocks
                 currentTime={callsignTime}
@@ -974,7 +1010,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
               />
             </div>
           )}
-          {config.showBellIcon && (
+          {showBellIcon && (
             <div className='bg-[#b21100] text-white p-6 shadow-2xl'>
               <BellRing size={64} strokeWidth={2} />
             </div>

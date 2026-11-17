@@ -160,6 +160,13 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
 
 The podcast players never read song signals. A scene that lists a radio component draws only the Modo Italiano layers it also lists (`modoitaliano-content`, `modoitaliano-marquee`); every other scene draws what it drew before. Nothing in the radio components makes a network call.
 
+The top-right corner (world clocks and the red bell box) follows Alcantara's own program renderer (`gaulatti/alcantara` `frontend/app/routes/program.tsx` at `8bca10b`) on radio scenes only:
+
+- **World clocks** draw on a radio scene only when its list also names a clock type: `clock-widget` (`:2291`), `reloj-clock`, `reloj-loop-clock`, `reloj-digital-loop-clock` (`:2362-2366`), `toni-clock`, `fifthbell-clock`, `fifthbell-corner` (`:2401`), `modoitaliano-clock` (`:2426`) or `modoitaliano-giorgia-clock` (`:2459`). The scene's `showWorldClocks` setting still applies on top.
+- **The bell** draws on a radio scene only when its list names `toni-clock`, `fifthbell-clock` or `fifthbell-corner` (`:2196-2198`, `:2401-2425`): always for the two `fifthbell` types, and for `toni-clock` only when the scene metadata sets `showBellIcon: true` (Alcantara's default is off).
+
+So a scene listing only `modoitaliano-podcast-player`, `modoitaliano-giorgia-podcast-player` or `earone` shows no clocks and no bell. Every other scene keeps its corner exactly as before: its clocks and bell follow only `showWorldClocks` and `showBellIcon` (both on by default), whatever its list names. Making every scene follow its component list is separate, future work.
+
 The TV graphics components live in `src/components/live-program/tv/`: `ModoItalianoChyron`, `ModoItalianoGiorgiaChyron`, `ModoItalianoClock`, `ModoItalianoGiorgiaClock`, `ModoItalianoDisclaimer`, `ModoItalianoBracket` (with `modoItalianoBracket.ts`), `CronicaChyron`, `CronicaBackground`, `CronicaReiteramos`, `CronicaLayout`, `RelojClone`, `RelojLoopClock` and `RelojDigitalLoopClock`, with stories under `stories/react/live-program/tv/` on the fictional `harbor-light` fixtures. Discovery finds them, but `LiveProgram` does not draw them yet: no scene type maps to them. Their stylesheets are part of the bundle (one imports the Barlow fonts from Google Fonts). The bracket reads `audience_interaction_draw_*` payloads and still accepts `modoitaliano_bracket_draw_*`. Two components reach the program's API, and only with an explicit `apiBaseUrl` prop: the bracket reads `/songs?limit=0` when it is given no songs, and `RelojDigitalLoopClock` posts `/program/:programId/activate` when its countdown ends. Without that prop neither makes a request.
 
 ## Publish flow
