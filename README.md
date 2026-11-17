@@ -160,6 +160,8 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
 
 The podcast players never read song signals. A scene that lists a radio component draws only the Modo Italiano layers it also lists (`modoitaliano-content`, `modoitaliano-marquee`); every other scene draws what it drew before. Nothing in the radio components makes a network call.
 
+The TV graphics components live in `src/components/live-program/tv/`: `ModoItalianoChyron`, `ModoItalianoGiorgiaChyron`, `ModoItalianoClock`, `ModoItalianoGiorgiaClock`, `ModoItalianoDisclaimer`, `ModoItalianoBracket` (with `modoItalianoBracket.ts`), `CronicaChyron`, `CronicaBackground`, `CronicaReiteramos`, `CronicaLayout`, `RelojClone`, `RelojLoopClock` and `RelojDigitalLoopClock`, with stories under `stories/react/live-program/tv/` on the fictional `harbor-light` fixtures. Discovery finds them, but `LiveProgram` does not draw them yet: no scene type maps to them. Their stylesheets are part of the bundle (one imports the Barlow fonts from Google Fonts). The bracket reads `audience_interaction_draw_*` payloads and still accepts `modoitaliano_bracket_draw_*`. Two components reach the program's API, and only with an explicit `apiBaseUrl` prop: the bracket reads `/songs?limit=0` when it is given no songs, and `RelojDigitalLoopClock` posts `/program/:programId/activate` when its countdown ends. Without that prop neither makes a request.
+
 ## Publish flow
 
 - CI validates typecheck, unit tests, and package build on pull requests and `main` pushes.
