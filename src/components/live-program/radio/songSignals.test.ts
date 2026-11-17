@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { earonePropsFromSong, podcastPropsFromSong, readSongPlaybackActive } from './songSignals.js';
+import { earonePropsFromSong, readSongPlaybackActive } from './songSignals.js';
 
 const active = {
   type: 'song_playback_active',
@@ -24,12 +24,11 @@ describe('song_playback_active reader', () => {
     expect(readSongPlaybackActive({ ...active, type: 'song_playback_update' })).toBeNull();
   });
 
-  it('reads only the signal fields the radio components display', () => {
+  it('reads only the song and chart fields the Earone box uses', () => {
     expect(readSongPlaybackActive(active)).toEqual({
       songId: 'harbor-light-radio-song-1',
       title: 'Harbor Light',
       artist: 'The Lighthouse Keepers',
-      coverUrl: '/assets/default-og.jpg',
       externalChartRank: '4',
       externalChartSpins: 1200,
     });
@@ -40,22 +39,18 @@ describe('song_playback_active reader', () => {
       songId: '',
       title: '',
       artist: '',
-      coverUrl: '',
       externalChartRank: null,
       externalChartSpins: null,
     });
   });
 
-  it('maps the active song to Earone and podcast player props', () => {
-    const song = readSongPlaybackActive(active);
-    expect(earonePropsFromSong(song)).toEqual({ rank: '4', spins: 1200 });
-    expect(podcastPropsFromSong(song)).toEqual({
-      episodeTitle: 'Harbor Light',
-      showName: 'The Lighthouse Keepers',
-      coverUrl: '/assets/default-og.jpg',
-    });
+  it('maps the active song to Earone rank and spins', () => {
+    expect(earonePropsFromSong(readSongPlaybackActive(active))).toEqual({ rank: '4', spins: 1200 });
     expect(earonePropsFromSong(null)).toEqual({ rank: null, spins: null });
-    expect(podcastPropsFromSong(null)).toEqual({ episodeTitle: '', showName: '', coverUrl: '' });
+  });
+
+  it('exposes no mapping onto the podcast players', async () => {
+    expect(Object.keys(await import('./songSignals.js')).sort()).toEqual(['earonePropsFromSong', 'readSongPlaybackActive']);
   });
 });
 

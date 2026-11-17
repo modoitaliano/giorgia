@@ -39,7 +39,6 @@ describe('Earone', () => {
       songId: 'harbor-light-radio-song-1',
       title: 'Harbor Light',
       artist: 'The Lighthouse Keepers',
-      coverUrl: '/assets/default-og.jpg',
       externalChartProvider: 'earone',
       externalChartRank: 3,
       externalChartSpins: '1520',

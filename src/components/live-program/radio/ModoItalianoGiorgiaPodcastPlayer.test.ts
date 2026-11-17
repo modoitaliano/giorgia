@@ -7,7 +7,6 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import miLogoUrl from '../../../templates/assets/mi.svg';
 import { ModoItalianoGiorgiaPodcastPlayer } from './ModoItalianoGiorgiaPodcastPlayer.js';
-import { podcastPropsFromSong, readSongPlaybackActive } from './songSignals.js';
 
 let frames: FrameRequestCallback[] = [];
 const runFrames = () => {
@@ -64,17 +63,11 @@ describe('ModoItalianoGiorgiaPodcastPlayer', () => {
     expect(screen.queryByText('No cover selected')).toBeNull();
   });
 
-  it('renders the active song title, artist and cover from song_playback_active', () => {
-    const song = readSongPlaybackActive({
-      type: 'song_playback_active',
-      title: 'Harbor Light',
-      artist: 'The Lighthouse Keepers',
-      coverUrl: '/assets/default-og.jpg',
-    });
-    render(h(ModoItalianoGiorgiaPodcastPlayer, podcastPropsFromSong(song)));
+  it('renders the episode title, show name and cover from its scene props', () => {
+    render(h(ModoItalianoGiorgiaPodcastPlayer, { episodeTitle: 'Harbor Light', showName: 'Harbor Light Radio', coverUrl: '/assets/default-og.jpg' }));
     expect(heading().textContent).toBe('Harbor Light');
     expect(heading().style.fontSize).toBe('164px');
-    expect(screen.getByText('The Lighthouse Keepers')).toBeTruthy();
+    expect(screen.getByText('Harbor Light Radio')).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Episode cover' }).getAttribute('src')).toBe('/assets/default-og.jpg');
   });
 

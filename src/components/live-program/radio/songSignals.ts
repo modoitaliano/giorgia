@@ -1,18 +1,20 @@
 // Reads the contract v2 `song_playback_active` signal (fields as Alcantara
-// projects them at the top level of the event) into the props the radio
-// components display. Only fields of that signal are read; nothing here adds a
-// signal or a field. `audioUrl` and `masterGain` are not song signal fields and
-// stay component props.
+// projects them at the top level of the event) for the Earone chart box, the
+// only radio component that follows the playing song. Only fields of that
+// signal are read; nothing here adds a signal or a field.
+//
+// The podcast players do not read song signals: they show an episode of a
+// show, and their episodeTitle, showName, coverUrl, audioUrl and masterGain
+// stay component props supplied by the template's scene configuration.
 import type { EaroneProps } from './Earone.js';
-import type { ModoItalianoPodcastPlayerProps } from './ModoItalianoPodcastPlayer.js';
 
 export type ChartMetric = string | number | null;
 
 export interface ActiveSong {
   songId: string;
+  /** Title and artist identify the song when matching it to a chart entry. */
   title: string;
   artist: string;
-  coverUrl: string;
   externalChartRank: ChartMetric;
   externalChartSpins: ChartMetric;
 }
@@ -34,7 +36,6 @@ export function readSongPlaybackActive(event: unknown): ActiveSong | null {
     songId: text(signal.songId),
     title: text(signal.title),
     artist: text(signal.artist),
-    coverUrl: text(signal.coverUrl),
     externalChartRank: metric(signal.externalChartRank),
     externalChartSpins: metric(signal.externalChartSpins),
   };
@@ -46,11 +47,4 @@ export function readSongPlaybackActive(event: unknown): ActiveSong | null {
  */
 export function earonePropsFromSong(song: ActiveSong | null): Pick<EaroneProps, 'rank' | 'spins'> {
   return { rank: song?.externalChartRank ?? null, spins: song?.externalChartSpins ?? null };
-}
-
-/** Title, artist and cover of the active song for a podcast player. */
-export function podcastPropsFromSong(
-  song: ActiveSong | null
-): Pick<ModoItalianoPodcastPlayerProps, 'episodeTitle' | 'showName' | 'coverUrl'> {
-  return { episodeTitle: song?.title ?? '', showName: song?.artist ?? '', coverUrl: song?.coverUrl ?? '' };
 }

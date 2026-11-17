@@ -8,12 +8,24 @@ export const harborLightSongPlaybackActive = {
   songId: 'harbor-light-radio-song-1',
   title: 'Harbor Light',
   artist: 'The Lighthouse Keepers',
-  coverUrl: '/assets/default-og.jpg',
   durationMs: 215000,
   startedAt: '2026-11-16T20:00:00Z',
   externalChartProvider: 'earone',
   externalChartRank: '3',
   externalChartSpins: '1520',
+};
+
+/**
+ * Fictional podcast scene props. The podcast players take these from the
+ * template's scene configuration, never from song signals.
+ */
+export const harborLightPodcastScene = {
+  show: true,
+  episodeTitle: 'Harbor Light, episode 12',
+  showName: 'Harbor Light Radio',
+  coverUrl: '/assets/default-og.jpg',
+  audioUrl: '',
+  masterGain: 1,
 };
 
 /** Mounts a component on a 1920x1080 broadcast stage, the size the radio components are laid out for. */

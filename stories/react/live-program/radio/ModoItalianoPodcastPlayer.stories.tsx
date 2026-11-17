@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/html';
 import React from 'react';
 import { ModoItalianoPodcastPlayer } from '../../../../src/components/live-program/radio/ModoItalianoPodcastPlayer';
-import { podcastPropsFromSong, readSongPlaybackActive } from '../../../../src/components/live-program/radio/songSignals';
-import { harborLightSongPlaybackActive, renderOnStage } from './stage';
+import { harborLightPodcastScene, renderOnStage } from './stage';
 
 const meta: Meta = {
   title: 'React/LiveProgram/Radio/ModoItalianoPodcastPlayer',
@@ -20,9 +19,9 @@ const meta: Meta = {
 
 export default meta;
 
-/** Title, artist and cover from the song_playback_active signal; no audio source. */
-export const FromSongSignal: StoryObj = {
-  args: { show: true, audioUrl: '', masterGain: 1, ...podcastPropsFromSong(readSongPlaybackActive(harborLightSongPlaybackActive)) },
+/** Episode props as the scene configuration supplies them; no audio source. */
+export const FromSceneProps: StoryObj = {
+  args: harborLightPodcastScene,
 };
 
 /** No props: placeholder copy, the empty cover glyph and no audio source. */

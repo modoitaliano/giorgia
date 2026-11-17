@@ -3,7 +3,6 @@ import { createElement as h } from 'react';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ModoItalianoPodcastPlayer } from './ModoItalianoPodcastPlayer.js';
-import { podcastPropsFromSong, readSongPlaybackActive } from './songSignals.js';
 
 let frames: FrameRequestCallback[] = [];
 const runFrames = (ts = 1000) => {
@@ -88,16 +87,10 @@ describe('ModoItalianoPodcastPlayer', () => {
     expect(cancelAnimationFrame).not.toHaveBeenCalled();
   });
 
-  it('renders the active song title, artist and cover from song_playback_active', () => {
-    const song = readSongPlaybackActive({
-      type: 'song_playback_active',
-      title: 'Harbor Light',
-      artist: 'The Lighthouse Keepers',
-      coverUrl: '/assets/default-og.jpg',
-    });
-    render(h(ModoItalianoPodcastPlayer, podcastPropsFromSong(song)));
-    expect(screen.getByText('Harbor Light')).toBeTruthy();
-    expect(screen.getByText('The Lighthouse Keepers')).toBeTruthy();
+  it('renders the episode title, show name and cover from its scene props', () => {
+    render(h(ModoItalianoPodcastPlayer, { episodeTitle: 'Harbor Light, episode 12', showName: 'Harbor Light Radio', coverUrl: '/assets/default-og.jpg' }));
+    expect(screen.getByText('Harbor Light, episode 12')).toBeTruthy();
+    expect(screen.getByText('Harbor Light Radio')).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Episode cover' }).getAttribute('src')).toBe('/assets/default-og.jpg');
   });
 
