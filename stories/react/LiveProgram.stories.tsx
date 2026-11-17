@@ -3,6 +3,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import LiveProgram from '../../src/components/live-program/LiveProgram';
 import { harborLightPodcastScene } from './live-program/radio/stage';
+import { HARBOR_LIGHT_CTA_SEQUENCE, HARBOR_LIGHT_TEXT_SEQUENCE, HARBOR_LIGHT_TV_PROGRAM } from './live-program/tv/harbor-light.fixture';
 
 const meta: Meta = {
   title: 'React/LiveProgram',
@@ -103,3 +104,36 @@ export const RadioSceneWithRelojLoopClock: StoryObj = {
 
 /** A logo-widget scene (giorgia#48): the scene's logoUrl on LogoWidget's plate; without a logoUrl nothing draws. */
 export const TvSceneLogoWidget: StoryObj = tvScene('logo-widget', { logoUrl: '/assets/mi.svg', position: 'bottom-right' });
+
+/**
+ * Giorgia clock and chyron scenes (giorgia#50), drawn as Alcantara draws them:
+ * each by itself, or both in the bottom row when the scene lists both. Stories
+ * have no event stream, so the on-air block (the song sequence from
+ * audio_bus_update) does not show here.
+ */
+const giorgiaChyron = { textSequence: HARBOR_LIGHT_TEXT_SEQUENCE, ctaSequence: HARBOR_LIGHT_CTA_SEQUENCE };
+const giorgiaScene = (componentTypes: string[], metadata: Record<string, unknown>): StoryObj => ({
+  args: { programId: HARBOR_LIGHT_TV_PROGRAM, embedded: true, activeComponents: componentTypes, sceneMetadata: metadata }
+});
+
+export const TvSceneGiorgiaClock: StoryObj = giorgiaScene(['modoitaliano-giorgia-clock'], { 'modoitaliano-giorgia-clock': {} });
+
+export const TvSceneGiorgiaClockKeySafe: StoryObj = giorgiaScene(['modoitaliano-giorgia-clock'], { 'modoitaliano-giorgia-clock': { keySafe: true } });
+
+export const TvSceneGiorgiaChyron: StoryObj = giorgiaScene(['modoitaliano-giorgia-chyron'], { 'modoitaliano-giorgia-chyron': giorgiaChyron });
+
+export const TvSceneGiorgiaChyronKeySafe: StoryObj = giorgiaScene(['modoitaliano-giorgia-chyron'], {
+  'modoitaliano-giorgia-chyron': { ...giorgiaChyron, keySafe: true }
+});
+
+/** Both listed: the header top-left, and the chyron and on-air slot side by side in the bottom row. */
+export const TvSceneGiorgiaRow: StoryObj = giorgiaScene(['modoitaliano-giorgia-clock', 'modoitaliano-giorgia-chyron'], {
+  'modoitaliano-giorgia-clock': {},
+  'modoitaliano-giorgia-chyron': giorgiaChyron
+});
+
+/** keySafe on either type keys the whole row. */
+export const TvSceneGiorgiaRowKeySafe: StoryObj = giorgiaScene(['modoitaliano-giorgia-clock', 'modoitaliano-giorgia-chyron'], {
+  'modoitaliano-giorgia-clock': {},
+  'modoitaliano-giorgia-chyron': { ...giorgiaChyron, keySafe: true }
+});

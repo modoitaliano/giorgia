@@ -278,8 +278,8 @@ function parseSceneMetadata(scene: Scene | null): Record<string, unknown> {
 // :2401, :2426, :2459) and the bell only through the first listed toni-clock,
 // fifthbell-clock or fifthbell-corner (:2196-2198, :2401-2425): always for the
 // fifthbell types, and for toni-clock only when its metadata turns showBellIcon on.
-// reloj-loop-clock is left out: the scene draws its own RelojLoopClock
-// (tv/TvSceneLayers), so it does not also ask for the corner clocks.
+// reloj-loop-clock and modoitaliano-giorgia-clock are left out: the scene draws its own
+// RelojLoopClock or Giorgia clock (tv/TvSceneLayers), so it does not also ask for the corner clocks.
 const ALCANTARA_CLOCK_COMPONENT_TYPES = [
   'clock-widget',
   'reloj-clock',
@@ -287,8 +287,7 @@ const ALCANTARA_CLOCK_COMPONENT_TYPES = [
   'toni-clock',
   'fifthbell-clock',
   'fifthbell-corner',
-  'modoitaliano-clock',
-  'modoitaliano-giorgia-clock'
+  'modoitaliano-clock'
 ];
 const ALCANTARA_BELL_COMPONENT_TYPES = ['toni-clock', 'fifthbell-clock', 'fifthbell-corner'];
 
@@ -404,7 +403,7 @@ function normalizeLaunchDate(rawDate: string): Date {
   return parsed;
 }
 
-export default function LiveProgram({ embedded = false, sceneMetadata, activeComponents, apiBaseUrl }: LiveProgramProps) {
+export default function LiveProgram({ programId = 'main', embedded = false, sceneMetadata, activeComponents, apiBaseUrl }: LiveProgramProps) {
   const [state, setState] = useState<ProgramState | null>(null);
   const [showLogoSlide, setShowLogoSlide] = useState(false);
   const [callsignTime, setCallsignTime] = useState(new Date());
@@ -434,6 +433,8 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
   const [activeSong, setActiveSong] = useState<ActiveSong | null>(null);
   // Broadcast settings from the latest broadcast_settings_update; undefined until one arrives.
   const [eventBroadcastSettings, setEventBroadcastSettings] = useState<unknown>(undefined);
+  // The song sequence from the latest audio_bus_update, as Alcantara gives it to the Giorgia clock; none until one arrives.
+  const [songSequence, setSongSequence] = useState<unknown>(undefined);
 
   const controlledBySceneRenderer = sceneMetadata !== undefined;
   const effectiveSceneMetadata = useMemo(() => {
@@ -450,6 +451,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
     () => timeOverrideFromBroadcastSettings(eventBroadcastSettings !== undefined ? eventBroadcastSettings : state?.broadcastSettings),
     [eventBroadcastSettings, state?.broadcastSettings]
   );
+  const giorgiaContext = useMemo(() => ({ programId, timeOverride, songSequence }), [programId, timeOverride, songSequence]);
   // The scene's component list, as the scene renderer passes it or as the active scene's layout names it.
   const componentTypes = useMemo(
     () => activeComponents ?? sceneComponentTypes(state?.activeScene ?? null),
@@ -681,6 +683,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
         activeInstantAudiosRef.current.clear();
       } else if (data.type === 'audio_bus_update' && data.settings) {
         const settings = data.settings;
+        setSongSequence(settings.songSequence);
         mixerSettingsRef.current = settings.mixerSettings || {};
         // Update scene instant volume
         const current = activeInstantAudioRef.current;
@@ -1034,7 +1037,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
       )}
 
       <RadioSceneLayers componentTypes={componentTypes} metadata={effectiveSceneMetadata} activeSong={activeSong} />
-      <TvSceneLayers componentTypes={componentTypes} metadata={effectiveSceneMetadata} />
+      <TvSceneLayers componentTypes={componentTypes} metadata={effectiveSceneMetadata} context={giorgiaContext} />
     </div>
   );
 
