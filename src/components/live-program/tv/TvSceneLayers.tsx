@@ -1,14 +1,16 @@
 // Maps an Alcantara scene onto the TV graphics components. The componentType
 // names and the metadata each case reads are Alcantara's own (its program
 // page's scene renderer, gaulatti/alcantara frontend/app/routes/program.tsx at
-// b0e8f009, :2361-2362 and :2585-2590), so a scene built in Alcantara's editor
+// b0e8f009, :2294-2295, :2361-2362 and :2585-2590), so a scene built in Alcantara's editor
 // draws the same component here.
 import React from 'react';
 import { CronicaBackground } from './CronicaBackground.js';
 import { CronicaChyron } from './CronicaChyron.js';
 import { CronicaReiteramos } from './CronicaReiteramos.js';
+import { LogoWidget } from './LogoWidget.js';
 import RelojLoopClock from './RelojLoopClock.js';
 
+export const LOGO_WIDGET = 'logo-widget';
 export const RELOJ_LOOP_CLOCK = 'reloj-loop-clock';
 export const CRONICA_BACKGROUND = 'cronica-background';
 export const CRONICA_CHYRON = 'cronica-chyron';
@@ -25,6 +27,15 @@ function optionalText(value: unknown): string | undefined {
 
 /** Each TV scene type and the component Alcantara draws for it, with the metadata it reads. */
 const TV_RENDERERS: Record<string, (props: Record<string, unknown>) => React.ReactNode> = {
+  // Alcantara: logoUrl={props.logoUrl} position={props.position} (program.tsx:2294-2295). Without a
+  // logoUrl the Giorgia LogoWidget draws nothing (#48: the ModoRadio bugs are retired).
+  [LOGO_WIDGET]: (props) => (
+    <LogoWidget
+      key={LOGO_WIDGET}
+      logoUrl={optionalText(props.logoUrl)}
+      position={props.position === 'top-right' || props.position === 'bottom-right' ? props.position : undefined}
+    />
+  ),
   // Alcantara: timezone={props.timezone || 'Europe/Madrid'} (program.tsx:2361-2362).
   [RELOJ_LOOP_CLOCK]: (props) => <RelojLoopClock key={RELOJ_LOOP_CLOCK} timezone={optionalText(props.timezone) || 'Europe/Madrid'} />,
   [CRONICA_BACKGROUND]: () => <CronicaBackground key={CRONICA_BACKGROUND} />,

@@ -100,3 +100,6 @@ export const RadioSceneWithRelojLoopClock: StoryObj = {
     sceneMetadata: { 'modoitaliano-giorgia-podcast-player': harborLightPodcastScene, 'reloj-loop-clock': { timezone: 'Europe/Madrid' } }
   }
 };
+
+/** A logo-widget scene (giorgia#48): the scene's logoUrl on LogoWidget's plate; without a logoUrl nothing draws. */
+export const TvSceneLogoWidget: StoryObj = tvScene('logo-widget', { logoUrl: '/assets/mi.svg', position: 'bottom-right' });

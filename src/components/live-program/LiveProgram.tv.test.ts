@@ -246,3 +246,48 @@ describe('LiveProgram TV graphics scenes', () => {
     expect(source).not.toMatch(new RegExp(['fetch\\(', 'XMLHttp' + 'Request', 'Event' + 'Source', 'https?:' + '//'].join('|')));
   });
 });
+
+// giorgia#48: logo-widget draws Alcantara's LogoWidget with the scene's logoUrl and position
+// (program.tsx:2294-2295 at b0e8f009), and nothing without a logoUrl.
+describe('LiveProgram logo-widget scene', () => {
+  it('draws the scene logo when the scene lists logo-widget with a logoUrl', async () => {
+    routes['/state'] = programState('logo-widget', { 'logo-widget': { logoUrl: '/harbor-light/logo.png', position: 'top-right' } });
+    const { container } = await mount();
+    const logo = tvBox(container)?.querySelector('.logo-widget');
+    expect(logo?.className).toContain('top-right');
+    expect(logo?.querySelector('img')?.getAttribute('src')).toBe('/harbor-light/logo.png');
+    expect(container.textContent).not.toContain('Headline A');
+    expect(corner(container)).toEqual({ clocks: false, bell: false });
+  });
+
+  it('draws nothing for logo-widget when the scene sets no logoUrl', async () => {
+    routes['/state'] = programState('logo-widget', { 'logo-widget': { logoUrl: 7, position: 'top-right' } });
+    const { container } = await mount();
+    expect(tvBox(container)).toBeDefined();
+    expect(container.querySelector('.logo-widget')).toBeNull();
+    expect(container.querySelector('img')).toBeNull();
+  });
+
+  it("keeps LogoWidget's bottom-right default for a position it does not know", async () => {
+    routes['/state'] = programState('logo-widget', { 'logo-widget': { logoUrl: '/harbor-light/logo.png', position: 'center' } });
+    const { container } = await mount();
+    expect(container.querySelector('.logo-widget')?.className).toContain('bottom-right');
+  });
+
+  it('does not draw logo-widget when the scene does not list it', async () => {
+    routes['/state'] = programState('modoitaliano', { 'modoitaliano-content': ONLY_ARTICLES, 'logo-widget': { logoUrl: '/harbor-light/logo.png' } });
+    const { container } = await mount();
+    expect(container.textContent).toContain('Headline A');
+    expect(container.querySelector('.logo-widget')).toBeNull();
+  });
+});
+
+// Keeps branch coverage at the base ratio after #48 dropped the covered ModoRadio-bug branches.
+describe('LiveProgram news scene next to the TV graphics', () => {
+  it('still draws a news article that has no slug', async () => {
+    routes['/state'] = programState('modoitaliano', { 'modoitaliano-content': ONLY_ARTICLES });
+    routes['homepage-current-es.json'] = { articles: [{ id: 2, title: 'Headline B', excerpt: 'x', featured: false, featuredImage: { url: '/b.jpg' }, categories: [], publishedAt: new Date().toISOString() }] };
+    const { container } = await mount();
+    expect(container.textContent).toContain('Headline B');
+  });
+});
