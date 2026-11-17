@@ -56,3 +56,21 @@ export function formatClockParts(parts: ClockParts): string {
   return `${hours}:${minutes}`;
 }
 
+
+/**
+ * The program-wide broadcast time override from Alcantara's broadcast settings
+ * (`timeOverrideEnabled`, `timeOverrideStartTime`, `timeOverrideStartedAt`), as
+ * Alcantara's own renderer builds it: active only when enabled with both values
+ * set. It is a program setting, not a scene field (modoitaliano/giorgia#49).
+ */
+export function timeOverrideFromBroadcastSettings(settings: unknown): GlobalTimeOverride | null {
+  if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+    return null;
+  }
+  const record = settings as Record<string, unknown>;
+  const { timeOverrideStartTime: startTime, timeOverrideStartedAt: startedAt } = record;
+  if (record.timeOverrideEnabled !== true || typeof startTime !== 'string' || !startTime || typeof startedAt !== 'string' || !startedAt) {
+    return null;
+  }
+  return { startTime, startedAt };
+}

@@ -12,7 +12,8 @@ const meta: Meta = {
     container.style.width = '1920px';
     container.style.height = '1080px';
     container.style.position = 'relative';
-    container.style.background = '#0a0a0a';
+    // A key-safe story sits on chroma green, the picture it is made for (#49).
+    container.style.background = args.keySafe ? '#00b140' : '#0a0a0a';
     createRoot(container).render(<ModoItalianoGiorgiaChyron {...args} />);
     return container;
   }
@@ -26,4 +27,9 @@ export const Default: StoryObj = {
     textSequence: HARBOR_LIGHT_TEXT_SEQUENCE,
     ctaSequence: HARBOR_LIGHT_CTA_SEQUENCE
   }
+};
+
+/** Key-safe (#49), over chroma green: a solid navy band and type with no shadow. */
+export const KeySafe: StoryObj = {
+  args: { ...Default.args, keySafe: true }
 };

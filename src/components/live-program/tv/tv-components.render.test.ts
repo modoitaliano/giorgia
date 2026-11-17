@@ -325,8 +325,9 @@ describe('TV Components Render Tests with harbor-light Fixtures', () => {
     act(() => {
       vi.advanceTimersByTime(1000);
     });
-    expect(container.textContent).toContain('Harbor Light Giorgia');
-    expect(container.textContent).toContain('Coastline');
+    // The redesigned Giorgia clock sets the song in uppercase (#49).
+    expect(container.textContent?.toUpperCase()).toContain('HARBOR LIGHT GIORGIA');
+    expect(container.textContent?.toUpperCase()).toContain('COASTLINE');
   });
 });
 

@@ -10,8 +10,6 @@ import { LogoWidget } from './LogoWidget.js';
 import { ModoItalianoChyron } from './ModoItalianoChyron.js';
 import { ModoItalianoClock } from './ModoItalianoClock.js';
 import { ModoItalianoDisclaimer } from './ModoItalianoDisclaimer.js';
-import { ModoItalianoGiorgiaChyron } from './ModoItalianoGiorgiaChyron.js';
-import { ModoItalianoGiorgiaClock } from './ModoItalianoGiorgiaClock.js';
 import { updateProgramAudioBus } from './programAudioBus.js';
 import RelojClone from './RelojClone.js';
 import RelojDigitalLoopClock from './RelojDigitalLoopClock.js';
@@ -125,10 +123,8 @@ describe('LogoWidget branches', () => {
 
 const textSequence = (text: string, useMarquee = false) => ({ mode: 'manual', items: [{ id: 'harbor', text, useMarquee }] });
 
-describe.each([
-  ['ModoItalianoChyron', ModoItalianoChyron],
-  ['ModoItalianoGiorgiaChyron', ModoItalianoGiorgiaChyron]
-] as const)('%s transitions', (_name, Chyron) => {
+// The Giorgia chyron cuts instead of fading since its redesign; giorgia-broadcast.test.ts covers it (#49).
+describe.each([['ModoItalianoChyron', ModoItalianoChyron]] as const)('%s transitions', (_name, Chyron) => {
   const advance = (ms: number) =>
     act(() => {
       vi.advanceTimersByTime(ms);
@@ -454,105 +450,7 @@ describe('RelojDigitalLoopClock branches', () => {
   });
 });
 
-describe('ModoItalianoGiorgiaClock branches', () => {
-  const advance = (ms: number) =>
-    act(() => {
-      vi.advanceTimersByTime(ms);
-    });
-  let programSeq = 0;
-  const nextProgram = () => `harbor-light-tv-${(programSeq += 1)}`;
-
-  it('renders nothing with every block hidden', () => {
-    expect(
-      render(h(ModoItalianoGiorgiaClock, { programId: nextProgram(), showWorldClocks: false, showLogo: false, showBellIcon: false })).container.innerHTML
-    ).toBe('');
-  });
-
-  it('rotates through every city, reshuffling when asked, and cancels a pending switch on unmount', () => {
-    const { container, rerender, unmount } = render(
-      h(ModoItalianoGiorgiaClock, { programId: nextProgram(), rotationIntervalMs: 500, transitionDurationMs: 100 })
-    );
-    const seen = new Set<string>();
-    for (let i = 0; i < 6; i += 1) {
-      advance(i === 0 ? 500 : 400);
-      expect(container.innerHTML).toContain('opacity: 0.35');
-      advance(100);
-      seen.add(container.textContent!.slice(-2));
-    }
-    expect(seen.size).toBe(5);
-    rerender(h(ModoItalianoGiorgiaClock, { programId: 'p', rotationIntervalMs: 500, transitionDurationMs: 100, shuffleCities: true }));
-    for (let i = 0; i < 6; i += 1) advance(600);
-    advance(500);
-    unmount();
-  });
-
-  it('shows the override time, the logo or bell without world clocks, and each language', () => {
-    const programId = nextProgram();
-    const override = { startTime: '07:30', startedAt: HARBOR_LIGHT_START.toISOString() };
-    const { container, rerender } = render(h(ModoItalianoGiorgiaClock, { programId, timeOverride: override, inline: true }));
-    expect(container.textContent).toContain('07:30');
-    rerender(h(ModoItalianoGiorgiaClock, { programId, timeOverride: { startTime: 'x', startedAt: '' } }));
-    expect(container.textContent).toMatch(/\d\d:\d\d/);
-    rerender(h(ModoItalianoGiorgiaClock, { programId, showWorldClocks: false, showBellIcon: true }));
-    expect(container.querySelector('[aria-label="MI"]')).toBeTruthy();
-    expect(container.querySelector('svg')).toBeTruthy();
-    rerender(h(ModoItalianoGiorgiaClock, { programId, showWorldClocks: false, showLogo: false, showBellIcon: true }));
-    expect(container.querySelector('[aria-label="MI"]')).toBeNull();
-    rerender(h(ModoItalianoGiorgiaClock, { programId, showLogo: false }));
-    expect(container.querySelector('[aria-label="MI"]')).toBeNull();
-
-    for (const [language, label] of [['it', 'Stai ascoltando'], ['en', 'Now playing'], ['es', 'Estás escuchando']] as const) {
-      rerender(h(ModoItalianoGiorgiaClock, { programId, language, songArtist: 'Harbor', songTitle: 'Light' }));
-      expect(container.textContent).toContain(label);
-    }
-  });
-
-  it('takes the song from the direct fields, the song list or the sequence, inline or floating', () => {
-    const programId = nextProgram();
-    const { container, rerender } = render(h(ModoItalianoGiorgiaClock, { programId, songs: [null, [], 'x', { artist: 3 }, { title: ' Tide ', durationMs: 1000, audioUrl: '/t.mp3' }] }));
-    expect(container.textContent).toContain('Tide');
-    expect(container.querySelector('img[alt="Cover"]')!.getAttribute('src')).toBe('/cover.jpg');
-    rerender(h(ModoItalianoGiorgiaClock, { programId, songs: [{ coverUrl: ' /c.jpg ' }] }));
-    expect(container.querySelector('img[alt="Cover"]')).toBeNull();
-    rerender(h(ModoItalianoGiorgiaClock, { programId, songs: 'nope' }));
-    expect(container.querySelector('img[alt="Cover"]')).toBeNull();
-    rerender(h(ModoItalianoGiorgiaClock, { programId, songs: [{ artist: 3, title: [], coverUrl: 1, audioUrl: {}, durationMs: -1 }] }));
-    expect(container.querySelector('img[alt="Cover"]')).toBeNull();
-    rerender(h(ModoItalianoGiorgiaClock, { programId, inline: true, songArtist: 'Only Artist', songCoverUrl: '/a.jpg', showPlaybackProgress: false }));
-    expect(container.textContent).toContain('Only Artist');
-    expect(container.innerHTML).not.toContain('scaleX');
-    rerender(
-      h(ModoItalianoGiorgiaClock, {
-        programId,
-        songSequence: { mode: 'autoplay', startedAt: HARBOR_LIGHT_START.getTime(), items: [{ id: 'a', title: 'First', durationMs: 1000 }, { id: 'b', title: 'Second', durationMs: 1000 }] }
-      })
-    );
-    expect(container.textContent).toContain('First');
-    advance(1250);
-    expect(container.textContent).toContain('Second');
-  });
-
-  it('prefers the live track on the audio bus until it ends, and hides the song when not playing', () => {
-    const programId = nextProgram();
-    const { container, rerender } = render(h(ModoItalianoGiorgiaClock, { programId, songTitle: 'Fallback' }));
-    act(() => {
-      updateProgramAudioBus(programId, { track: { token: 't1', audioUrl: '/live.mp3', artist: 'Live Artist', title: 'Live Title', coverUrl: '/live.jpg' }, progress: 0.5 });
-    });
-    expect(container.textContent).toContain('Live Title');
-    expect(container.innerHTML).toContain('scaleX(0.5)');
-    act(() => {
-      updateProgramAudioBus(programId, { track: { token: 't2', audioUrl: '/live.mp3' }, progress: 0.2 });
-    });
-    expect(container.textContent).toContain('Fallback');
-    act(() => {
-      updateProgramAudioBus(programId, { track: { token: 't3', audioUrl: '/live.mp3', title: 'Ended' }, endedToken: 't3' });
-    });
-    expect(container.querySelector('img[alt="Cover"]')).toBeNull();
-    rerender(h(ModoItalianoGiorgiaClock, { programId, songTitle: 'Fallback', playingSong: false }));
-    expect(container.querySelector('img[alt="Cover"]')).toBeNull();
-    rerender(h(ModoItalianoGiorgiaClock, { programId, playingSong: true }));
-  });
-});
+// The redesigned Giorgia clock is covered by giorgia-broadcast.test.ts (#49).
 
 describe('ModoItalianoClock branches', () => {
   const advance = (ms: number) =>

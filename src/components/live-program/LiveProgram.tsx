@@ -6,6 +6,7 @@ import { MODOITALIANO_ASSETS } from './assets.js';
 import { MarqueeCurtain } from './components/MarqueeCurtain.js';
 import Marquee from './components/Marquee.js';
 import { WorldClocks, DEFAULT_WORLD_CLOCK_CITIES } from './components/WorldClocks.js';
+import { timeOverrideFromBroadcastSettings } from './utils/broadcastTime.js';
 import { CallsignSlide } from './components/slides/CallsignSlide.js';
 import { slideStyles } from './components/slides/slideStyles.js';
 import { fetchEvents, getCachedEvents, hasEventChanges, type Event } from './events.js';
@@ -55,6 +56,8 @@ interface ProgramState {
   stagedSceneId?: number | null;
   stagedScene?: Scene | null;
   updatedAt: string;
+  /** Optional in the v2 projected state (gaulatti/alcantara#177): program-wide broadcast settings. */
+  broadcastSettings?: unknown;
 }
 
 interface ModoItalianoWorldClockCity {
@@ -429,6 +432,8 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
   const mixerSettingsRef = useRef<Record<string, unknown>>({});
   const songAudioRef = useRef<HTMLAudioElement | null>(null);
   const [activeSong, setActiveSong] = useState<ActiveSong | null>(null);
+  // Broadcast settings from the latest broadcast_settings_update; undefined until one arrives.
+  const [eventBroadcastSettings, setEventBroadcastSettings] = useState<unknown>(undefined);
 
   const controlledBySceneRenderer = sceneMetadata !== undefined;
   const effectiveSceneMetadata = useMemo(() => {
@@ -439,6 +444,12 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
     return parseSceneMetadata(state?.activeScene ?? null);
   }, [sceneMetadata, state?.activeScene]);
   const config = useMemo(() => extractConfigFromMetadata(effectiveSceneMetadata), [effectiveSceneMetadata]);
+  // The program-wide time override (#49): the latest broadcast_settings_update, else the state's
+  // optional broadcastSettings, else none. It is a program setting, never a scene field.
+  const timeOverride = useMemo(
+    () => timeOverrideFromBroadcastSettings(eventBroadcastSettings !== undefined ? eventBroadcastSettings : state?.broadcastSettings),
+    [eventBroadcastSettings, state?.broadcastSettings]
+  );
   // The scene's component list, as the scene renderer passes it or as the active scene's layout names it.
   const componentTypes = useMemo(
     () => activeComponents ?? sceneComponentTypes(state?.activeScene ?? null),
@@ -582,7 +593,8 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
           };
         });
       } else if (data.type === 'broadcast_settings_update') {
-        // broadcast settings stored for overlay display
+        // The latest broadcast settings carry the program-wide time override (#49).
+        setEventBroadcastSettings(data.settings ?? null);
       } else if (data.type === 'scene_instant_take' && data.instant?.audioUrl) {
         console.log('[scene_instant_take]', data.instant.name, data.instant.audioUrl);
         sceneInstantTakeSequenceRef.current += 1;
@@ -1009,6 +1021,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
                 transitionDurationMs={config.worldClockTransitionMs}
                 shuffleCities={config.worldClockShuffle}
                 widthPx={config.worldClockWidthPx}
+                timeOverride={timeOverride}
               />
             </div>
           )}
