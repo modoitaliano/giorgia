@@ -214,4 +214,62 @@ describe('ModoItalianoPodcastPlayer', () => {
     expect(audio.play).toHaveBeenCalledTimes(1);
     expect(audioContexts).toHaveLength(0);
   });
+
+  // gaulatti/alcantara#192: RadioSceneLayers keys the player by component
+  // type, so a scene whose player starts hidden keeps the same instance when
+  // it is shown. Its effects used to run once, on the hidden mount, with no
+  // elements to bind.
+  it('starts, animates and follows its clock when it is shown after mounting hidden', async () => {
+    vi.mocked(HTMLMediaElement.prototype.play).mockRejectedValueOnce(new Error('NotAllowedError'));
+    const { container, rerender } = render(h(ModoItalianoPodcastPlayer, { show: false, audioUrl: '/harbor-light.mp3', masterGain: 0.4 }));
+    expect(container.innerHTML).toBe('');
+    expect(frames).toHaveLength(0);
+
+    rerender(h(ModoItalianoPodcastPlayer, { show: true, audioUrl: '/harbor-light.mp3', masterGain: 0.4 }));
+    const audio = audioOf(container);
+    expect(audio.getAttribute('src')).toBe('/harbor-light.mp3');
+    expect(audio.load).toHaveBeenCalled();
+    expect(audio.volume).toBe(0.4);
+    // Both canvases animate.
+    expect(frames).toHaveLength(2);
+
+    fireEvent.canPlay(audio);
+    await flush();
+    expect(audioContexts).toHaveLength(1);
+    expect(audio.play).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Waiting for interaction to start playback')).toBeTruthy();
+    fireEvent.play(audio);
+    expect(screen.queryByText('Waiting for interaction to start playback')).toBeNull();
+
+    Object.defineProperty(audio, 'duration', { configurable: true, value: 125 });
+    fireEvent.durationChange(audio);
+    Object.defineProperty(audio, 'currentTime', { configurable: true, writable: true, value: 65 });
+    fireEvent.timeUpdate(audio);
+    expect(screen.getByText('1:05')).toBeTruthy();
+    expect(screen.getByText('2:05')).toBeTruthy();
+  });
+
+  it('stops when hidden and builds a fresh audio graph for the element shown again', () => {
+    const { container, rerender } = render(h(ModoItalianoPodcastPlayer, { audioUrl: '/harbor-light.mp3' }));
+    fireEvent.canPlay(audioOf(container));
+    expect(audioContexts).toHaveLength(1);
+
+    rerender(h(ModoItalianoPodcastPlayer, { show: false, audioUrl: '/harbor-light.mp3' }));
+    expect(container.innerHTML).toBe('');
+    expect(vi.mocked(cancelAnimationFrame).mock.calls.length).toBeGreaterThanOrEqual(2);
+    expect(audioContexts[0].close).toHaveBeenCalledTimes(1);
+
+    frames = [];
+    rerender(h(ModoItalianoPodcastPlayer, { show: true, audioUrl: '/harbor-light.mp3' }));
+    const shownAgain = audioOf(container);
+    expect(frames).toHaveLength(2);
+    fireEvent.canPlay(shownAgain);
+    expect(audioContexts).toHaveLength(2);
+    fireEvent.play(shownAgain);
+    vi.mocked(ctx!.fillRect).mockClear();
+    runFrames();
+    // The new graph feeds the spectrum: its loud bins draw mirrored bars.
+    expect(vi.mocked(ctx!.fillRect).mock.calls.length).toBeGreaterThan(4);
+  });
 });
+
