@@ -12,6 +12,7 @@ import { fetchEvents, getCachedEvents, hasEventChanges, type Event } from './eve
 import { type SupportedLanguage } from './i18n.js';
 import { RadioSceneLayers, isRadioComponentType, sceneComponentTypes } from './radio/RadioSceneLayers.js';
 import { readSongPlaybackActive, type ActiveSong } from './radio/songSignals.js';
+import { TvSceneLayers, isTvComponentType } from './tv/TvSceneLayers.js';
 import {
   createArticlesSegment,
   createEarthquakeSegment,
@@ -274,10 +275,11 @@ function parseSceneMetadata(scene: Scene | null): Record<string, unknown> {
 // :2401, :2426, :2459) and the bell only through the first listed toni-clock,
 // fifthbell-clock or fifthbell-corner (:2196-2198, :2401-2425): always for the
 // fifthbell types, and for toni-clock only when its metadata turns showBellIcon on.
+// reloj-loop-clock is left out: the scene draws its own RelojLoopClock
+// (tv/TvSceneLayers), so it does not also ask for the corner clocks.
 const ALCANTARA_CLOCK_COMPONENT_TYPES = [
   'clock-widget',
   'reloj-clock',
-  'reloj-loop-clock',
   'reloj-digital-loop-clock',
   'toni-clock',
   'fifthbell-clock',
@@ -287,8 +289,8 @@ const ALCANTARA_CLOCK_COMPONENT_TYPES = [
 ];
 const ALCANTARA_BELL_COMPONENT_TYPES = ['toni-clock', 'fifthbell-clock', 'fifthbell-corner'];
 
-/** The corner a radio scene asks for, by Alcantara's rules; other scenes keep their corner. */
-function resolveRadioSceneCorner(componentTypes: string[], metadata: Record<string, unknown>) {
+/** The corner a radio or TV graphics scene asks for, by Alcantara's rules; other scenes keep their corner. */
+function resolveListedSceneCorner(componentTypes: string[], metadata: Record<string, unknown>) {
   const clocks = componentTypes.some((componentType) => ALCANTARA_CLOCK_COMPONENT_TYPES.includes(componentType));
   const bellType = componentTypes.find((componentType) => ALCANTARA_BELL_COMPONENT_TYPES.includes(componentType));
   const bellProps = {
@@ -442,16 +444,16 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
     () => activeComponents ?? sceneComponentTypes(state?.activeScene ?? null),
     [activeComponents, state?.activeScene]
   );
-  // A radio scene draws only the Modo Italiano layers it lists; every other scene keeps today's layers.
-  const isRadioScene = componentTypes.some(isRadioComponentType);
+  // A radio or TV graphics scene draws only the Modo Italiano layers it lists; every other scene keeps today's layers.
+  const drawsOnlyListedLayers = componentTypes.some((componentType) => isRadioComponentType(componentType) || isTvComponentType(componentType));
   const layerAvailability = useMemo(
-    () => resolveModoItalianoLayerAvailability(isRadioScene ? componentTypes : activeComponents),
-    [isRadioScene, componentTypes, activeComponents]
+    () => resolveModoItalianoLayerAvailability(drawsOnlyListedLayers ? componentTypes : activeComponents),
+    [drawsOnlyListedLayers, componentTypes, activeComponents]
   );
-  // A radio scene draws the world clocks and the bell only as Alcantara would for its list; every other scene keeps today's corner.
-  const radioCorner = useMemo(() => resolveRadioSceneCorner(componentTypes, effectiveSceneMetadata), [componentTypes, effectiveSceneMetadata]);
-  const showWorldClocks = config.showWorldClocks && (!isRadioScene || radioCorner.clocks);
-  const showBellIcon = isRadioScene ? radioCorner.bell : config.showBellIcon;
+  // Such a scene draws the world clocks and the bell only as Alcantara would for its list; every other scene keeps today's corner.
+  const listedCorner = useMemo(() => resolveListedSceneCorner(componentTypes, effectiveSceneMetadata), [componentTypes, effectiveSceneMetadata]);
+  const showWorldClocks = config.showWorldClocks && (!drawsOnlyListedLayers || listedCorner.clocks);
+  const showBellIcon = drawsOnlyListedLayers ? listedCorner.bell : config.showBellIcon;
   const languageRotation = config.languageRotation;
   const currentLanguage: SupportedLanguage = languageRotation[languageIndex] ?? languageRotation[0] ?? 'es';
   const resolvedApiBaseUrl =
@@ -1019,6 +1021,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
       )}
 
       <RadioSceneLayers componentTypes={componentTypes} metadata={effectiveSceneMetadata} activeSong={activeSong} />
+      <TvSceneLayers componentTypes={componentTypes} metadata={effectiveSceneMetadata} />
     </div>
   );
 

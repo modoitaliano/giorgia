@@ -69,3 +69,34 @@ export const RadioSceneWithCornerClock: StoryObj = {
     sceneMetadata: { 'modoitaliano-giorgia-podcast-player': harborLightPodcastScene, 'fifthbell-corner': {} }
   }
 };
+
+/**
+ * TV graphics scenes (giorgia#47): each lists one of Alcantara's TV scene types
+ * and draws its component over the stage, with no news, marquee or corner.
+ */
+const tvScene = (componentType: string, metadata: Record<string, unknown> = {}): StoryObj => ({
+  args: {
+    programId: 'modoitaliano',
+    embedded: true,
+    activeComponents: [componentType],
+    sceneMetadata: { [componentType]: metadata }
+  }
+});
+
+export const TvSceneRelojLoopClock: StoryObj = tvScene('reloj-loop-clock', { timezone: 'Europe/Madrid' });
+
+export const TvSceneCronicaBackground: StoryObj = tvScene('cronica-background');
+
+export const TvSceneCronicaChyron: StoryObj = tvScene('cronica-chyron', { text: 'HARBOR LIGHT\nNIGHT SHIFT' });
+
+export const TvSceneCronicaReiteramos: StoryObj = tvScene('cronica-reiteramos', { text: 'REITERAMOS', show: true });
+
+/** A radio scene that also lists reloj-loop-clock: the podcast player with RelojLoopClock over it, and no corner clocks or bell. */
+export const RadioSceneWithRelojLoopClock: StoryObj = {
+  args: {
+    programId: 'modoitaliano',
+    embedded: true,
+    activeComponents: ['modoitaliano-giorgia-podcast-player', 'reloj-loop-clock'],
+    sceneMetadata: { 'modoitaliano-giorgia-podcast-player': harborLightPodcastScene, 'reloj-loop-clock': { timezone: 'Europe/Madrid' } }
+  }
+};
