@@ -8,6 +8,7 @@ import {
   collectBundleFiles,
   createLiveProgramManifest,
   discoverLiveProgramComponents,
+  LIVE_PROGRAM_COMPONENTS_DIR,
   validateLiveProgramManifest,
 } from './src/live-program-manifest.js';
 
@@ -37,10 +38,10 @@ export default defineConfig({
         }
 
         const files = collectBundleFiles(outDir);
-        const components = discoverLiveProgramComponents(
-          'src/live-program/components/**/*.{tsx,ts}',
-          __dirname
-        );
+        const components = discoverLiveProgramComponents(LIVE_PROGRAM_COMPONENTS_DIR, __dirname);
+        if (components.length === 0) {
+          throw new Error(`No live-program components found under ${LIVE_PROGRAM_COMPONENTS_DIR}`);
+        }
 
         const manifest = createLiveProgramManifest({
           packageVersion,

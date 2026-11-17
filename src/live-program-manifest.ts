@@ -153,8 +153,11 @@ export function collectBundleFiles(outDir: string): ManifestFileEntry[] {
   return keys.map((key) => computeFileMetadata(join(outDir, key), key));
 }
 
+/** Where the live-program components live; src/live-program holds only the app entry. */
+export const LIVE_PROGRAM_COMPONENTS_DIR = 'src/components/live-program';
+
 export function discoverLiveProgramComponents(
-  patternOrDir = 'src/live-program/components',
+  patternOrDir = LIVE_PROGRAM_COMPONENTS_DIR,
   rootDir = process.cwd()
 ): string[] {
   const baseDir = patternOrDir.includes('*')

@@ -20,6 +20,7 @@ import {
   listDirectoryFiles,
   collectBundleFiles,
   discoverLiveProgramComponents,
+  LIVE_PROGRAM_COMPONENTS_DIR,
   createLiveProgramManifest,
   validateLiveProgramManifest,
 } from './live-program-manifest.js';
@@ -119,7 +120,6 @@ describe('live-program-manifest', () => {
     });
 
     it('returns empty array when no components exist', () => {
-      expect(discoverLiveProgramComponents()).toEqual([]);
       const found = discoverLiveProgramComponents('src/live-program/nonexistent-components/**/*.tsx');
       expect(found).toEqual([]);
     });
@@ -231,6 +231,25 @@ describe('live-program-manifest', () => {
   describe('main.tsx runtime parameter parsing and component discovery', () => {
     it('exposes discoveredComponents mapping', () => {
       expect(typeof discoveredComponents).toBe('object');
+    });
+
+    it('discovers the real live-program components for the manifest and the bundle alike', () => {
+      const manifestList = discoverLiveProgramComponents();
+      expect(manifestList.length).toBeGreaterThan(0);
+      expect(manifestList).toEqual(discoverLiveProgramComponents(LIVE_PROGRAM_COMPONENTS_DIR));
+      expect(manifestList).toEqual(
+        expect.arrayContaining([
+          'src/components/live-program/LiveProgram.tsx',
+          'src/components/live-program/radio/Earone.tsx',
+          'src/components/live-program/radio/ModoItalianoPodcastPlayer.tsx',
+          'src/components/live-program/radio/ModoItalianoGiorgiaPodcastPlayer.tsx',
+        ])
+      );
+      expect(manifestList.some((file) => file.includes('.test.'))).toBe(false);
+      const bundleList = Object.keys(discoveredComponents)
+        .map((key) => key.replace(/^\.\.\//, 'src/'))
+        .sort((a, b) => a.localeCompare(b));
+      expect(bundleList).toEqual(manifestList);
     });
 
     it('parses runtime parameters from search query', () => {

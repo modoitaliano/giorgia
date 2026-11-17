@@ -10,6 +10,8 @@ import { CallsignSlide } from './components/slides/CallsignSlide.js';
 import { slideStyles } from './components/slides/slideStyles.js';
 import { fetchEvents, getCachedEvents, hasEventChanges, type Event } from './events.js';
 import { type SupportedLanguage } from './i18n.js';
+import { RadioSceneLayers, isRadioComponentType, sceneComponentTypes } from './radio/RadioSceneLayers.js';
+import { readSongPlaybackActive, type ActiveSong } from './radio/songSignals.js';
 import {
   createArticlesSegment,
   createEarthquakeSegment,
@@ -392,6 +394,7 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
   const sceneInstantTakeSequenceRef = useRef(0);
   const mixerSettingsRef = useRef<Record<string, unknown>>({});
   const songAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [activeSong, setActiveSong] = useState<ActiveSong | null>(null);
 
   const controlledBySceneRenderer = sceneMetadata !== undefined;
   const effectiveSceneMetadata = useMemo(() => {
@@ -402,7 +405,17 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
     return parseSceneMetadata(state?.activeScene ?? null);
   }, [sceneMetadata, state?.activeScene]);
   const config = useMemo(() => extractConfigFromMetadata(effectiveSceneMetadata), [effectiveSceneMetadata]);
-  const layerAvailability = useMemo(() => resolveModoItalianoLayerAvailability(activeComponents), [activeComponents]);
+  // The scene's component list, as the scene renderer passes it or as the active scene's layout names it.
+  const componentTypes = useMemo(
+    () => activeComponents ?? sceneComponentTypes(state?.activeScene ?? null),
+    [activeComponents, state?.activeScene]
+  );
+  // A radio scene draws only the Modo Italiano layers it lists; every other scene keeps today's layers.
+  const isRadioScene = componentTypes.some(isRadioComponentType);
+  const layerAvailability = useMemo(
+    () => resolveModoItalianoLayerAvailability(isRadioScene ? componentTypes : activeComponents),
+    [isRadioScene, componentTypes, activeComponents]
+  );
   const languageRotation = config.languageRotation;
   const currentLanguage: SupportedLanguage = languageRotation[languageIndex] ?? languageRotation[0] ?? 'es';
   const resolvedApiBaseUrl =
@@ -666,7 +679,10 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
           currentSong.onerror = null;
           songAudioRef.current = null;
         }
+      } else if (data.type === 'song_playback_active') {
+        setActiveSong(readSongPlaybackActive(data));
       } else if (data.type === 'song_off_air') {
+        setActiveSong(null);
         const song = songAudioRef.current;
         if (song) {
           song.pause();
@@ -965,6 +981,8 @@ export default function LiveProgram({ embedded = false, sceneMetadata, activeCom
           )}
         </div>
       )}
+
+      <RadioSceneLayers componentTypes={componentTypes} metadata={effectiveSceneMetadata} activeSong={activeSong} />
     </div>
   );
 

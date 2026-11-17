@@ -146,6 +146,20 @@ Standard page layouts replace only `#page-content` during same-origin, same-lang
 
 Page-local scripts that must run after a content swap use `data-swup-reload-script`. Initializers shared by several layouts expose an idempotent `window.__brokaw*` function and are called after each page view. Search and media pagination tag their query-only history entries so back/forward navigation can distinguish local state changes from page changes. Cross-language links and pages without the standard content boundary use a normal document navigation.
 
+## Live program
+
+`src/live-program/` holds only the live-program app entry (`main.tsx`, `index.html`); the components live in `src/components/live-program/`. Both the bundle (`import.meta.glob` in `main.tsx`) and the contract-v2 manifest build (`discoverLiveProgramComponents()`, default `src/components/live-program`) discover component files there, excluding tests; the build fails if none are found.
+
+`LiveProgram` reads the active scene's component list (the `componentType` list the scene renderer passes as `activeComponents`, or the active scene layout's comma-separated `componentType`). It draws the radio components for Alcantara's own scene types:
+
+| `componentType` | Component | Source of its values |
+| --- | --- | --- |
+| `modoitaliano-podcast-player` | `ModoItalianoPodcastPlayer` | Scene metadata for that type: `show`, `episodeTitle`, `showName`, `coverUrl`, `audioUrl` (and `masterGain` when given; full gain otherwise) |
+| `modoitaliano-giorgia-podcast-player` | `ModoItalianoGiorgiaPodcastPlayer` | Same as above |
+| `earone` | `Earone` | Rank and spins from the latest `song_playback_active` signal (`externalChartRank`, `externalChartSpins`), cleared by `song_off_air`; `label` from scene metadata |
+
+The podcast players never read song signals. A scene that lists a radio component draws only the Modo Italiano layers it also lists (`modoitaliano-content`, `modoitaliano-marquee`); every other scene draws what it drew before. Nothing in the radio components makes a network call.
+
 ## Publish flow
 
 - CI validates typecheck, unit tests, and package build on pull requests and `main` pushes.

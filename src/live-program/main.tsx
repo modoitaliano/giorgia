@@ -4,8 +4,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import LiveProgram from '../components/live-program/LiveProgram.js';
 
+// The live-program components live in src/components/live-program (this
+// directory holds only the app entry); tests are not part of the bundle.
 export const discoveredComponents = import.meta.glob(
-  ['./components/**/*.tsx', './components/**/*.ts'],
+  ['../components/live-program/**/*.{ts,tsx}', '!../components/live-program/**/*.test.{ts,tsx}', '!../components/live-program/**/*.d.ts'],
   { eager: true }
 );
 
