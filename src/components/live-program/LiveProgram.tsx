@@ -450,7 +450,7 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
   // The song sequence from the latest audio_bus_update, as Alcantara gives it to the Giorgia clock; none until one arrives.
   const [songSequence, setSongSequence] = useState<unknown>(undefined);
   // The playing track of the latest projected state (the /state snapshot, program_state_snapshot or a
-  // state-bearing signal); a later state without one clears it.
+  // state-bearing signal) or playing_track_update, whichever came last; a later one without it clears it.
   const [playingTrack, setPlayingTrack] = useState<PlayingTrack | null>(null);
 
   const controlledBySceneRenderer = sceneMetadata !== undefined;
@@ -592,6 +592,10 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
       // Every state-bearing signal carries the whole projected state, and with it the playing track or its absence.
       if (STATE_BEARING_SIGNALS.has(data.type) && data.state && typeof data.state === 'object') {
         setPlayingTrack(readPlayingTrack(data.state));
+      }
+      // playing_track_update { playingTrack?, updatedAt } (alcantara#178): the track as it changes; absent clears it.
+      if (data.type === 'playing_track_update') {
+        setPlayingTrack(readPlayingTrack(data));
       }
       if (data.type === 'scene_staged') {
         setState((prev) => {

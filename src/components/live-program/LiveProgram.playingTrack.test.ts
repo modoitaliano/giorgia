@@ -230,4 +230,39 @@ describe('LiveProgram Giorgia clock and the playing track', () => {
     expect(onAir(container)?.textContent).toContain('PIER CHOIR');
     expect(onAir(container)?.textContent).toContain('LOW TIDE');
   });
+
+  // giorgia#52: the change signal alcantara#178 delivers once the manifest lists it.
+  it('sets the playing track from playing_track_update, between state-bearing signals', async () => {
+    routes['/state'] = programState(ROW, ROW_METADATA);
+    const { container } = await mount();
+    await emit(audioBus);
+    await emit({ type: 'playing_track_update', programId: 'harbor-light', playingTrack: track('Harbor Light', 'The Lighthouse Keepers'), updatedAt: '2026-11-17T09:58:00.500Z' });
+    await settle();
+    expect(onAir(container)?.textContent).toContain('THE LIGHTHOUSE KEEPERS');
+    expect(onAir(container)?.textContent).not.toContain('SEQUENCE');
+  });
+
+  it('clears the playing track on a playing_track_update without one, back to the sequence', async () => {
+    routes['/state'] = programState(ROW, ROW_METADATA, { playingTrack: track('Harbor Light', 'The Lighthouse Keepers') });
+    const { container } = await mount();
+    await emit(audioBus);
+    await settle();
+    expect(onAir(container)?.textContent).toContain('THE LIGHTHOUSE KEEPERS');
+    await emit({ type: 'playing_track_update', programId: 'harbor-light', updatedAt: '2026-11-17T10:02:00.000Z' });
+    await settle();
+    expect(onAir(container)?.textContent).toContain('SEQUENCE ARTIST');
+    expect(onAir(container)?.textContent).not.toContain('LIGHTHOUSE');
+  });
+
+  it('lets a later state-bearing signal override a playing_track_update, and the reverse', async () => {
+    routes['/state'] = programState(ROW, ROW_METADATA);
+    const { container } = await mount();
+    await emit({ type: 'playing_track_update', programId: 'harbor-light', playingTrack: track('Harbor Light', 'The Lighthouse Keepers'), updatedAt: '2026-11-17T09:58:00.500Z' });
+    await emit({ type: 'scene_change', programId: 'harbor-light', state: programState(ROW, ROW_METADATA, { playingTrack: track('Low Tide', 'Pier Choir', 'harbor-playback-2') }) });
+    await settle();
+    expect(onAir(container)?.textContent).toContain('PIER CHOIR');
+    await emit({ type: 'playing_track_update', programId: 'harbor-light', playingTrack: track('Night Ferry', 'Dock Band', 'harbor-playback-3'), updatedAt: '2026-11-17T10:05:00.000Z' });
+    await settle();
+    expect(onAir(container)?.textContent).toContain('DOCK BAND');
+  });
 });

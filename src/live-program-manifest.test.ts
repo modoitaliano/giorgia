@@ -33,10 +33,11 @@ import {
 describe('live-program-manifest', () => {
   const schemaPath = resolve(process.cwd(), 'docs/contracts/program-template-v2.schema.json');
 
-  it('verifies that the committed schema sha256 matches e0ae7f68…0ad841', () => {
+  // A byte-for-byte copy of gaulatti/alcantara cf7246f docs/contracts/program-template-v2.schema.json.
+  it('verifies that the committed schema sha256 matches 62302dab…effb9c', () => {
     const content = readFileSync(schemaPath);
     const hash = createHash('sha256').update(content).digest('hex');
-    expect(hash).toBe('e0ae7f6899cd8c1b4bb11b183b6287a7a68d74a1bab8eec1d3b36a5b6f0ad841');
+    expect(hash).toBe('62302dab52262f17671a5c8d8b55c587bc5f92ad5a016dfc368947d472effb9c');
   });
 
   describe('resolveContentType', () => {
@@ -185,12 +186,11 @@ describe('live-program-manifest', () => {
     });
 
     // Alcantara rejects a v2 manifest that lists any signal outside PROGRAM_TEMPLATE_V2_SIGNALS
-    // (gaulatti/alcantara 222a360, backend/src/program/program-template.service.ts:24-59 for the set,
-    // :310-319 for the rejection). The set below is copied from that commit: PROGRAM_TEMPLATE_SIGNALS
-    // followed by V2_ONLY_SIGNALS. playing_track_update (alcantara#178) is not in it, so the manifest
-    // must not list it until an Alcantara that accepts it is deployed.
-    it("lists no signal outside Alcantara 222a360's PROGRAM_TEMPLATE_V2_SIGNALS", () => {
-      const ALCANTARA_222A360_V2_SIGNALS = new Set([
+    // (gaulatti/alcantara cf7246f, backend/src/program/program-template.service.ts:24-60 for the set,
+    // :311-321 for the rejection). The set below is copied from that commit: PROGRAM_TEMPLATE_SIGNALS
+    // followed by V2_ONLY_SIGNALS, which now ends with playing_track_update (alcantara#178).
+    it("lists no signal outside Alcantara cf7246f's PROGRAM_TEMPLATE_V2_SIGNALS, and lists playing_track_update", () => {
+      const ALCANTARA_CF7246F_V2_SIGNALS = new Set([
         'audio_bus_update',
         'broadcast_settings_update',
         'heartbeat',
@@ -217,10 +217,11 @@ describe('live-program-manifest', () => {
         'audio_levels',
         'audience_interaction_draw_start',
         'audience_interaction_draw_end',
+        'playing_track_update',
       ]);
       const manifest = createLiveProgramManifest({ files: [], components: discoverLiveProgramComponents(LIVE_PROGRAM_COMPONENTS_DIR) });
-      expect(manifest.control.signals.filter((signal) => !ALCANTARA_222A360_V2_SIGNALS.has(signal))).toEqual([]);
-      expect(manifest.control.signals).not.toContain('playing_track_update');
+      expect(manifest.control.signals.filter((signal) => !ALCANTARA_CF7246F_V2_SIGNALS.has(signal))).toEqual([]);
+      expect(manifest.control.signals).toContain('playing_track_update');
       expect(manifest.control.signals).toContain('program_state_snapshot');
     });
 

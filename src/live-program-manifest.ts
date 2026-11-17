@@ -58,6 +58,7 @@ export const ALL_V2_SIGNALS = [
   'audio_levels',
   'audience_interaction_draw_start',
   'audience_interaction_draw_end',
+  'playing_track_update',
 ] as const;
 
 export type ProgramTemplateSignal = (typeof ALL_V2_SIGNALS)[number];
