@@ -18,9 +18,9 @@ describe('embedUrl helper', () => {
     expect(embed('{{embedUrl "tiktok" id="42"}}')).toBe('https://www.tiktok.com/embed/v2/42');
   });
 
-  it('rejects the removed SofaScore providers', () => {
-    expect(() => embed('{{embedUrl "sofascore-widget" id="1" widgetTheme="dark"}}')).toThrow('Unknown embed provider "sofascore-widget"');
-    expect(() => embed('{{embedUrl "sofascore-match" id="1"}}')).toThrow('Unknown embed provider "sofascore-match"');
+  it('yields no URL for the removed SofaScore providers (gaulatti/ariston#217)', () => {
+    expect(embed('{{embedUrl "sofascore-widget" id="1" widgetTheme="dark"}}')).toBe('');
+    expect(embed('{{embedUrl "sofascore-match" id="1"}}')).toBe('');
   });
 
   it('requires every provider parameter', () => {

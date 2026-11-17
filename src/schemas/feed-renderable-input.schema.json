@@ -4,7 +4,6 @@
   "title": "ModoItaliano feed renderable input",
   "description": "CMS-supplied document and feed consumed by Cronkite's feed-renderable publication path.",
   "type": "object",
-  "additionalProperties": false,
   "required": ["document", "feed"],
   "properties": {
     "document": { "type": "object" },

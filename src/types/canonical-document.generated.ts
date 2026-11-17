@@ -60,7 +60,10 @@ export type CronkiteCanonicalDocument =
         | {
             type: "heading";
             text: string;
-            level?: 2 | 3 | 4;
+            /**
+             * 2, 3 or 4. Any other number renders as 2.
+             */
+            level?: number;
             [k: string]: unknown;
           }
         | {
@@ -86,7 +89,10 @@ export type CronkiteCanonicalDocument =
         | {
             type: "infoBox";
             title?: string;
-            tone?: "neutral" | "info" | "warning" | "success";
+            /**
+             * neutral, info, warning or success. Any other value renders as neutral.
+             */
+            tone?: string;
             html: string;
             [k: string]: unknown;
           }
@@ -157,7 +163,10 @@ export type CronkiteCanonicalDocument =
         | {
             type: "spotify";
             url: string;
-            embedKind: "track" | "album" | "playlist" | "episode" | "show";
+            /**
+             * track, album, playlist, episode or show. Any other lowercase kind is passed to Spotify as sent.
+             */
+            embedKind: string;
             embedId: string;
             [k: string]: unknown;
           }
@@ -165,6 +174,10 @@ export type CronkiteCanonicalDocument =
             type: "pullQuote";
             text: string;
             attribution?: string;
+            [k: string]: unknown;
+          }
+        | {
+            type: string;
             [k: string]: unknown;
           }
       )[];
@@ -219,7 +232,10 @@ export type CronkiteCanonicalDocument =
         alt?: string;
         [k: string]: unknown;
       }[];
-      heroLayout?: "spotlight" | "editorial";
+      /**
+       * spotlight or editorial. Any other value is treated as absent.
+       */
+      heroLayout?: string;
       heroCategories?: {
         name: string;
         slug: string;
@@ -351,7 +367,10 @@ export type CronkiteCanonicalDocument =
         | {
             type: "heading";
             text: string;
-            level?: 2 | 3 | 4;
+            /**
+             * 2, 3 or 4. Any other number renders as 2.
+             */
+            level?: number;
             [k: string]: unknown;
           }
         | {
@@ -377,7 +396,10 @@ export type CronkiteCanonicalDocument =
         | {
             type: "infoBox";
             title?: string;
-            tone?: "neutral" | "info" | "warning" | "success";
+            /**
+             * neutral, info, warning or success. Any other value renders as neutral.
+             */
+            tone?: string;
             html: string;
             [k: string]: unknown;
           }
@@ -448,7 +470,10 @@ export type CronkiteCanonicalDocument =
         | {
             type: "spotify";
             url: string;
-            embedKind: "track" | "album" | "playlist" | "episode" | "show";
+            /**
+             * track, album, playlist, episode or show. Any other lowercase kind is passed to Spotify as sent.
+             */
+            embedKind: string;
             embedId: string;
             [k: string]: unknown;
           }
@@ -456,6 +481,10 @@ export type CronkiteCanonicalDocument =
             type: "pullQuote";
             text: string;
             attribution?: string;
+            [k: string]: unknown;
+          }
+        | {
+            type: string;
             [k: string]: unknown;
           }
       )[];
@@ -510,7 +539,10 @@ export type CronkiteCanonicalDocument =
         alt?: string;
         [k: string]: unknown;
       }[];
-      heroLayout?: "spotlight" | "editorial";
+      /**
+       * spotlight or editorial. Any other value is treated as absent.
+       */
+      heroLayout?: string;
       heroCategories?: {
         name: string;
         slug: string;

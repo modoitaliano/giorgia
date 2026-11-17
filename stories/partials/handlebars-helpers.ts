@@ -177,7 +177,8 @@ export function registerCommonHelpers(): void {
       spotify: 'https://open.spotify.com/embed/{kind}/{id}'
     };
     const template = typeof name === 'string' ? templates[name] : undefined;
-    if (!template) throw new Error(`Unknown embed provider "${String(name)}"`);
+    // As Cronkite's helper: an undeclared provider yields '' (gaulatti/ariston#217).
+    if (!template) return '';
     return template.replace(/\{([A-Za-z][A-Za-z0-9]*)\}/g, (_token, parameter: string) => encodeURIComponent(String(options.hash[parameter])));
   });
 

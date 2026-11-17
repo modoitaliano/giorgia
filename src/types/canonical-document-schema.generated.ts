@@ -197,20 +197,9 @@ export const canonicalDocumentSchema = {
                     type: "string",
                   },
                   level: {
-                    anyOf: [
-                      {
-                        type: "number",
-                        const: 2,
-                      },
-                      {
-                        type: "number",
-                        const: 3,
-                      },
-                      {
-                        type: "number",
-                        const: 4,
-                      },
-                    ],
+                    type: "number",
+                    description: "2, 3 or 4. Any other number renders as 2.",
+                    examples: [2, 3, 4],
                   },
                 },
                 required: ["type", "text"],
@@ -277,7 +266,9 @@ export const canonicalDocumentSchema = {
                   },
                   tone: {
                     type: "string",
-                    enum: ["neutral", "info", "warning", "success"],
+                    description:
+                      "neutral, info, warning or success. Any other value renders as neutral.",
+                    examples: ["neutral", "info", "warning", "success"],
                   },
                   html: {
                     type: "string",
@@ -473,7 +464,10 @@ export const canonicalDocumentSchema = {
                   },
                   embedKind: {
                     type: "string",
-                    enum: ["track", "album", "playlist", "episode", "show"],
+                    pattern: "^[a-z]+$",
+                    description:
+                      "track, album, playlist, episode or show. Any other lowercase kind is passed to Spotify as sent.",
+                    examples: ["track", "album", "playlist", "episode", "show"],
                   },
                   embedId: {
                     type: "string",
@@ -497,6 +491,37 @@ export const canonicalDocumentSchema = {
                   },
                 },
                 required: ["type", "text"],
+              },
+              {
+                type: "object",
+                description:
+                  "A block type this contract does not define. It is accepted and not rendered.",
+                properties: {
+                  type: {
+                    type: "string",
+                    not: {
+                      enum: [
+                        "richText",
+                        "heading",
+                        "image",
+                        "list",
+                        "divider",
+                        "infoBox",
+                        "keyPoints",
+                        "dataTable",
+                        "liveUpdate",
+                        "audio",
+                        "youtube",
+                        "x",
+                        "instagram",
+                        "tiktok",
+                        "spotify",
+                        "pullQuote",
+                      ],
+                    },
+                  },
+                },
+                required: ["type"],
               },
             ],
           },
@@ -659,7 +684,9 @@ export const canonicalDocumentSchema = {
         },
         heroLayout: {
           type: "string",
-          enum: ["spotlight", "editorial"],
+          description:
+            "spotlight or editorial. Any other value is treated as absent.",
+          examples: ["spotlight", "editorial"],
         },
         heroCategories: {
           type: "array",
@@ -1093,20 +1120,9 @@ export const canonicalDocumentSchema = {
                     type: "string",
                   },
                   level: {
-                    anyOf: [
-                      {
-                        type: "number",
-                        const: 2,
-                      },
-                      {
-                        type: "number",
-                        const: 3,
-                      },
-                      {
-                        type: "number",
-                        const: 4,
-                      },
-                    ],
+                    type: "number",
+                    description: "2, 3 or 4. Any other number renders as 2.",
+                    examples: [2, 3, 4],
                   },
                 },
                 required: ["type", "text"],
@@ -1173,7 +1189,9 @@ export const canonicalDocumentSchema = {
                   },
                   tone: {
                     type: "string",
-                    enum: ["neutral", "info", "warning", "success"],
+                    description:
+                      "neutral, info, warning or success. Any other value renders as neutral.",
+                    examples: ["neutral", "info", "warning", "success"],
                   },
                   html: {
                     type: "string",
@@ -1369,7 +1387,10 @@ export const canonicalDocumentSchema = {
                   },
                   embedKind: {
                     type: "string",
-                    enum: ["track", "album", "playlist", "episode", "show"],
+                    pattern: "^[a-z]+$",
+                    description:
+                      "track, album, playlist, episode or show. Any other lowercase kind is passed to Spotify as sent.",
+                    examples: ["track", "album", "playlist", "episode", "show"],
                   },
                   embedId: {
                     type: "string",
@@ -1393,6 +1414,37 @@ export const canonicalDocumentSchema = {
                   },
                 },
                 required: ["type", "text"],
+              },
+              {
+                type: "object",
+                description:
+                  "A block type this contract does not define. It is accepted and not rendered.",
+                properties: {
+                  type: {
+                    type: "string",
+                    not: {
+                      enum: [
+                        "richText",
+                        "heading",
+                        "image",
+                        "list",
+                        "divider",
+                        "infoBox",
+                        "keyPoints",
+                        "dataTable",
+                        "liveUpdate",
+                        "audio",
+                        "youtube",
+                        "x",
+                        "instagram",
+                        "tiktok",
+                        "spotify",
+                        "pullQuote",
+                      ],
+                    },
+                  },
+                },
+                required: ["type"],
               },
             ],
           },
@@ -1555,7 +1607,9 @@ export const canonicalDocumentSchema = {
         },
         heroLayout: {
           type: "string",
-          enum: ["spotlight", "editorial"],
+          description:
+            "spotlight or editorial. Any other value is treated as absent.",
+          examples: ["spotlight", "editorial"],
         },
         heroCategories: {
           type: "array",

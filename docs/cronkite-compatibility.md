@@ -74,6 +74,36 @@ The browser search page still reads `search-manifest-{language}.json` and its
 referenced index shards from the configured content origin. Spritz owns those
 CMS resources; they are not static assets or executable Giorgia capabilities.
 
+## Unrecognized input
+
+Owner's rule (gaulatti/ariston#217): if we don't recognize it, we ignore it.
+The packaged input schemas (`canonical-document`, `feed-renderable-input`,
+`social-image-input`, `search-manifest`) accept members they do not define,
+and accept values this release does not know where a fallback exists:
+
+| Input | Fallback |
+|---|---|
+| Body block with an unknown `type` | Dropped (the `body-block` partial renders nothing) |
+| Heading `level` other than 2, 3 or 4 | Rendered as level 2 |
+| `infoBox.tone` other than neutral/info/warning/success | Rendered as `neutral` |
+| Spotify `embedKind` other than track/album/playlist/episode/show | Passed to Spotify as sent (lowercase letters only, as the manifest's `embedRegistry.spotify.kind` pattern) |
+| `heroLayout` other than spotlight/editorial | Treated as absent |
+| Embed provider the helper does not declare | `embedUrl` yields `''`; the guarded embed is omitted |
+
+Every `embedUrl` call (X, TikTok, Spotify) sits inside `{{#with (embedUrl ...)}}`,
+so an empty result renders no iframe.
+
+These stay strict, because accepting them would be unsafe or leave nothing to
+render: `status` (the publication guard), page `layout`, a known block type's
+own required members, the Spotify kind's URL-safe pattern and the search
+manifest's safe relative paths.
+
+Giorgia's own renderers count each ignored item by reason. `ignoredInputCounts()`
+(root export) returns the counters, and the first item of each reason writes one
+`[giorgia] ignored unrecognized input: <reason>` warning naming only the reason.
+Cronkite renders the declarative templates without those renderers, so on that
+path the template gives the same fallback and any count belongs to Cronkite.
+
 ## Verification boundaries
 
 The build validates the local manifest schema and package alignment. Unit tests

@@ -101,14 +101,18 @@ describe('renderer.core helpers', () => {
     expect(helper('formatDate')('not-a-date')).toBe('not-a-date');
   });
 
-  it('builds embed urls and rejects unknown providers or missing parameters', async () => {
+  it('builds embed urls, yields none for unknown providers and rejects missing parameters', async () => {
     const core = await freshCore();
     core.initializeHandlebars(assets());
     const embed = helper('embedUrl');
     expect(embed('x-status', { hash: { username: 'a b', id: '1' } })).toBe('https://twitter.com/a%20b/status/1');
     expect(embed('spotify', { hash: { kind: 'track', id: 'x' } })).toBe('https://open.spotify.com/embed/track/x');
-    expect(() => embed('unknown', { hash: {} })).toThrow('Unknown embed provider "unknown"');
-    expect(() => embed(5, { hash: {} })).toThrow('Unknown embed provider "5"');
+    // As Cronkite's helper: an undeclared provider yields '' and is counted (gaulatti/ariston#217).
+    const { ignoredInputCounts } = await import('./ignored-input.js');
+    const before = ignoredInputCounts().embed_provider;
+    expect(embed('unknown', { hash: {} })).toBe('');
+    expect(embed(5, { hash: {} })).toBe('');
+    expect(ignoredInputCounts().embed_provider - before).toBe(2);
     expect(() => embed('tiktok', { hash: {} })).toThrow('requires parameter id');
     expect(() => embed('tiktok', { hash: { id: null } })).toThrow('requires parameter id');
     expect(() => embed('tiktok', { hash: { id: '' } })).toThrow('requires parameter id');

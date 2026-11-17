@@ -5,13 +5,11 @@
   "description": "Language-specific manifest consumed by Giorgia's static search page.",
   "x-referenced-payload-schema": "./search-index.schema.json",
   "type": "object",
-  "additionalProperties": false,
   "required": ["files"],
   "properties": {
     "generatedAt": { "type": "string", "format": "date-time" },
     "files": {
       "type": "object",
-      "additionalProperties": false,
       "required": ["currentMonth", "yearly"],
       "properties": {
         "currentMonth": { "$ref": "#/$defs/indexFile" },

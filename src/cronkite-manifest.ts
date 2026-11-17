@@ -219,7 +219,8 @@ export const cronkiteManifest = {
       spotify: {
         urlTemplate: 'https://open.spotify.com/embed/{kind}/{id}',
         parameters: {
-          kind: { type: 'string', enum: ['track', 'album', 'playlist', 'episode', 'show'] },
+          // Any lowercase kind, so a Spotify kind Giorgia does not list still embeds (gaulatti/ariston#217).
+          kind: { type: 'string', pattern: '^[a-z]+$' },
           id: { type: 'string', pattern: '^[A-Za-z0-9]+$' },
         },
       },

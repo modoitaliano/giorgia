@@ -3,7 +3,6 @@
   "$id": "https://modoitaliano.fm/schemas/social-image-input-v1.schema.json",
   "title": "ModoItaliano social image input",
   "type": "object",
-  "additionalProperties": false,
   "required": ["imageUrl", "categoryName", "title", "qrCodeHtml"],
   "properties": {
     "imageUrl": { "type": "string", "format": "uri" },
