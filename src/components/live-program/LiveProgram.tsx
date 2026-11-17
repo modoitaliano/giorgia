@@ -7,6 +7,7 @@ import { MarqueeCurtain } from './components/MarqueeCurtain.js';
 import Marquee from './components/Marquee.js';
 import { WorldClocks, DEFAULT_WORLD_CLOCK_CITIES } from './components/WorldClocks.js';
 import { timeOverrideFromBroadcastSettings } from './utils/broadcastTime.js';
+import { readPlayingTrack, type PlayingTrack } from './utils/playingTrack.js';
 import { CallsignSlide } from './components/slides/CallsignSlide.js';
 import { slideStyles } from './components/slides/slideStyles.js';
 import { fetchEvents, getCachedEvents, hasEventChanges, type Event } from './events.js';
@@ -58,6 +59,8 @@ interface ProgramState {
   updatedAt: string;
   /** Optional in the v2 projected state (gaulatti/alcantara#177): program-wide broadcast settings. */
   broadcastSettings?: unknown;
+  /** Optional in the v2 projected state (gaulatti/alcantara#178): the track the engine confirmed is playing. */
+  playingTrack?: unknown;
 }
 
 interface ModoItalianoWorldClockCity {
@@ -291,6 +294,17 @@ const ALCANTARA_CLOCK_COMPONENT_TYPES = [
 ];
 const ALCANTARA_BELL_COMPONENT_TYPES = ['toni-clock', 'fifthbell-clock', 'fifthbell-corner'];
 
+// The signals whose payload carries the projected state, with its playingTrack (pinned contract for
+// gaulatti/alcantara#178). From program_state_snapshot, program_media_groups_changed and program_stingers_changed,
+// which LiveProgram does not otherwise apply, only the playing track is read.
+const STATE_BEARING_SIGNALS = new Set([
+  'program_state_snapshot',
+  'scene_change',
+  'program_scenes_changed',
+  'program_media_groups_changed',
+  'program_stingers_changed'
+]);
+
 /** The corner a radio or TV graphics scene asks for, by Alcantara's rules; other scenes keep their corner. */
 function resolveListedSceneCorner(componentTypes: string[], metadata: Record<string, unknown>) {
   const clocks = componentTypes.some((componentType) => ALCANTARA_CLOCK_COMPONENT_TYPES.includes(componentType));
@@ -435,6 +449,9 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
   const [eventBroadcastSettings, setEventBroadcastSettings] = useState<unknown>(undefined);
   // The song sequence from the latest audio_bus_update, as Alcantara gives it to the Giorgia clock; none until one arrives.
   const [songSequence, setSongSequence] = useState<unknown>(undefined);
+  // The playing track of the latest projected state (the /state snapshot, program_state_snapshot or a
+  // state-bearing signal); a later state without one clears it.
+  const [playingTrack, setPlayingTrack] = useState<PlayingTrack | null>(null);
 
   const controlledBySceneRenderer = sceneMetadata !== undefined;
   const effectiveSceneMetadata = useMemo(() => {
@@ -451,7 +468,10 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
     () => timeOverrideFromBroadcastSettings(eventBroadcastSettings !== undefined ? eventBroadcastSettings : state?.broadcastSettings),
     [eventBroadcastSettings, state?.broadcastSettings]
   );
-  const giorgiaContext = useMemo(() => ({ programId, timeOverride, songSequence }), [programId, timeOverride, songSequence]);
+  const giorgiaContext = useMemo(
+    () => ({ programId, timeOverride, songSequence, playingTrack }),
+    [programId, timeOverride, songSequence, playingTrack]
+  );
   // The scene's component list, as the scene renderer passes it or as the active scene's layout names it.
   const componentTypes = useMemo(
     () => activeComponents ?? sceneComponentTypes(state?.activeScene ?? null),
@@ -494,7 +514,10 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
 
     fetch(`${resolvedApiBaseUrl}/state`)
       .then((res) => res.json())
-      .then((data) => setState(data))
+      .then((data) => {
+        setState(data);
+        setPlayingTrack(readPlayingTrack(data));
+      })
       .catch((err) => console.error('Failed to fetch ModoItaliano program state:', err));
   }, [controlledBySceneRenderer, resolvedApiBaseUrl]);
 
@@ -566,6 +589,10 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
     url: `${resolvedApiBaseUrl}/events`,
     enabled: !controlledBySceneRenderer,
     onMessage: (data: any) => {
+      // Every state-bearing signal carries the whole projected state, and with it the playing track or its absence.
+      if (STATE_BEARING_SIGNALS.has(data.type) && data.state && typeof data.state === 'object') {
+        setPlayingTrack(readPlayingTrack(data.state));
+      }
       if (data.type === 'scene_staged') {
         setState((prev) => {
           if (!prev) return prev;

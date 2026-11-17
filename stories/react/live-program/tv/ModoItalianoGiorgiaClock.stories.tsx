@@ -55,3 +55,37 @@ export const TimeOverride: StoryObj = {
     timeOverride: { startTime: '07:30', startedAt: new Date().toISOString() }
   }
 };
+
+/** The program's song sequence, as an audio_bus_update gives it: shown while no playing track is confirmed. */
+const harborSequence = {
+  mode: 'manual',
+  items: [
+    { id: 'harbor-song', kind: 'preset', artist: 'The Lighthouse Keepers', title: 'Harbor Light', coverUrl: '/assets/default-og.jpg' }
+  ],
+  activeItemId: 'harbor-song',
+  intervalMs: 4000,
+  loop: true,
+  startedAt: 0
+};
+
+/**
+ * A confirmed playing track (the v2 state's playingTrack, giorgia#51): it replaces the sequence's song.
+ * It carries no cover, so the cover falls back to the component's default.
+ */
+export const PlayingTrack: StoryObj = {
+  args: {
+    programId: HARBOR_LIGHT_TV_PROGRAM,
+    songSequence: harborSequence,
+    playingTrack: { playbackId: 'harbor-playback-1', title: 'Low Tide', artist: 'Pier Choir', startedAt: '2026-11-17T09:58:00.000Z' }
+  }
+};
+
+/** No playing track in the state: the song sequence shows, as before. */
+export const PlayingTrackAbsent: StoryObj = {
+  args: { programId: HARBOR_LIGHT_TV_PROGRAM, songSequence: harborSequence, playingTrack: null }
+};
+
+/** A playing track whose artist the playout engine omitted: the title leads, and the sequence's artist is not borrowed. */
+export const PlayingTrackWithoutArtist: StoryObj = {
+  args: { ...PlayingTrack.args, playingTrack: { playbackId: 'harbor-playback-2', title: 'Low Tide', artist: null, startedAt: '2026-11-17T09:58:00.000Z' } }
+};

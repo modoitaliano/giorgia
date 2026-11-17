@@ -5,6 +5,7 @@
 // and is not drawn by LiveProgram.
 import React from 'react';
 import type { GlobalTimeOverride } from './broadcastTime.js';
+import type { PlayingTrack } from '../utils/playingTrack.js';
 import { GIORGIA } from './giorgiaBroadcast.js';
 import { ModoItalianoGiorgiaChyron } from './ModoItalianoGiorgiaChyron.js';
 import { ModoItalianoGiorgiaClock } from './ModoItalianoGiorgiaClock.js';
@@ -12,11 +13,13 @@ import { ModoItalianoGiorgiaClock } from './ModoItalianoGiorgiaClock.js';
 export const MODOITALIANO_GIORGIA_CLOCK = 'modoitaliano-giorgia-clock';
 export const MODOITALIANO_GIORGIA_CHYRON = 'modoitaliano-giorgia-chyron';
 
-/** What the program, not the scene, gives the Giorgia clock: the bus key, the time override and the song sequence. */
+/** What the program, not the scene, gives the Giorgia clock: the bus key, the time override, the song sequence and the playing track. */
 export interface GiorgiaProgramContext {
   programId: string;
   timeOverride: GlobalTimeOverride | null;
   songSequence: unknown;
+  /** The latest state's `playingTrack` (gaulatti/alcantara#178), or null when that state has none. */
+  playingTrack: PlayingTrack | null;
 }
 
 export interface GiorgiaProgramRowPlan {
@@ -57,6 +60,7 @@ export function giorgiaClockCommonProps(clockProps: Record<string, unknown>, con
     showPlaybackProgress: toBoolean(clockProps.showPlaybackProgress, true),
     showBellIcon: false,
     songSequence: context.songSequence,
+    playingTrack: context.playingTrack,
     language: 'es' as const
   };
 }

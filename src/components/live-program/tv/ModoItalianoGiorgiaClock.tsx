@@ -5,6 +5,7 @@ import type { GlobalTimeOverride } from './broadcastTime.js';
 import { getOverrideClockParts } from './broadcastTime.js';
 import { normalizeProgramSongSequence, resolveProgramSongLeaf, type ProgramSongSequence } from './programSequence.js';
 import { getProgramAudioBusSnapshot, subscribeProgramAudioBus } from './programAudioBus.js';
+import type { PlayingTrack } from '../utils/playingTrack.js';
 
 export interface ModoItalianoGiorgiaClockCity {
   city: string;
@@ -32,6 +33,11 @@ interface ModoItalianoGiorgiaClockProps {
   songEaroneSongId?: string;
   songEaroneRank?: string;
   songEaroneSpins?: string;
+  /**
+   * The track the engine has confirmed is playing (the v2 state's `playingTrack`). While it is set the
+   * on-air block shows it, and a null title or artist shows as empty; without it the song sequence shows.
+   */
+  playingTrack?: PlayingTrack | null;
   inline?: boolean;
   /**
    * Which piece to render. The header (mark and time) sits top-left and the
@@ -121,6 +127,7 @@ export const ModoItalianoGiorgiaClock: React.FC<ModoItalianoGiorgiaClockProps> =
   songArtist = '',
   songTitle = '',
   songCoverUrl = '',
+  playingTrack = null,
   inline = false,
   part = 'all',
   keySafe = false
@@ -187,11 +194,14 @@ export const ModoItalianoGiorgiaClock: React.FC<ModoItalianoGiorgiaClockProps> =
 
   const songGateEnabled = typeof playingSong === 'boolean' ? playingSong : true;
   const liveSong = songGateEnabled ? audioBus.track : null;
-  const artist = (liveSong?.artist ?? resolvedSong?.artist ?? '').trim();
-  const title = (liveSong?.title ?? resolvedSong?.title ?? '').trim();
-  const coverUrl = (liveSong?.coverUrl ?? resolvedSong?.coverUrl ?? songCoverUrl).trim();
-  const hasSong = songGateEnabled && Boolean(artist || title) && (!liveSong || audioBus.endedToken !== liveSong.token);
-  const progress = Math.max(0, Math.min(1, liveSong ? audioBus.progress : 0));
+  // A confirmed playing track replaces the sequence's song entirely: its own null title or artist stays empty
+  // rather than borrowing the sequence's, and it carries no cover.
+  const artist = (playingTrack ? (playingTrack.artist ?? '') : (liveSong?.artist ?? resolvedSong?.artist ?? '')).trim();
+  const title = (playingTrack ? (playingTrack.title ?? '') : (liveSong?.title ?? resolvedSong?.title ?? '')).trim();
+  const coverUrl = (playingTrack ? '' : (liveSong?.coverUrl ?? resolvedSong?.coverUrl ?? songCoverUrl)).trim();
+  const hasSong =
+    songGateEnabled && Boolean(artist || title) && (Boolean(playingTrack) || !liveSong || audioBus.endedToken !== liveSong.token);
+  const progress = Math.max(0, Math.min(1, !playingTrack && liveSong ? audioBus.progress : 0));
 
   const [textColumnRef, textColumnHeight] = useElementHeight<HTMLDivElement>();
   const coverSize = Math.max(COVER_PX, textColumnHeight);

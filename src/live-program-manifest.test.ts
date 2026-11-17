@@ -184,6 +184,46 @@ describe('live-program-manifest', () => {
       expect(validation.errors).toBeUndefined();
     });
 
+    // Alcantara rejects a v2 manifest that lists any signal outside PROGRAM_TEMPLATE_V2_SIGNALS
+    // (gaulatti/alcantara 222a360, backend/src/program/program-template.service.ts:24-59 for the set,
+    // :310-319 for the rejection). The set below is copied from that commit: PROGRAM_TEMPLATE_SIGNALS
+    // followed by V2_ONLY_SIGNALS. playing_track_update (alcantara#178) is not in it, so the manifest
+    // must not list it until an Alcantara that accepts it is deployed.
+    it("lists no signal outside Alcantara 222a360's PROGRAM_TEMPLATE_V2_SIGNALS", () => {
+      const ALCANTARA_222A360_V2_SIGNALS = new Set([
+        'audio_bus_update',
+        'broadcast_settings_update',
+        'heartbeat',
+        'instant_play',
+        'instant_stop_all',
+        'program_media_groups_changed',
+        'program_reload',
+        'program_scenes_changed',
+        'program_state_snapshot',
+        'program_stingers_changed',
+        'scene_change',
+        'scene_cleared',
+        'scene_instant_state',
+        'scene_instant_stop',
+        'scene_instant_take',
+        'scene_staged',
+        'scene_update',
+        'song_off_air',
+        'chyron_update',
+        'fade_to_black',
+        'song_playback_active',
+        'song_playback_update',
+        'song_queue_update',
+        'audio_levels',
+        'audience_interaction_draw_start',
+        'audience_interaction_draw_end',
+      ]);
+      const manifest = createLiveProgramManifest({ files: [], components: discoverLiveProgramComponents(LIVE_PROGRAM_COMPONENTS_DIR) });
+      expect(manifest.control.signals.filter((signal) => !ALCANTARA_222A360_V2_SIGNALS.has(signal))).toEqual([]);
+      expect(manifest.control.signals).not.toContain('playing_track_update');
+      expect(manifest.control.signals).toContain('program_state_snapshot');
+    });
+
     it('allows custom capabilities and signals within schema bounds', () => {
       const manifest = createLiveProgramManifest({
         packageVersion: '1.0.0',
