@@ -194,6 +194,10 @@ The TV graphics components live in `src/components/live-program/tv/`: `ModoItali
 
 TV images ship in the bundle under `modoitaliano/tv/` and are referenced bundle-relative through `MODOITALIANO_ASSETS.tv` (`src/components/live-program/assets.ts`), so they load when the bundle is served from a sub-path. Only `reloj.png`, the `ClockWidget` plate (byte-identical to `gaulatti/alcantara` `frontend/public/reloj.png` at `f13ee4d`, sha256 `3b62d40e…ce04823`), is carried; `ClockWidget` sets it as an inline `backgroundImage` so Vite does not resolve it at build time. Alcantara's three ModoRadio marks (`bug-sm.svg`, `bug-big.svg`, `reloj-modoradio_full_negro.svg`) are retired from Giorgia and are not bundled: `LogoWidget` draws only a scene-supplied `logoUrl` and draws nothing without one (so `CronicaLayout`, which passes none, shows no logo), and `RelojClone` draws its analogue clock without the wordmark plate beneath it. `src/live-program-bundle.test.ts` builds the bundle with the real config and checks that none of the retired marks or their names are in the output and that the manifest lists `reloj.png` with its sha256.
 
+## Image variants
+
+`featuredImage`, and the image blocks of a body, may carry the original's `width` and `height` (integers, pixels) and `variants`, an array of `{ url, width, height }` sorted by width ascending and holding only variants that exist. All three are optional and the original `url` is unchanged. When `variants` is present the templates emit `srcset` (the variants plus the original, when its width is known) and `sizes` for the slot, with `width` and `height` set; when it is absent they emit the original `url` exactly as before. Images below the fold are `loading='lazy'`; the lead image of a page is not, and carries `fetchpriority='high'`. The shared markup is the `components/ui/responsive-image` partial. Unknown extra fields are ignored. CSS background images (the editorial hero and the landing story card) cannot use `srcset` and still load the original.
+
 ## Publish flow
 
 - CI validates typecheck, unit tests, and package build on pull requests and `main` pushes.

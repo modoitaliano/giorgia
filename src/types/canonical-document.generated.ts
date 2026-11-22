@@ -38,6 +38,14 @@ export type CronkiteCanonicalDocument =
         url: string;
         alt: string;
         caption?: string;
+        width?: number;
+        height?: number;
+        variants?: {
+          url: string;
+          width: number;
+          height: number;
+          [k: string]: unknown;
+        }[];
         [k: string]: unknown;
       };
       media?: {
@@ -220,6 +228,14 @@ export type CronkiteCanonicalDocument =
           url: string;
           alt: string;
           caption?: string;
+          width?: number;
+          height?: number;
+          variants?: {
+            url: string;
+            width: number;
+            height: number;
+            [k: string]: unknown;
+          }[];
           [k: string]: unknown;
         };
         updatedAt?: string;
@@ -345,6 +361,14 @@ export type CronkiteCanonicalDocument =
         url: string;
         alt: string;
         caption?: string;
+        width?: number;
+        height?: number;
+        variants?: {
+          url: string;
+          width: number;
+          height: number;
+          [k: string]: unknown;
+        }[];
         [k: string]: unknown;
       };
       media?: {
@@ -527,6 +551,14 @@ export type CronkiteCanonicalDocument =
           url: string;
           alt: string;
           caption?: string;
+          width?: number;
+          height?: number;
+          variants?: {
+            url: string;
+            width: number;
+            height: number;
+            [k: string]: unknown;
+          }[];
           [k: string]: unknown;
         };
         updatedAt?: string;

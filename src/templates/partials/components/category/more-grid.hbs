@@ -7,7 +7,7 @@
     {{#each (slice articles 13 25)}}
       <article class='group flex flex-col h-full'>
         <a href='{{url}}' class='block mb-3 overflow-hidden aspect-[3/2] bg-slate-100'>
-          <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105' />
+          {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105' loading='lazy' sizes='(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw'}}
         </a>
         <div class='flex-1 flex flex-col'>
           <div class='flex items-center text-xs font-bold uppercase tracking-wider text-[#8f0d00] mb-2'>

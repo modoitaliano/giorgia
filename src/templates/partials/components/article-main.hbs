@@ -2,14 +2,7 @@
   <div class='col-span-12 lg:col-span-4'>
     {{#if featuredImage}}
       <div class='mb-6 overflow-hidden aspect-video bg-slate-100'>
-        <img
-          src='{{featuredImage.url}}'
-          alt='{{featuredImage.alt}}'
-          class='w-full h-full object-cover'
-          fetchpriority='high'
-          loading='eager'
-          decoding='async'
-        />
+        {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-full object-cover' priority=true loading='eager' decoding='async' sizes='(min-width: 1024px) 33vw, 100vw'}}
       </div>
     {{/if}}
 
@@ -90,6 +83,7 @@
               url=url
               title=title
               image=featuredImage.url
+              imageSource=featuredImage
               alt=featuredImage.alt
               categories=categories
               excerpt=excerpt
