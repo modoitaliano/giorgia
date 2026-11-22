@@ -13,7 +13,7 @@
       {{/if}}
     {{else}}
       {{#if featuredImage.url}}
-        <link rel='preload' as='image' href='{{featuredImage.url}}' fetchpriority='high' />
+        <link rel='preload' as='image' href='{{featuredImage.url}}'{{#if featuredImage.variants}} imagesrcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' imagesizes='100vw'{{/if}} fetchpriority='high' />
       {{/if}}
     {{/if}}
     <meta name='description' content='{{#if seo.metaDescription}}{{seo.metaDescription}}{{else}}{{excerpt}}{{/if}}' />

@@ -1,5 +1,5 @@
 <figure class='my-8'>
-  <img src='{{url}}' alt='{{alt}}' class='w-full h-auto object-cover' />
+  {{> components/ui/responsive-image image=this alt=alt class='w-full h-auto object-cover' loading='lazy' sizes='(min-width: 1024px) 66vw, 100vw'}}
   {{#if caption}}
     <figcaption class='text-sm text-slate-500 dark:text-slate-400 mt-2'>{{caption}}</figcaption>
   {{/if}}

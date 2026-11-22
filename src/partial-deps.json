@@ -46,6 +46,7 @@
   "components/coming-soon/main": ["coming-soon"],
   "components/live-story/main": ["live-story"],
   "components/ui/status-badge": ["live-story"],
+  "components/ui/responsive-image": ["article-page", "homepage", "category-page", "live-story", "link-in-bio"],
   "components/media/main": ["media-page"],
   "components/standalone-main": ["standalone-page"]
 }

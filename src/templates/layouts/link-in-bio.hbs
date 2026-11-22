@@ -199,7 +199,7 @@
           <a class='card' href='{{url}}' aria-label='Leer artículo: {{title}}'>
             {{#if featuredImage.url}}
               <div class='card-bg'>
-                <img src='{{featuredImage.url}}' alt='{{#if featuredImage.alt}}{{featuredImage.alt}}{{else}}{{title}}{{/if}}' loading='lazy' />
+                {{#if featuredImage.alt}}{{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt loading='lazy' sizes='(min-width: 640px) 33vw, 100vw'}}{{else}}{{> components/ui/responsive-image image=featuredImage alt=title loading='lazy' sizes='(min-width: 640px) 33vw, 100vw'}}{{/if}}
               </div>
             {{/if}}
             

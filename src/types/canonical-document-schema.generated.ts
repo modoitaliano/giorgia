@@ -134,6 +134,35 @@ export const canonicalDocumentSchema = {
             caption: {
               type: "string",
             },
+            width: {
+              type: "integer",
+              minimum: 1,
+            },
+            height: {
+              type: "integer",
+              minimum: 1,
+            },
+            variants: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  url: {
+                    type: "string",
+                    minLength: 1,
+                  },
+                  width: {
+                    type: "integer",
+                    minimum: 1,
+                  },
+                  height: {
+                    type: "integer",
+                    minimum: 1,
+                  },
+                },
+                required: ["url", "width", "height"],
+              },
+            },
           },
           required: ["url", "alt"],
         },
@@ -643,6 +672,35 @@ export const canonicalDocumentSchema = {
                   },
                   caption: {
                     type: "string",
+                  },
+                  width: {
+                    type: "integer",
+                    minimum: 1,
+                  },
+                  height: {
+                    type: "integer",
+                    minimum: 1,
+                  },
+                  variants: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        url: {
+                          type: "string",
+                          minLength: 1,
+                        },
+                        width: {
+                          type: "integer",
+                          minimum: 1,
+                        },
+                        height: {
+                          type: "integer",
+                          minimum: 1,
+                        },
+                      },
+                      required: ["url", "width", "height"],
+                    },
                   },
                 },
                 required: ["url", "alt"],
@@ -1057,6 +1115,35 @@ export const canonicalDocumentSchema = {
             caption: {
               type: "string",
             },
+            width: {
+              type: "integer",
+              minimum: 1,
+            },
+            height: {
+              type: "integer",
+              minimum: 1,
+            },
+            variants: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  url: {
+                    type: "string",
+                    minLength: 1,
+                  },
+                  width: {
+                    type: "integer",
+                    minimum: 1,
+                  },
+                  height: {
+                    type: "integer",
+                    minimum: 1,
+                  },
+                },
+                required: ["url", "width", "height"],
+              },
+            },
           },
           required: ["url", "alt"],
         },
@@ -1566,6 +1653,35 @@ export const canonicalDocumentSchema = {
                   },
                   caption: {
                     type: "string",
+                  },
+                  width: {
+                    type: "integer",
+                    minimum: 1,
+                  },
+                  height: {
+                    type: "integer",
+                    minimum: 1,
+                  },
+                  variants: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        url: {
+                          type: "string",
+                          minLength: 1,
+                        },
+                        width: {
+                          type: "integer",
+                          minimum: 1,
+                        },
+                        height: {
+                          type: "integer",
+                          minimum: 1,
+                        },
+                      },
+                      required: ["url", "width", "height"],
+                    },
                   },
                 },
                 required: ["url", "alt"],

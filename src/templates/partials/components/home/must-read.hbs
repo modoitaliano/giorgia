@@ -8,7 +8,7 @@
         {{#with homepageSlots.mustRead.lead}}
           <article class='grid grid-cols-1 md:grid-cols-2 gap-6 items-start'>
             <a href='{{url}}' class='block aspect-video overflow-hidden bg-slate-100'>
-              <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-full object-cover transition-transform duration-500 hover:scale-105' />
+              {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-full object-cover transition-transform duration-500 hover:scale-105' loading='lazy' sizes='(min-width: 768px) 50vw, 100vw'}}
             </a>
             <div class='space-y-3'>
               <div class='flex items-center text-xs font-bold uppercase tracking-wider text-[#8f0d00]'>
@@ -28,7 +28,7 @@
         <div class='col-span-1'>
           <article class='group'>
             <a href='{{url}}' class='block mb-4 overflow-hidden aspect-[3/2] bg-slate-100'>
-              <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105' />
+              {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105' loading='lazy' sizes='(min-width: 768px) 25vw, 50vw'}}
             </a>
             <div class='space-y-2'>
               <span class='text-xs font-bold text-[#8f0d00] uppercase tracking-wider'>{{#with (lookup categories 0)}}{{name}}{{/with}}</span>
@@ -44,7 +44,7 @@
         <div class='col-span-1'>
           <article class='group'>
             <a href='{{url}}' class='block mb-4 overflow-hidden aspect-[3/2] bg-slate-100'>
-              <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105' />
+              {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105' loading='lazy' sizes='(min-width: 768px) 25vw, 50vw'}}
             </a>
             <div class='space-y-2'>
               <span class='text-xs font-bold text-[#004d99] uppercase tracking-wider'>{{#with (lookup categories 0)}}{{name}}{{/with}}</span>
