@@ -9,7 +9,7 @@
     <link href='/content/styles/giorgia.css' rel='stylesheet' />
     {{#if (eq layout 'homepage')}}
       {{#if hero.url}}
-        <link rel='preload' as='image' href='{{hero.url}}' fetchpriority='high' />
+        <link rel='preload' as='image' href='{{hero.url}}'{{#if hero.variants}} imagesrcset='{{#each hero.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if hero.width}}, {{hero.url}} {{hero.width}}w{{/if}}' imagesizes='100vw'{{/if}} fetchpriority='high' />
       {{/if}}
     {{else}}
       {{#if featuredImage.url}}

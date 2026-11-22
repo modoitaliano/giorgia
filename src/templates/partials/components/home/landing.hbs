@@ -47,8 +47,10 @@
     <section class='lg:col-span-1 xl:col-span-4 flex flex-col h-full justify-between'>
       {{#with homepageSlots.landing.card5}}
         <div class='bg-black text-white mb-6 flex-grow flex flex-col'>
-          <div class='flex-grow min-h-[250px] bg-cover bg-center flex flex-col justify-end' style='background-image: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.7) 50%, transparent 100%), url("{{featuredImage.url}}");'>
-            <div class='px-4'>
+          <div class='relative flex-grow min-h-[250px] overflow-hidden flex flex-col justify-end'>
+            <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='absolute inset-0 w-full h-full object-cover object-center'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='(min-width: 1280px) 25vw, (min-width: 1024px) 40vw, 100vw'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} loading='lazy' />
+            <div class='absolute inset-0 pointer-events-none' style='background-image: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.7) 50%, transparent 100%);'></div>
+            <div class='relative px-4'>
               <span class='bg-[#b21100] text-white px-3 py-2 text-xs tracking-[1px] font-bold uppercase inline-block mb-2'>{{#with (lookup categories 0)}}{{name}}{{/with}}</span>
               <h2 class='text-2xl font-bold font-encode mb-2'>
                 <a href='{{url}}' class='hover:text-slate-300 transition-colors'>{{title}}</a>

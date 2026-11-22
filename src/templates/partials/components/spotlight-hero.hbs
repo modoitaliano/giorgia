@@ -2,12 +2,21 @@
   <div class='carousel-background absolute inset-0 w-full h-full'>
     {{#if slides}}
       {{#each slides}}
-        <div class='carousel-slide {{#if @first}}active opacity-100{{else}}hidden opacity-0{{/if}} absolute inset-0 bg-cover bg-center transition-opacity duration-700' style='background-image: radial-gradient(71.75% 69.5% at 50% 47.39%, rgba(0, 0, 0, 0) 0%, #000000 100%), url({{image}});'></div>
+        <div class='carousel-slide {{#if @first}}active opacity-100{{else}}hidden opacity-0{{/if}} absolute inset-0 transition-opacity duration-700'>
+          {{#if @first}}<img src='{{image}}' alt='{{alt}}' class='absolute inset-0 w-full h-full object-cover object-center'{{#if variants}} srcset='{{#each variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if width}}, {{image}} {{width}}w{{/if}}' sizes='100vw'{{/if}}{{#if width}}{{#if height}} width='{{width}}' height='{{height}}'{{/if}}{{/if}} fetchpriority='high' />{{else}}<img src='{{image}}' alt='{{alt}}' class='absolute inset-0 w-full h-full object-cover object-center'{{#if variants}} srcset='{{#each variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if width}}, {{image}} {{width}}w{{/if}}' sizes='100vw'{{/if}}{{#if width}}{{#if height}} width='{{width}}' height='{{height}}'{{/if}}{{/if}} loading='lazy' />{{/if}}
+          <div class='absolute inset-0 pointer-events-none' style='background-image: radial-gradient(71.75% 69.5% at 50% 47.39%, rgba(0, 0, 0, 0) 0%, #000000 100%);'></div>
+        </div>
       {{/each}}
     {{else if hero.url}}
-      <div class='carousel-slide active opacity-100 absolute inset-0 bg-cover bg-center transition-opacity duration-700' style='background-image: radial-gradient(71.75% 69.5% at 50% 47.39%, rgba(0, 0, 0, 0) 0%, #000000 100%), url({{hero.url}});'></div>
+      <div class='carousel-slide active opacity-100 absolute inset-0 transition-opacity duration-700'>
+        <img src='{{hero.url}}' alt='{{hero.alt}}' class='absolute inset-0 w-full h-full object-cover object-center'{{#if hero.variants}} srcset='{{#each hero.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if hero.width}}, {{hero.url}} {{hero.width}}w{{/if}}' sizes='100vw'{{/if}}{{#if hero.width}}{{#if hero.height}} width='{{hero.width}}' height='{{hero.height}}'{{/if}}{{/if}} fetchpriority='high' />
+        <div class='absolute inset-0 pointer-events-none' style='background-image: radial-gradient(71.75% 69.5% at 50% 47.39%, rgba(0, 0, 0, 0) 0%, #000000 100%);'></div>
+      </div>
     {{else}}
-      <div class='carousel-slide active opacity-100 absolute inset-0 bg-cover bg-center transition-opacity duration-700' style='background-image: radial-gradient(71.75% 69.5% at 50% 47.39%, rgba(0, 0, 0, 0) 0%, #000000 100%), url(https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=1440&h=882&fit=crop);'></div>
+      <div class='carousel-slide active opacity-100 absolute inset-0 transition-opacity duration-700'>
+        <img src='https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=1440&h=882&fit=crop' alt='' class='absolute inset-0 w-full h-full object-cover object-center' fetchpriority='high' />
+        <div class='absolute inset-0 pointer-events-none' style='background-image: radial-gradient(71.75% 69.5% at 50% 47.39%, rgba(0, 0, 0, 0) 0%, #000000 100%);'></div>
+      </div>
     {{/if}}
   </div>
 
