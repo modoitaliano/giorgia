@@ -57,6 +57,12 @@ describe('header slide markup', () => {
     }
     expect(new Set(slideTags.map((tag) => tag.match(/(?:data-bg='|url\()([^')]+)/)?.[1])).size).toBe(12);
   });
+
+  it('points every slide at the 1600 px renditions, not at the 7008 px originals', () => {
+    const urls = slideTags.map((tag) => tag.match(/(?:data-bg='|url\()([^')]+)/)?.[1]);
+    expect(urls).toHaveLength(12);
+    for (const url of urls) expect(url).toMatch(/^https:\/\/macondostack-alcantara-assets\.s3\.amazonaws\.com\/artwork\/header-1600\/compressed_[0-9a-z-]+\.avif$/);
+  });
 });
 
 type Slide = { dataset: { bg?: string }; style: { opacity?: string; backgroundImage?: string }; classList: { add(name: string): void; remove(name: string): void }; classes: Set<string> };
