@@ -4,7 +4,7 @@
   {{#if featuredImage.url}}
   <section class='relative w-full overflow-hidden'>
     <div class='hidden lg:block absolute inset-0 pointer-events-none' aria-hidden='true'>
-      {{> components/ui/responsive-image image=featuredImage alt='' class='w-full h-full object-cover scale-125 opacity-90' style='filter: blur(16px);' loading='lazy' sizes='100vw'}}
+      <img src='{{featuredImage.url}}' alt='' class='w-full h-full object-cover scale-125 opacity-90' style='filter: blur(16px);'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='100vw'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} loading='lazy' />
     </div>
 
     <div class='relative max-w-screen-xl mx-auto px-0 lg:px-6 xl:px-8'>
@@ -15,11 +15,11 @@
         {{#if media}}
           <div data-carousel='live-story-hero' class='relative'>
             <div class='carousel-slide active opacity-100 transition-opacity duration-700'>
-              {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-auto object-cover object-center' style='max-height:520px;' priority=true sizes='(min-width: 1280px) 1200px, 100vw'}}
+              <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-auto object-cover object-center' style='max-height:520px;'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='(min-width: 1280px) 1200px, 100vw'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} fetchpriority='high' />
             </div>
             {{#each media}}
             <div class='carousel-slide hidden opacity-0 transition-opacity duration-700'>
-              {{> components/ui/responsive-image image=this alt=alt class='w-full h-auto object-cover object-center' style='max-height:520px;' loading='lazy' sizes='(min-width: 1280px) 1200px, 100vw'}}
+              <img src='{{this.url}}' alt='{{alt}}' class='w-full h-auto object-cover object-center' style='max-height:520px;'{{#if this.variants}} srcset='{{#each this.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if this.width}}, {{this.url}} {{this.width}}w{{/if}}' sizes='(min-width: 1280px) 1200px, 100vw'{{/if}}{{#if this.width}}{{#if this.height}} width='{{this.width}}' height='{{this.height}}'{{/if}}{{/if}} loading='lazy' />
             </div>
             {{/each}}
             <div class='absolute inset-x-0 bottom-4 z-20 flex items-center justify-center gap-2'>
@@ -37,7 +37,7 @@
             </button>
           </div>
         {{else}}
-          {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-auto object-cover object-center' style='max-height:520px;' priority=true sizes='(min-width: 1280px) 1200px, 100vw'}}
+          <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-auto object-cover object-center' style='max-height:520px;'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='(min-width: 1280px) 1200px, 100vw'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} fetchpriority='high' />
         {{/if}}
       </figure>
     </div>
@@ -122,7 +122,7 @@
                 <div class='mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3'>
                   {{#each media}}
                   <figure class='overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'>
-                    {{> components/ui/responsive-image image=this alt=alt class='w-full h-auto object-cover' loading='lazy' sizes='(min-width: 1024px) 66vw, 100vw'}}
+                    <img src='{{this.url}}' alt='{{alt}}' class='w-full h-auto object-cover'{{#if this.variants}} srcset='{{#each this.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if this.width}}, {{this.url}} {{this.width}}w{{/if}}' sizes='(min-width: 1024px) 66vw, 100vw'{{/if}}{{#if this.width}}{{#if this.height}} width='{{this.width}}' height='{{this.height}}'{{/if}}{{/if}} loading='lazy' />
                     {{#if caption}}
                     <figcaption class='px-3 py-2 text-xs text-slate-500 dark:text-slate-400'>
                       {{caption}}

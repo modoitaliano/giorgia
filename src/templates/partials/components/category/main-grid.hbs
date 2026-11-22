@@ -3,7 +3,7 @@
     {{#with (lookup articles 0)}}
       <article class='mb-8'>
         <a href='{{url}}' class='block mb-4 overflow-hidden aspect-video bg-slate-100'>
-          {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-full object-cover transition-transform duration-500 hover:scale-105' sizes='(min-width: 1024px) 66vw, 100vw'}}
+          <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-full object-cover transition-transform duration-500 hover:scale-105'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='(min-width: 1024px) 66vw, 100vw'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} />
         </a>
 
         <div class='flex items-center text-xs font-bold uppercase tracking-wider text-[#8f0d00] mb-3'>
@@ -23,7 +23,7 @@
       {{#each (slice articles 1 3)}}
         <article class='group'>
           <a href='{{url}}' class='block mb-4 overflow-hidden aspect-[3/2] bg-slate-100'>
-            {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105' loading='lazy' sizes='(min-width: 768px) 33vw, 100vw'}}
+            <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='(min-width: 768px) 33vw, 100vw'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} loading='lazy' />
           </a>
           <div class='space-y-2'>
             <span class='text-xs font-bold text-[#8f0d00] uppercase tracking-wider'>{{#with (lookup categories 0)}}{{name}}{{/with}}</span>

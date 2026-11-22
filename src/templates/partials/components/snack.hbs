@@ -23,14 +23,14 @@
       {{#if image}}
         <a href='{{url}}' class='{{#if imageSize}}{{imageSize}}{{else}}w-32 h-24{{/if}} flex-shrink-0 block'>
           {{#if imageSource}}
-            {{> components/ui/responsive-image image=imageSource alt=alt class='w-full h-full object-cover rounded' classExtra=imageClasses loading='lazy' sizes='128px'}}
+            <img src='{{imageSource.url}}' alt='{{alt}}' class='w-full h-full object-cover rounded{{#if imageClasses}} {{imageClasses}}{{/if}}'{{#if imageSource.variants}} srcset='{{#each imageSource.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if imageSource.width}}, {{imageSource.url}} {{imageSource.width}}w{{/if}}' sizes='128px'{{/if}}{{#if imageSource.width}}{{#if imageSource.height}} width='{{imageSource.width}}' height='{{imageSource.height}}'{{/if}}{{/if}} loading='lazy' />
           {{else}}
             <img src='{{image}}' alt='{{alt}}' class='w-full h-full object-cover rounded {{#if imageClasses}}{{imageClasses}}{{/if}}' loading='lazy' />
           {{/if}}
         </a>
       {{else if featuredImage.url}}
         <a href='{{url}}' class='{{#if imageSize}}{{imageSize}}{{else}}w-32 h-24{{/if}} flex-shrink-0 block'>
-          {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-full object-cover rounded' classExtra=imageClasses loading='lazy' sizes='128px'}}
+          <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-full object-cover rounded{{#if imageClasses}} {{imageClasses}}{{/if}}'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='128px'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} loading='lazy' />
         </a>
       {{/if}}
     {{/unless}}

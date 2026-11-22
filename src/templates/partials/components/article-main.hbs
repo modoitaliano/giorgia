@@ -2,7 +2,7 @@
   <div class='col-span-12 lg:col-span-4'>
     {{#if featuredImage}}
       <div class='mb-6 overflow-hidden aspect-video bg-slate-100'>
-        {{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt class='w-full h-full object-cover' priority=true loading='eager' decoding='async' sizes='(min-width: 1024px) 33vw, 100vw'}}
+        <img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}' class='w-full h-full object-cover'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='(min-width: 1024px) 33vw, 100vw'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} fetchpriority='high' loading='eager' decoding='async' />
       </div>
     {{/if}}
 

@@ -199,7 +199,7 @@
           <a class='card' href='{{url}}' aria-label='Leer artículo: {{title}}'>
             {{#if featuredImage.url}}
               <div class='card-bg'>
-                {{#if featuredImage.alt}}{{> components/ui/responsive-image image=featuredImage alt=featuredImage.alt loading='lazy' sizes='(min-width: 640px) 33vw, 100vw'}}{{else}}{{> components/ui/responsive-image image=featuredImage alt=title loading='lazy' sizes='(min-width: 640px) 33vw, 100vw'}}{{/if}}
+                {{#if featuredImage.alt}}<img src='{{featuredImage.url}}' alt='{{featuredImage.alt}}'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='(min-width: 640px) 33vw, 100vw'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} loading='lazy' />{{else}}<img src='{{featuredImage.url}}' alt='{{title}}'{{#if featuredImage.variants}} srcset='{{#each featuredImage.variants}}{{url}} {{width}}w{{#unless @last}}, {{/unless}}{{/each}}{{#if featuredImage.width}}, {{featuredImage.url}} {{featuredImage.width}}w{{/if}}' sizes='(min-width: 640px) 33vw, 100vw'{{/if}}{{#if featuredImage.width}}{{#if featuredImage.height}} width='{{featuredImage.width}}' height='{{featuredImage.height}}'{{/if}}{{/if}} loading='lazy' />{{/if}}
               </div>
             {{/if}}
             
