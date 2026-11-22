@@ -57,8 +57,7 @@ function directPartials(source: string): string[] {
     }
   };
   visit(Handlebars.parse(source));
-  // A partial used at several places in one template is one dependency, listed at its first use.
-  return [...new Set(found)];
+  return found;
 }
 
 describe('Cronkite declarative template manifest', () => {
