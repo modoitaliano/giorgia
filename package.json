@@ -50,6 +50,10 @@
       "types": "./dist/scenes/index.d.ts",
       "import": "./dist/scenes/index.js"
     },
+    "./scenes/legacy": {
+      "types": "./dist/scenes/legacy/index.d.ts",
+      "import": "./dist/scenes/legacy/index.js"
+    },
     "./components/live-program": {
       "types": "./dist/components/live-program/LiveProgram.d.ts",
       "import": "./dist/components/live-program/LiveProgram.js"
@@ -116,7 +120,7 @@
     "@tailwindcss/cli": "^4.2.1",
     "@tailwindcss/vite": "^4.3.0",
     "@testing-library/dom": "10.4.2",
-    "@testing-library/jest-dom": "^8.0.0",
+    "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
     "@types/handlebars": "^4.1.0",
     "@types/node": "^20.19.37",
