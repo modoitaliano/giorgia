@@ -95,6 +95,23 @@ try {
       `renderable ${name} schema`,
     );
   }
+  // Cronkite's bundle loader rejects a partials list that names one partial twice
+  // (bundle-loader.service.ts stringArray). Check the packed artifact the same way.
+  const assertUniquePartials = (owner, partials) => {
+    const seen = new Set();
+    for (const partial of partials ?? []) {
+      if (seen.has(partial)) {
+        throw new Error(`${owner} names partial ${partial} more than once`);
+      }
+      seen.add(partial);
+    }
+  };
+  for (const [name, definition] of Object.entries(rendering.renderables ?? {})) {
+    assertUniquePartials(`renderable ${name} template`, definition.template?.partials);
+  }
+  for (const [name, definition] of Object.entries(rendering.partials ?? {})) {
+    assertUniquePartials(`partial ${name}`, definition.partials);
+  }
   for (const [key, definition] of Object.entries(rendering.staticAssets ?? {})) {
     await assertPackedFile(packageRoot, definition.source, `static asset ${key}`);
   }
