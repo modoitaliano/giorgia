@@ -94,9 +94,9 @@ describe('angelinaPoll block', () => {
     core.initializeHandlebars({ ...assets, partials: { 'blocks/angelina-poll': partialSource } });
     const html = Handlebars.compile('{{> angelinaPoll}}')({ slug: 'elecciones-2026-a1b2c3' });
     expect(html).toContain("src='https://angelina.gaulatti.com/embed/poll/elecciones-2026-a1b2c3'");
-    expect(html).toContain("title='Sondaggio'");
+    expect(html).toContain("title='Encuesta'");
     expect(html).toContain("loading='lazy'");
-    expect(html).toContain("sandbox='allow-scripts allow-same-origin allow-forms allow-popups'");
+    expect(html).toContain("sandbox='allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox'");
     expect(html).not.toMatch(/\sallow=/);
     expect(html).toContain("href='https://angelina.gaulatti.com/poll/elecciones-2026-a1b2c3'");
   });
@@ -108,6 +108,8 @@ describe('angelinaPoll block', () => {
     expect(() => template({ slug: 'Not A Slug' })).toThrow('parameter slug is not a valid value');
     expect(() => template({ slug: 'a--b' })).toThrow('parameter slug is not a valid value');
     expect(() => template({ slug: '../other' })).toThrow('parameter slug is not a valid value');
+    expect(() => template({ slug: 'a'.repeat(65) })).toThrow('parameter slug is not a valid value');
+    expect(template({ slug: 'a'.repeat(64) })).toContain('embed/poll/' + 'a'.repeat(64));
   });
 
   it('builds the embed and link urls from the slug alone', async () => {

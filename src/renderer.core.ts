@@ -30,8 +30,8 @@ const knownSpotifyKinds = new Set(['track', 'album', 'playlist', 'episode', 'sho
 const knownHeroLayouts = new Set(['spotlight', 'editorial']);
 // Parameter formats an embed provider accepts (contract C2 for the Angelina poll slug).
 const embedParameterPatterns: Record<string, Record<string, RegExp>> = {
-  'angelina-poll': { slug: /^[a-z0-9]+(?:-[a-z0-9]+)*$/ },
-  'angelina-poll-link': { slug: /^[a-z0-9]+(?:-[a-z0-9]+)*$/ }
+  'angelina-poll': { slug: /^(?=.{1,64}$)[a-z0-9]+(?:-[a-z0-9]+)*$/ },
+  'angelina-poll-link': { slug: /^(?=.{1,64}$)[a-z0-9]+(?:-[a-z0-9]+)*$/ }
 };
 
 function normalizeBlock(block: unknown): unknown[] {

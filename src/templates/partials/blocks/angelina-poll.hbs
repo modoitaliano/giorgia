@@ -4,13 +4,13 @@
       <iframe
         class='w-full min-h-[360px]'
         src='{{embedUrlValue}}'
-        title='Sondaggio'
+        title='Encuesta'
         loading='lazy'
-        sandbox='allow-scripts allow-same-origin allow-forms allow-popups'
+        sandbox='allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox'
       ></iframe>
     {{/with}}
   </div>
   <figcaption class='text-sm text-slate-500 dark:text-slate-400 mt-2'>
-    <a href='{{embedUrl "angelina-poll-link" slug=slug}}' target='_blank' rel='noopener noreferrer' class='hover:underline'>Vota il sondaggio</a>
+    <a href='{{embedUrl "angelina-poll-link" slug=slug}}' target='_blank' rel='noopener noreferrer' class='hover:underline'>Votar en la encuesta</a>
   </figcaption>
 </figure>
