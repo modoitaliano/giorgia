@@ -92,6 +92,10 @@ for (const schemaName of [
   "feed-renderable-input.schema.json",
   "search-index.schema.json",
   "search-manifest.schema.json",
+  "robots-input.schema.json",
+  "sitemap-index-input.schema.json",
+  "sitemap-input.schema.json",
+  "feed-input.schema.json",
 ]) {
   const schema = await readJson(join(sourceSchemas, schemaName));
   ajv.compile(schema);

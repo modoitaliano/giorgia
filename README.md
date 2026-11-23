@@ -35,6 +35,10 @@ TypeScript declarations and declarative runtime validation use that same artifac
 - `@modoitaliano/giorgia/video` -> legacy non-CPS Remotion entrypoint
 - `@modoitaliano/giorgia/schemas/canonical-document.schema.json` -> canonical input contract
 - `@modoitaliano/giorgia/schemas/feed-renderable-input.schema.json` -> feed publication envelope
+- `@modoitaliano/giorgia/schemas/robots-input.schema.json` -> robots.txt rule set
+- `@modoitaliano/giorgia/schemas/sitemap-input.schema.json` and
+  `@modoitaliano/giorgia/schemas/sitemap-index-input.schema.json` -> sitemap files and index
+- `@modoitaliano/giorgia/schemas/feed-input.schema.json` -> Atom feed of the latest stories
 - `@modoitaliano/giorgia/schemas/search-manifest.schema.json` and
   `@modoitaliano/giorgia/schemas/search-index.schema.json` -> static-search resource contract
 - `@modoitaliano/giorgia/partial-deps.json` -> partial-to-layout dependency map

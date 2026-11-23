@@ -237,6 +237,31 @@ export const cronkiteManifest = {
       'link-in-bio': page('link-in-bio', []),
       'media-page': page('media-page', [pagePartials[0], pagePartials[1], 'components/media/main', pagePartials[2], pagePartials[3]]),
       'standalone-page': page('standalone-page', [pagePartials[0], pagePartials[1], 'components/standalone-main', pagePartials[2], pagePartials[3]]),
+      // robots.txt for the site. Its input is the CMS's rule set, not a canonical document.
+      robots: {
+        template: { entry: 'src/templates/layouts/robots.hbs', partials: [] },
+        inputSchema: 'dist/schemas/robots-input.schema.json',
+        contentType: 'text/plain; charset=utf-8',
+      },
+      // The sitemap files of the site: one file of URLs and the index of those files.
+      // Their input is the CMS's story set, not a canonical document.
+      sitemap: {
+        template: { entry: 'src/templates/layouts/sitemap.hbs', partials: [] },
+        inputSchema: 'dist/schemas/sitemap-input.schema.json',
+        contentType: 'text/xml; charset=utf-8',
+      },
+      'sitemap-index': {
+        template: { entry: 'src/templates/layouts/sitemap-index.hbs', partials: [] },
+        inputSchema: 'dist/schemas/sitemap-index-input.schema.json',
+        contentType: 'text/xml; charset=utf-8',
+      },
+      // The Atom feed of the latest released stories of one language. Its input is the
+      // CMS's list, not a canonical document.
+      feed: {
+        template: { entry: 'src/templates/layouts/feed.hbs', partials: [] },
+        inputSchema: 'dist/schemas/feed-input.schema.json',
+        contentType: 'text/xml; charset=utf-8',
+      },
       'social-image': {
         template: { entry: 'src/templates/templates/instagram-image.hbs', partials: [] },
         inputSchema: 'dist/schemas/social-image-input.schema.json',
