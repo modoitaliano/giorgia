@@ -68,6 +68,22 @@ describe('Cronkite declarative template manifest', () => {
     expect(validate(cronkiteManifest), JSON.stringify(validate.errors)).toBe(true);
   });
 
+  it('rejects a template that names one partial twice, as Cronkite\'s loader does (giorgia#59)', () => {
+    // Cronkite's bundle loader (stringArray at src/tenants/bundle-loader.service.ts:168-177)
+    // throws on a duplicate in a declared partials list. The schema must refuse it too.
+    const ajv = new Ajv2020({ allErrors: true, strict: false });
+    addContractFormats(ajv);
+    const validate = ajv.compile(schema);
+    const manifest = structuredClone(cronkiteManifest) as typeof cronkiteManifest & {
+      templateRendering: { renderables: Record<string, { template: { partials: string[] } }>; partials: Record<string, unknown> };
+    };
+    const partialName = Object.keys(manifest.templateRendering.partials)[0];
+    const renderable = Object.values(manifest.templateRendering.renderables)[0];
+    renderable.template.partials = [partialName, partialName];
+    expect(validate(manifest)).toBe(false);
+    expect(JSON.stringify(validate.errors)).toContain('uniqueItems');
+  });
+
   it('is the sole opt-in and stays aligned with package, layouts, and languages', () => {
     expect(() => assertManifestAlignment(cronkiteManifest, sources())).not.toThrow();
     expect(cronkiteManifest).not.toHaveProperty('contract');
