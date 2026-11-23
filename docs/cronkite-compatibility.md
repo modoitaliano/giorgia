@@ -20,6 +20,20 @@ partial decorators, and partial blocks were replaced with static dependencies.
 The manifest also declares the retained `social-image` template as a 1080 by
 1350 JPEG raster. Remotion is not a CPS renderable.
 
+The manifest also declares four non-page renderables. None of them is a
+canonical document, so none has a page layout, and each is excluded from the
+layout alignment check (`NON_PAGE_RENDERABLES` in `src/manifest-validation.ts`):
+
+- `robots`: the `robots.txt` text (`text/plain; charset=utf-8`) from a CMS rule set
+  (`robots-input.schema.json`). At least one rule is required, and a group with no
+  `Allow` or `Disallow` line is refused, so a missing rule set cannot render as allow-all.
+- `sitemap`: one sitemap XML file of URLs (`sitemap-input.schema.json`), at most 4,000 entries.
+- `sitemap-index`: the index of sitemap files (`sitemap-index-input.schema.json`).
+- `feed`: an Atom 1.0 feed of one language's latest released stories (`feed-input.schema.json`), at most 50 entries.
+
+All XML output escapes `&`, `<` and `>` in text and attributes. The three XML and
+text renderables use the same escaping as the other renderables.
+
 ## Helpers and document ownership
 
 The templates use only Cronkite's built-in and closed helper set. Primitive

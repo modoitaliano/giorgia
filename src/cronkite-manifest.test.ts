@@ -124,6 +124,10 @@ describe('Cronkite declarative template manifest', () => {
   it('declares every page plus retained social-card rasterization and no Remotion renderable', () => {
     expect(Object.keys(cronkiteManifest.templateRendering.renderables)).toEqual([
       ...Object.keys(layoutFiles),
+      'robots',
+      'sitemap',
+      'sitemap-index',
+      'feed',
       'social-image',
     ]);
     expect(cronkiteManifest.templateRendering.renderables['social-image']).toMatchObject({
