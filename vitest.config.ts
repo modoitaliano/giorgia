@@ -38,6 +38,16 @@ export default defineConfig({
           name: 'unit',
           environment: 'node',
           include: ['src/**/*.test.ts'],
+          exclude: ['src/scenes/**'],
+        },
+      },
+      {
+        // DOM scene components (gaulatti/alcantara#382): React Testing Library on happy-dom.
+        extends: true,
+        test: {
+          name: 'scenes',
+          environment: 'happy-dom',
+          include: ['src/scenes/**/*.test.ts', 'src/scenes/**/*.test.tsx'],
         },
       },
     ],

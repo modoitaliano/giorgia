@@ -46,6 +46,10 @@
     "./schemas/search-index.schema.json": "./dist/schemas/search-index.schema.json",
     "./schemas/search-manifest.schema.json": "./dist/schemas/search-manifest.schema.json",
     "./video": "./dist/video/index.js",
+    "./scenes": {
+      "types": "./dist/scenes/index.d.ts",
+      "import": "./dist/scenes/index.js"
+    },
     "./components/live-program": {
       "types": "./dist/components/live-program/LiveProgram.d.ts",
       "import": "./dist/components/live-program/LiveProgram.js"
@@ -75,8 +79,8 @@
     "typecheck": "npm run generate:contract-types && tsc --noEmit -p tsconfig.json",
     "pretest:unit": "npm run generate:contract-types && npm run build:css && npm run build:navigation",
     "test": "npm run test:unit",
-    "test:unit": "vitest run --project unit",
-    "test:coverage": "npm run build:css && npm run build:navigation && vitest run --project unit --coverage.enabled --coverage.provider=v8 --coverage.reporter=json --coverage.reportsDirectory=coverage \"--coverage.include=src/**/*.{ts,tsx}\"",
+    "test:unit": "vitest run --project unit --project scenes",
+    "test:coverage": "npm run build:css && npm run build:navigation && vitest run --project unit --project scenes --coverage.enabled --coverage.provider=v8 --coverage.reporter=json --coverage.reportsDirectory=coverage \"--coverage.include=src/**/*.{ts,tsx}\"",
     "verify:packed-contract": "npm run build && node scripts/verify-packed-contract.mjs",
     "storybook:assets": "npm run build:css && npm run build:navigation && tsx scripts/prepare-storybook-assets.ts"
   },
