@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import Handlebars from 'handlebars';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { layoutNames } from './layouts.js';
@@ -76,5 +77,45 @@ describe('client navigation', () => {
     handlers['before:content:replace']();
     expect(cleanup).toHaveBeenCalled();
     expect(win.__brokawPageCleanup).toBeUndefined();
+  });
+});
+
+// gaulatti/giorgia#64 (contract C1-C4): the Angelina poll block frames the embed page and links the poll page.
+describe('angelinaPoll block', () => {
+  // The renderer initializes Handlebars once per module instance, so each test loads a fresh one.
+  const freshRenderer = async () => {
+    vi.resetModules();
+    return import('./renderer.core.js');
+  };
+  const partialSource = readFileSync(new URL('./templates/partials/blocks/angelina-poll.hbs', import.meta.url), 'utf8');
+
+  it('frames the embed page for a valid slug and links the public poll page', async () => {
+    const core = await freshRenderer();
+    core.initializeHandlebars({ ...assets, partials: { 'blocks/angelina-poll': partialSource } });
+    const html = Handlebars.compile('{{> angelinaPoll}}')({ slug: 'elecciones-2026-a1b2c3' });
+    expect(html).toContain("src='https://angelina.gaulatti.com/embed/poll/elecciones-2026-a1b2c3'");
+    expect(html).toContain("title='Encuesta'");
+    expect(html).toContain("loading='lazy'");
+    expect(html).toContain("sandbox='allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox'");
+    expect(html).not.toMatch(/\sallow=/);
+    expect(html).toContain("href='https://angelina.gaulatti.com/poll/elecciones-2026-a1b2c3'");
+  });
+
+  it('fails the render for a slug outside contract C2', async () => {
+    const core = await freshRenderer();
+    core.initializeHandlebars({ ...assets, partials: { 'blocks/angelina-poll': partialSource } });
+    const template = Handlebars.compile('{{> angelinaPoll}}');
+    expect(() => template({ slug: 'Not A Slug' })).toThrow('parameter slug is not a valid value');
+    expect(() => template({ slug: 'a--b' })).toThrow('parameter slug is not a valid value');
+    expect(() => template({ slug: '../other' })).toThrow('parameter slug is not a valid value');
+    expect(() => template({ slug: 'a'.repeat(65) })).toThrow('parameter slug is not a valid value');
+    expect(template({ slug: 'a'.repeat(64) })).toContain('embed/poll/' + 'a'.repeat(64));
+  });
+
+  it('builds the embed and link urls from the slug alone', async () => {
+    const core = await freshRenderer();
+    core.initializeHandlebars(assets);
+    expect(Handlebars.compile('{{embedUrl "angelina-poll" slug="abc-1"}}', { noEscape: true })({})).toBe('https://angelina.gaulatti.com/embed/poll/abc-1');
+    expect(Handlebars.compile('{{embedUrl "angelina-poll-link" slug="abc-1"}}', { noEscape: true })({})).toBe('https://angelina.gaulatti.com/poll/abc-1');
   });
 });

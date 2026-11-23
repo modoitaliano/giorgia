@@ -179,6 +179,11 @@ export type CronkiteCanonicalDocument =
             [k: string]: unknown;
           }
         | {
+            type: "angelinaPoll";
+            slug: string;
+            [k: string]: unknown;
+          }
+        | {
             type: "pullQuote";
             text: string;
             attribution?: string;
@@ -499,6 +504,11 @@ export type CronkiteCanonicalDocument =
              */
             embedKind: string;
             embedId: string;
+            [k: string]: unknown;
+          }
+        | {
+            type: "angelinaPoll";
+            slug: string;
             [k: string]: unknown;
           }
         | {
