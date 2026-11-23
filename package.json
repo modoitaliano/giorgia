@@ -50,6 +50,10 @@
       "types": "./dist/scenes/index.d.ts",
       "import": "./dist/scenes/index.js"
     },
+    "./scenes/legacy": {
+      "types": "./dist/scenes/legacy/index.d.ts",
+      "import": "./dist/scenes/legacy/index.js"
+    },
     "./components/live-program": {
       "types": "./dist/components/live-program/LiveProgram.d.ts",
       "import": "./dist/components/live-program/LiveProgram.js"
