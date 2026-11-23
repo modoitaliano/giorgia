@@ -74,8 +74,11 @@ describe('Cronkite declarative template manifest', () => {
     const ajv = new Ajv2020({ allErrors: true, strict: false });
     addContractFormats(ajv);
     const validate = ajv.compile(schema);
-    const manifest = structuredClone(cronkiteManifest) as typeof cronkiteManifest & {
-      templateRendering: { renderables: Record<string, { template: { partials: string[] } }>; partials: Record<string, unknown> };
+    const manifest = structuredClone(cronkiteManifest) as unknown as {
+      templateRendering: {
+        partials: Record<string, unknown>;
+        renderables: Record<string, { template: { partials: string[] } }>;
+      };
     };
     const partialName = Object.keys(manifest.templateRendering.partials)[0];
     const renderable = Object.values(manifest.templateRendering.renderables)[0];
