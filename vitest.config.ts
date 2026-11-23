@@ -48,6 +48,7 @@ export default defineConfig({
           name: 'scenes',
           environment: 'happy-dom',
           include: ['src/scenes/**/*.test.ts', 'src/scenes/**/*.test.tsx'],
+          setupFiles: ['src/scenes/vitest.setup.ts'],
         },
       },
     ],

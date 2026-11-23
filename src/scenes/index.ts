@@ -12,6 +12,8 @@ export {
   useElementHeight,
   useElementWidth,
 } from './giorgiaBroadcast.js';
+export { ModoItalianoGiorgiaPodcastPlayer } from './ModoItalianoGiorgiaPodcastPlayer.js';
+export type { ModoItalianoPodcastPlayerProps } from './ModoItalianoGiorgiaPodcastPlayer.js';
 export { ModoItalianoGiorgiaClock } from './ModoItalianoGiorgiaClock.js';
 export type { ModoItalianoGiorgiaClockProps } from './ModoItalianoGiorgiaClock.js';
 export {
