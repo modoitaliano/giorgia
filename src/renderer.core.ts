@@ -22,12 +22,17 @@ const homepageTitle = 'ModoItaliano - Música italiana, noticias y lanzamientos'
 // fallback below.
 const knownBlockTypes = new Set([
   'richText', 'heading', 'image', 'list', 'divider', 'infoBox', 'keyPoints', 'dataTable',
-  'liveUpdate', 'audio', 'youtube', 'x', 'instagram', 'tiktok', 'spotify', 'pullQuote'
+  'liveUpdate', 'audio', 'youtube', 'x', 'instagram', 'tiktok', 'spotify', 'pullQuote', 'angelinaPoll'
 ]);
 const knownHeadingLevels = new Set([2, 3, 4]);
 const knownInfoBoxTones = new Set(['neutral', 'info', 'warning', 'success']);
 const knownSpotifyKinds = new Set(['track', 'album', 'playlist', 'episode', 'show']);
 const knownHeroLayouts = new Set(['spotlight', 'editorial']);
+// Parameter formats an embed provider accepts (contract C2 for the Angelina poll slug).
+const embedParameterPatterns: Record<string, Record<string, RegExp>> = {
+  'angelina-poll': { slug: /^[a-z0-9]+(?:-[a-z0-9]+)*$/ },
+  'angelina-poll-link': { slug: /^[a-z0-9]+(?:-[a-z0-9]+)*$/ }
+};
 
 function normalizeBlock(block: unknown): unknown[] {
   if (!block || typeof block !== 'object') return [block];
@@ -96,7 +101,11 @@ function registerHelpers(): void {
       'x-embed': 'https://platform.twitter.com/embed/Tweet.html?id={id}&dnt=true',
       instagram: 'https://www.instagram.com/p/{shortcode}/embed/',
       tiktok: 'https://www.tiktok.com/embed/v2/{id}',
-      spotify: 'https://open.spotify.com/embed/{kind}/{id}'
+      spotify: 'https://open.spotify.com/embed/{kind}/{id}',
+      // Angelina poll (gaulatti/giorgia#64, contract C1 and C4): the embed page frames
+      // the poll; the link is the poll's own public page, for when frames are off.
+      'angelina-poll': 'https://angelina.gaulatti.com/embed/poll/{slug}',
+      'angelina-poll-link': 'https://angelina.gaulatti.com/poll/{slug}'
     };
     const template = typeof name === 'string' ? templates[name] : undefined;
     if (!template) {
@@ -109,6 +118,10 @@ function registerHelpers(): void {
       const value = options.hash[parameter];
       if (value === undefined || value === null || value === '') {
         throw new Error(`Embed provider "${String(name)}" requires parameter ${parameter}`);
+      }
+      const pattern = embedParameterPatterns[String(name)]?.[parameter];
+      if (pattern && !pattern.test(String(value))) {
+        throw new Error(`Embed provider "${String(name)}" parameter ${parameter} is not a valid value`);
       }
       return encodeURIComponent(String(value));
     });
@@ -205,7 +218,8 @@ function registerPartials(partials: Record<string, string>): void {
     instagram: 'blocks/instagram',
     tiktok: 'blocks/tiktok',
     spotify: 'blocks/spotify',
-    pullQuote: 'blocks/pull-quote'
+    pullQuote: 'blocks/pull-quote',
+    angelinaPoll: 'blocks/angelina-poll'
   };
 
   for (const [alias, partialName] of Object.entries(bodyAliases)) {

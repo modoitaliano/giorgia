@@ -21,6 +21,7 @@
   "blocks/pull-quote": ["article-page", "live-story", "standalone-page"],
   "blocks/rich-text": ["article-page", "live-story", "standalone-page"],
   "blocks/spotify": ["article-page", "live-story", "standalone-page"],
+  "blocks/angelina-poll": ["article-page", "live-story", "standalone-page"],
   "blocks/tiktok": ["article-page", "live-story", "standalone-page"],
   "blocks/x": ["article-page", "live-story", "standalone-page"],
   "blocks/youtube": ["article-page", "live-story", "standalone-page"],

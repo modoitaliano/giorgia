@@ -19,6 +19,7 @@ import liveUpdateHbs from '../../src/templates/partials/blocks/live-update.hbs?r
 import pullQuoteHbs from '../../src/templates/partials/blocks/pull-quote.hbs?raw';
 import richTextHbs from '../../src/templates/partials/blocks/rich-text.hbs?raw';
 import spotifyHbs from '../../src/templates/partials/blocks/spotify.hbs?raw';
+import angelinaPollHbs from '../../src/templates/partials/blocks/angelina-poll.hbs?raw';
 import tiktokHbs from '../../src/templates/partials/blocks/tiktok.hbs?raw';
 import xHbs from '../../src/templates/partials/blocks/x.hbs?raw';
 import youtubeHbs from '../../src/templates/partials/blocks/youtube.hbs?raw';
@@ -143,6 +144,7 @@ export function registerCommonHelpers(): void {
     'blocks/pull-quote': pullQuoteHbs,
     'blocks/rich-text': richTextHbs,
     'blocks/spotify': spotifyHbs,
+    'blocks/angelina-poll': angelinaPollHbs,
     'blocks/tiktok': tiktokHbs,
     'blocks/x': xHbs,
     'blocks/youtube': youtubeHbs

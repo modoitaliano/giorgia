@@ -299,6 +299,15 @@
               },
               {
                 "type": "object",
+                "description": "An Angelina poll embedded inline (gaulatti/giorgia#64, contract C3).",
+                "properties": {
+                  "type": { "type": "string", "const": "angelinaPoll" },
+                  "slug": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+                },
+                "required": ["type", "slug"]
+              },
+              {
+                "type": "object",
                 "properties": {
                   "type": { "type": "string", "const": "pullQuote" },
                   "text": { "type": "string" },
@@ -310,7 +319,7 @@
                 "type": "object",
                 "description": "A block type this contract does not define. It is accepted and not rendered.",
                 "properties": {
-                  "type": { "type": "string", "not": { "enum": ["richText", "heading", "image", "list", "divider", "infoBox", "keyPoints", "dataTable", "liveUpdate", "audio", "youtube", "x", "instagram", "tiktok", "spotify", "pullQuote"] } }
+                  "type": { "type": "string", "not": { "enum": ["richText", "heading", "image", "list", "divider", "infoBox", "keyPoints", "dataTable", "liveUpdate", "audio", "youtube", "x", "instagram", "tiktok", "spotify", "pullQuote", "angelinaPoll"] } }
                 },
                 "required": ["type"]
               }
@@ -880,6 +889,15 @@
               },
               {
                 "type": "object",
+                "description": "An Angelina poll embedded inline (gaulatti/giorgia#64, contract C3).",
+                "properties": {
+                  "type": { "type": "string", "const": "angelinaPoll" },
+                  "slug": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+                },
+                "required": ["type", "slug"]
+              },
+              {
+                "type": "object",
                 "properties": {
                   "type": { "type": "string", "const": "pullQuote" },
                   "text": { "type": "string" },
@@ -891,7 +909,7 @@
                 "type": "object",
                 "description": "A block type this contract does not define. It is accepted and not rendered.",
                 "properties": {
-                  "type": { "type": "string", "not": { "enum": ["richText", "heading", "image", "list", "divider", "infoBox", "keyPoints", "dataTable", "liveUpdate", "audio", "youtube", "x", "instagram", "tiktok", "spotify", "pullQuote"] } }
+                  "type": { "type": "string", "not": { "enum": ["richText", "heading", "image", "list", "divider", "infoBox", "keyPoints", "dataTable", "liveUpdate", "audio", "youtube", "x", "instagram", "tiktok", "spotify", "pullQuote", "angelinaPoll"] } }
                 },
                 "required": ["type"]
               }

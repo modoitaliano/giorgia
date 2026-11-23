@@ -1,0 +1,16 @@
+<figure class='my-8 w-full'>
+  <div class='overflow-hidden w-full rounded-sm bg-slate-100 dark:bg-slate-900'>
+    {{#with (embedUrl "angelina-poll" slug=slug) as |embedUrlValue|}}
+      <iframe
+        class='w-full min-h-[360px]'
+        src='{{embedUrlValue}}'
+        title='Sondaggio'
+        loading='lazy'
+        sandbox='allow-scripts allow-same-origin allow-forms allow-popups'
+      ></iframe>
+    {{/with}}
+  </div>
+  <figcaption class='text-sm text-slate-500 dark:text-slate-400 mt-2'>
+    <a href='{{embedUrl "angelina-poll-link" slug=slug}}' target='_blank' rel='noopener noreferrer' class='hover:underline'>Vota il sondaggio</a>
+  </figcaption>
+</figure>

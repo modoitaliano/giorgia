@@ -507,6 +507,24 @@ export const canonicalDocumentSchema = {
               },
               {
                 type: "object",
+                description:
+                  "An Angelina poll embedded inline (gaulatti/giorgia#64, contract C3).",
+                properties: {
+                  type: {
+                    type: "string",
+                    const: "angelinaPoll",
+                  },
+                  slug: {
+                    type: "string",
+                    minLength: 1,
+                    maxLength: 64,
+                    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+                  },
+                },
+                required: ["type", "slug"],
+              },
+              {
+                type: "object",
                 properties: {
                   type: {
                     type: "string",
@@ -546,6 +564,7 @@ export const canonicalDocumentSchema = {
                         "tiktok",
                         "spotify",
                         "pullQuote",
+                        "angelinaPoll",
                       ],
                     },
                   },
@@ -1488,6 +1507,24 @@ export const canonicalDocumentSchema = {
               },
               {
                 type: "object",
+                description:
+                  "An Angelina poll embedded inline (gaulatti/giorgia#64, contract C3).",
+                properties: {
+                  type: {
+                    type: "string",
+                    const: "angelinaPoll",
+                  },
+                  slug: {
+                    type: "string",
+                    minLength: 1,
+                    maxLength: 64,
+                    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+                  },
+                },
+                required: ["type", "slug"],
+              },
+              {
+                type: "object",
                 properties: {
                   type: {
                     type: "string",
@@ -1527,6 +1564,7 @@ export const canonicalDocumentSchema = {
                         "tiktok",
                         "spotify",
                         "pullQuote",
+                        "angelinaPoll",
                       ],
                     },
                   },
