@@ -103,9 +103,7 @@ export function shuffleProgramSongSequence(
     ...sequence,
     mode: 'shuffle',
     items: anchoredItem ? [anchoredItem, ...shuffledItems] : shuffledItems,
-    // Unreachable: the index is within the items, so the `?? null` only satisfies the type.
-    /* v8 ignore next -- @preserve */
-    activeItemId: anchoredItem?.id ?? sequence.activeItemId ?? nextItems[0]?.id ?? null
+    activeItemId: anchoredItem?.id ?? sequence.activeItemId ?? nextItems[0].id
   };
 }
 
@@ -342,9 +340,7 @@ function getSelectedItem<TItem extends BaseSequenceItem>(
   }
 
   if (sequence.mode === 'manual') {
-    // Unreachable: the index is within the items, so the `?? null` only satisfies the type.
-    /* v8 ignore next -- @preserve */
-    return sequence.items[baseIndex] ?? null;
+    return sequence.items[baseIndex];
   }
 
   const startedAt = sequence.startedAt ?? nowMs;
@@ -357,10 +353,7 @@ function getSelectedItem<TItem extends BaseSequenceItem>(
   } else if (nextIndex >= sequence.items.length) {
     nextIndex = sequence.items.length - 1;
   }
-
-  // Unreachable: the index is within the items, so the `?? null` only satisfies the type.
-  /* v8 ignore next -- @preserve */
-  return sequence.items[nextIndex] ?? null;
+  return sequence.items[nextIndex];
 }
 
 function getSongItemPlaybackDurationMs(
@@ -378,6 +371,42 @@ function getSongItemPlaybackDurationMs(
   return null;
 }
 
+/**
+ * The song playing `remainingMs` into a walk that starts at `baseIndex` and goes round the playlist: each song of
+ * known length is walked past while the time left is at least its length, and the walk stops at the first song of
+ * unknown length. `baseIndex` when the walk finds no stop (lengths that are not numbers a clock can run on).
+ */
+export function songIndexAfter(durations: Array<number | null>, baseIndex: number, remainingMs: number): number {
+  let remaining = remainingMs;
+  for (let step = 0; step < durations.length; step += 1) {
+    const index = (baseIndex + step) % durations.length;
+    const durationMs = durations[index];
+    if (typeof durationMs !== 'number') {
+      return index;
+    }
+    if (remaining < durationMs) {
+      return index;
+    }
+    remaining -= durationMs;
+  }
+
+  return baseIndex;
+}
+
+/**
+ * The song playing `elapsedMs` into a looping playlist whose songs all have a length: the time is taken within one
+ * cycle. A cycle that does not last (no lengths, or lengths that add up to nothing) holds `baseIndex` instead of
+ * dividing by zero.
+ */
+export function songIndexInCycle(durations: Array<number | null>, baseIndex: number, elapsedMs: number): number {
+  const cycleDurationMs = durations.reduce<number>((sum, durationMs) => sum + (durationMs ?? 0), 0);
+  if (cycleDurationMs <= 0) {
+    return baseIndex;
+  }
+
+  return songIndexAfter(durations, baseIndex, elapsedMs % cycleDurationMs);
+}
+
 function getSelectedSongItem(
   sequence: ProgramSongSequence,
   nowMs: number
@@ -392,9 +421,7 @@ function getSelectedSongItem(
   }
 
   if (sequence.mode === 'manual') {
-    // Unreachable: the index is within the items, so the `?? null` only satisfies the type.
-    /* v8 ignore next -- @preserve */
-    return sequence.items[baseIndex] ?? null;
+    return sequence.items[baseIndex];
   }
 
   const startedAt = sequence.startedAt ?? nowMs;
@@ -403,60 +430,10 @@ function getSelectedSongItem(
 
   if (sequence.loop !== false) {
     const hasUnknownDuration = itemDurations.some((durationMs) => durationMs === null);
-    if (!hasUnknownDuration) {
-      // Unreachable: every length is known here, so the `?? 0` only satisfies the type.
-      /* v8 ignore next -- @preserve */
-      const cycleDurationMs = itemDurations.reduce<number>((sum, durationMs) => sum + (durationMs ?? 0), 0);
-      // Unreachable: this branch is entered only when every song has a known length, and each known length is at least 1 ms.
-      /* v8 ignore start -- @preserve */
-      if (cycleDurationMs <= 0) {
-        return sequence.items[baseIndex] ?? null;
-      }
-      /* v8 ignore stop -- @preserve */
-
-      let remainingMs = elapsedMs % cycleDurationMs;
-      for (let step = 0; step < sequence.items.length; step += 1) {
-        const index = (baseIndex + step) % sequence.items.length;
-        const itemDurationMs = itemDurations[index];
-        // Unreachable: this branch is entered only when every song has a known length, and each known length is at least 1 ms.
-        /* v8 ignore start -- @preserve */
-        if (typeof itemDurationMs !== 'number') {
-          return sequence.items[index] ?? null;
-        }
-        /* v8 ignore stop -- @preserve */
-        if (remainingMs < itemDurationMs) {
-          // Unreachable: the index is within the items, so the `?? null` only satisfies the type.
-          /* v8 ignore next -- @preserve */
-          return sequence.items[index] ?? null;
-        }
-        remainingMs -= itemDurationMs;
-      }
-
-      // Unreachable: this branch is entered only when every song has a known length, and each known length is at least 1 ms.
-      /* v8 ignore next -- @preserve */
-      return sequence.items[baseIndex] ?? null;
-    }
-
-    let remainingMs = elapsedMs;
-    for (let step = 0; step < sequence.items.length; step += 1) {
-      const index = (baseIndex + step) % sequence.items.length;
-      const itemDurationMs = itemDurations[index];
-      if (typeof itemDurationMs !== 'number') {
-        // Unreachable: the index is within the items, so the `?? null` only satisfies the type.
-        /* v8 ignore next -- @preserve */
-        return sequence.items[index] ?? null;
-      }
-      if (remainingMs < itemDurationMs) {
-        // Unreachable: the index is within the items, so the `?? null` only satisfies the type.
-        /* v8 ignore next -- @preserve */
-        return sequence.items[index] ?? null;
-      }
-      remainingMs -= itemDurationMs;
-    }
-
-    // Unreachable: the loop above returns for the first song of unknown length, and one exists in this branch.
-    /* v8 ignore next -- @preserve */
-    return sequence.items[baseIndex] ?? null;
+    const index = hasUnknownDuration
+      ? songIndexAfter(itemDurations, baseIndex, elapsedMs)
+      : songIndexInCycle(itemDurations, baseIndex, elapsedMs);
+    return sequence.items[index];
   }
 
   let index = baseIndex;
@@ -464,9 +441,7 @@ function getSelectedSongItem(
   while (index < sequence.items.length - 1) {
     const itemDurationMs = itemDurations[index];
     if (typeof itemDurationMs !== 'number') {
-      // Unreachable: the index is within the items, so the `?? null` only satisfies the type.
-      /* v8 ignore next -- @preserve */
-      return sequence.items[index] ?? null;
+      return sequence.items[index];
     }
     if (remainingMs < itemDurationMs) {
       break;
@@ -474,24 +449,18 @@ function getSelectedSongItem(
     remainingMs -= itemDurationMs;
     index += 1;
   }
-
-  // Unreachable: the index is within the items, so the `?? null` only satisfies the type.
-  /* v8 ignore next -- @preserve */
-  return sequence.items[index] ?? null;
+  return sequence.items[index];
 }
 
-function resolveTextSequenceRecursive(
+export function resolveTextSequenceRecursive(
   sequence: ProgramTextSequence,
   nowMs: number,
   depth: number,
   labels: string[]
 ): ProgramResolvedTextLeaf | null {
-  // Unreachable: sequences are normalized first, which stops at the same depth; the guard is kept for a resolver given a deeper one.
-  /* v8 ignore start -- @preserve */
   if (depth > MAX_DEPTH) {
     return null;
   }
-  /* v8 ignore stop -- @preserve */
 
   const selected = getSelectedItem(sequence, nowMs);
   if (!selected) {
@@ -510,18 +479,15 @@ function resolveTextSequenceRecursive(
   };
 }
 
-function resolveSongSequenceRecursive(
+export function resolveSongSequenceRecursive(
   sequence: ProgramSongSequence,
   nowMs: number,
   depth: number,
   labels: string[]
 ): ProgramResolvedSongLeaf | null {
-  // Unreachable: sequences are normalized first, which stops at the same depth; the guard is kept for a resolver given a deeper one.
-  /* v8 ignore start -- @preserve */
   if (depth > MAX_DEPTH) {
     return null;
   }
-  /* v8 ignore stop -- @preserve */
 
   const selected = getSelectedSongItem(sequence, nowMs);
   if (!selected) {

@@ -11,6 +11,7 @@ import {
   normalizeModoItalianoBracketMatches,
   normalizeModoItalianoBracketSongPoolIds,
   normalizeModoItalianoBracketStartRound,
+  placeDrawnModoItalianoBracketSongs,
   type ModoItalianoBracketMatch,
 } from './bracketModel.js';
 
@@ -212,4 +213,22 @@ it('leaves the bracket as it is for a song that is unusable, already in it, or h
   const unchanged = fillNextModoItalianoBracketOpeningSlot(full, 'roundOf16', 500);
   expect(unchanged.every((entry, index) => entry.songAId === full[index].songAId || entry.id > 8)).toBe(true);
   expect(unchanged.flatMap((entry) => [entry.songAId, entry.songBId])).not.toContain(500);
+});
+
+it('places each drawn song into the empty slot of its position, and leaves out one with no slot', () => {
+  const matches = createDefaultModoItalianoBracketMatches();
+  placeDrawnModoItalianoBracketSongs(
+    matches,
+    [
+      { matchId: 1, field: 'songAId' },
+      { matchId: 2, field: 'songBId' },
+    ],
+    [11, 12, 13],
+  );
+  expect(matches[0]).toMatchObject({ songAId: 11 });
+  expect(matches[1]).toMatchObject({ songBId: 12 });
+  expect(matches.flatMap((entry) => [entry.songAId, entry.songBId])).not.toContain(13);
+  const untouched = createDefaultModoItalianoBracketMatches();
+  placeDrawnModoItalianoBracketSongs(untouched, [], [5]);
+  expect(untouched).toEqual(createDefaultModoItalianoBracketMatches());
 });
