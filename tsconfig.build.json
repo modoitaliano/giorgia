@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": { "rootDir": "src" },
-  "exclude": ["dist", "scripts", "node_modules", "stories", "src/**/*.test.ts", "src/**/*.test.tsx", "src/scenes/vitest.setup.ts"]
+  "exclude": ["dist", "scripts", "node_modules", "stories", "src/**/*.test.ts", "src/**/*.test.tsx", "test-setup"]
 }
