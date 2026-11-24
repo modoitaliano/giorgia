@@ -9,9 +9,14 @@ import {
   normalizeProgramSongSequence,
   normalizeProgramTextSequence,
   resolveProgramSongLeaf,
+  resolveSongSequenceRecursive,
+  resolveTextSequenceRecursive,
   songIdsInProgramSongSequence,
+  songIndexAfter,
+  songIndexInCycle,
   type ProgramSongSequence,
   type ProgramSongSequenceItem,
+  type ProgramTextSequence,
 } from './programSequence.js';
 
 // gaulatti/giorgia#74: how a sequence is made, how long a song plays, and how bad input is read.
@@ -175,5 +180,53 @@ describe('reading bad input', () => {
       expect(normalizeProgramTextSequence(bad)).toBeNull();
       expect(normalizeProgramSongSequence(bad)).toBeNull();
     }
+  });
+});
+
+// The walk over song lengths, called directly with lengths a playlist cannot produce, and the resolvers with a
+// tree deeper than the normalizer lets through: the guards that keep a stored or hand-built value from freezing
+// the renderer.
+describe('guards against data a page does not produce', () => {
+  it('walks past known lengths and stops at an unknown one', () => {
+    expect(songIndexAfter([1000, 2000, null], 0, 500)).toBe(0);
+    expect(songIndexAfter([1000, 2000, null], 0, 1500)).toBe(1);
+    expect(songIndexAfter([1000, 2000, null], 0, 99999)).toBe(2);
+    expect(songIndexAfter([1000, 2000, null], 1, 2500)).toBe(2);
+  });
+
+  it('holds the starting song when the walk finds no stop', () => {
+    expect(songIndexAfter([5, 5], 1, 100)).toBe(1);
+    expect(songIndexAfter([Number.NaN, Number.NaN], 0, 10)).toBe(0);
+    expect(songIndexAfter([], 0, 10)).toBe(0);
+  });
+
+  it('takes the time within one cycle', () => {
+    expect(songIndexInCycle([1000, 1000], 0, 2500)).toBe(0);
+    expect(songIndexInCycle([1000, 1000], 0, 1500)).toBe(1);
+    expect(songIndexInCycle([1000, 1000], 1, 500)).toBe(1);
+  });
+
+  it('holds the starting song when the lengths add up to nothing, instead of dividing by zero', () => {
+    expect(songIndexInCycle([0, 0], 1, 12345)).toBe(1);
+    expect(songIndexInCycle([null, null], 0, 12345)).toBe(0);
+    expect(songIndexInCycle([], 0, 5)).toBe(0);
+    expect(songIndexInCycle([-5, 5], 1, 3)).toBe(1);
+  });
+
+  it('resolves nothing from a text or song tree deeper than the normalizer allows', () => {
+    const text: ProgramTextSequence = {
+      mode: 'manual',
+      activeItemId: 'a',
+      items: [{ id: 'a', kind: 'preset', text: 'deep' }],
+    };
+    const song: ProgramSongSequence = {
+      mode: 'manual',
+      activeItemId: 'a',
+      items: [{ id: 'a', kind: 'preset', artist: 'A', title: 'T', coverUrl: '' }],
+    };
+    expect(resolveTextSequenceRecursive(text, 0, 8, [])).toMatchObject({ text: 'deep' });
+    expect(resolveTextSequenceRecursive(text, 0, 9, [])).toBeNull();
+    expect(resolveSongSequenceRecursive(song, 0, 8, [])).toMatchObject({ title: 'T' });
+    expect(resolveSongSequenceRecursive(song, 0, 9, [])).toBeNull();
   });
 });

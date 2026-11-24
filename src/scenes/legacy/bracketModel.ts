@@ -134,6 +134,32 @@ function seededShuffle(songIds: number[], seed: number): number[] {
   return shuffled;
 }
 
+export interface ModoItalianoBracketOpeningSlot {
+  matchId: number;
+  field: 'songAId' | 'songBId';
+}
+
+/**
+ * Puts each drawn song into the empty slot of the same position, in `matches`. A draw places one song into the
+ * first empty slot; a song with no slot left to take it is left out rather than written past the bracket.
+ */
+export function placeDrawnModoItalianoBracketSongs(
+  matches: ModoItalianoBracketMatch[],
+  emptySlots: ModoItalianoBracketOpeningSlot[],
+  drawnSongIds: number[]
+): void {
+  drawnSongIds.forEach((songId, index) => {
+    const slot = emptySlots[index];
+    if (!slot) {
+      return;
+    }
+    matches[slot.matchId - 1] = {
+      ...matches[slot.matchId - 1],
+      [slot.field]: songId
+    };
+  });
+}
+
 export function drawModoItalianoBracketOpeningSongs(
   matches: ModoItalianoBracketMatch[],
   startRound: unknown,
@@ -162,20 +188,7 @@ export function drawModoItalianoBracketOpeningSongs(
   );
   const drawnSongIds = availableSongIds.slice(0, emptySlots.length > 0 ? 1 : 0);
 
-  drawnSongIds.forEach((songId, index) => {
-    const slot = emptySlots[index];
-    // At most one song is drawn and only when there is an empty slot, so the slot is always there: the guard is
-    // kept for a change to how many songs are drawn.
-    /* v8 ignore start -- @preserve */
-    if (!slot) {
-      return;
-    }
-    /* v8 ignore stop -- @preserve */
-    nextMatches[slot.matchId - 1] = {
-      ...nextMatches[slot.matchId - 1],
-      [slot.field]: songId
-    };
-  });
+  placeDrawnModoItalianoBracketSongs(nextMatches, emptySlots, drawnSongIds);
 
   return {
     matches: applyModoItalianoBracketAdvancement(nextMatches, normalizedStartRound),

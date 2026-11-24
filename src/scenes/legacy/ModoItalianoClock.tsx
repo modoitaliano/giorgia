@@ -509,9 +509,7 @@ export const ModoItalianoClock: React.FC<ModoItalianoClockProps> = ({
       : clockBoxMotion
         ? // The 'in' motion is set together with the song card today (setSongUiVisible(true) in the same effect),
           // so the 'In' arm is not reached from here; it stays as the safe animation should that ever change.
-          /* v8 ignore start -- @preserve */
           `modoItalianoClockSongBox${clockBoxMotion === 'in' ? 'In' : 'Out'} ${SONG_BOX_MOTION_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1) 1`
-          /* v8 ignore stop -- @preserve */
         : undefined
   };
   const clampedSongProgress = Math.max(0, Math.min(1, audioBusSong ? audioBusSnapshot.progress : 0));
