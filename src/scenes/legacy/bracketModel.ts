@@ -164,9 +164,13 @@ export function drawModoItalianoBracketOpeningSongs(
 
   drawnSongIds.forEach((songId, index) => {
     const slot = emptySlots[index];
+    // At most one song is drawn and only when there is an empty slot, so the slot is always there: the guard is
+    // kept for a change to how many songs are drawn.
+    /* v8 ignore start -- @preserve */
     if (!slot) {
       return;
     }
+    /* v8 ignore stop -- @preserve */
     nextMatches[slot.matchId - 1] = {
       ...nextMatches[slot.matchId - 1],
       [slot.field]: songId

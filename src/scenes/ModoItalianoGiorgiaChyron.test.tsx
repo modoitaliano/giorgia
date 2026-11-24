@@ -49,3 +49,55 @@ it('drops the call-to-action shadow for a chroma-key scene', () => {
   const view = render(<ModoItalianoGiorgiaChyron keySafe textSequence={manual('Ciao')} ctaSequence={manual('In diretta')} />);
   expect(view.getByText('In diretta').style.textShadow).toBe('none');
 });
+
+// gaulatti/giorgia#74: the marquee, the wrapped headline and the hidden and empty cases.
+
+const manual = (text: string, extra: Record<string, unknown> = {}) => ({
+  mode: 'manual',
+  items: [{ id: 'a', text, ...extra }],
+  activeItemId: 'a',
+});
+
+it('scrolls a marquee headline as two identical halves', () => {
+  const view = render(<ModoItalianoGiorgiaChyron textSequence={manual('Ultima ora', { useMarquee: true })} />);
+  expect(headline(view.container)).toBeNull();
+  const marquee = view.container.querySelector('.modoitaliano-giorgia-chyron-marquee')!;
+  expect(marquee.textContent).toBe('ULTIMA ORAULTIMA ORA');
+  expect(marquee.children[1].getAttribute('aria-hidden')).toBe('true');
+});
+
+it('wraps a headline too long for one line at the smallest size instead of cutting it', () => {
+  const long = 'Il governo approva la riforma della giustizia dopo una lunga notte di trattative in parlamento';
+  const view = render(<ModoItalianoGiorgiaChyron textSequence={manual(long)} />);
+  const style = headline(view.container)!.style;
+  expect(headline(view.container)!.textContent).toBe(long.toUpperCase());
+  expect(style.overflowWrap).toBe('anywhere');
+  expect(style.whiteSpace).not.toBe('nowrap');
+});
+
+it('keeps a short headline on one line', () => {
+  const view = render(<ModoItalianoGiorgiaChyron textSequence={manual('Ciao')} />);
+  expect(headline(view.container)!.style.whiteSpace).toBe('nowrap');
+});
+
+it('keeps its call-to-action shadow when it is not chroma-keyed', () => {
+  const view = render(<ModoItalianoGiorgiaChyron textSequence={manual('Ciao')} ctaSequence={manual('In diretta')} />);
+  expect(view.getByText('In diretta').style.textShadow).not.toBe('none');
+  expect(headline(view.container)!.style.textShadow).not.toBe('none');
+});
+
+it('shows no call to action when the sequence has none', () => {
+  const view = render(<ModoItalianoGiorgiaChyron textSequence={manual('Ciao')} />);
+  expect(view.queryByText('In diretta')).toBeNull();
+});
+
+it('drops the headline shadow for a chroma-key scene', () => {
+  const view = render(<ModoItalianoGiorgiaChyron keySafe textSequence={manual('Ciao')} />);
+  expect(headline(view.container)!.style.textShadow).toBe('none');
+});
+
+it('shows nothing while hidden, or when the headline is empty', () => {
+  expect(render(<ModoItalianoGiorgiaChyron show={false} textSequence={manual('Ciao')} />).container.innerHTML).toBe('');
+  cleanup();
+  expect(render(<ModoItalianoGiorgiaChyron textSequence={manual('   ')} />).container.innerHTML).toBe('');
+});
