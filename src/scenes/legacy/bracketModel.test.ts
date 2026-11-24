@@ -62,7 +62,7 @@ it('takes a draw duration of at least one second, or the fallback', () => {
   expect(normalizeModoItalianoBracketDrawDurationSeconds(0)).toBe(5);
   expect(normalizeModoItalianoBracketDrawDurationSeconds('x')).toBe(5);
   expect(normalizeModoItalianoBracketDrawDurationSeconds(undefined, 9)).toBe(9);
-  expect(normalizeModoItalianoBracketDrawDurationSeconds(null, 'x')).toBe(5);
+  expect(normalizeModoItalianoBracketDrawDurationSeconds(null, 'x' as never)).toBe(5);
 });
 
 it('reads a draw command, clamping what it can and refusing what it cannot', () => {
@@ -195,7 +195,7 @@ it('puts a chosen song into the first empty opening slot', () => {
   expect(one[0].songAId).toBe(7);
   const two = fillNextModoItalianoBracketOpeningSlot(one, 'roundOf16', '8');
   expect(two[0]).toMatchObject({ songAId: 7, songBId: 8 });
-  const quarter = fillNextModoItalianoBracketOpeningSlot(undefined, 'quarterfinals', 3);
+  const quarter = fillNextModoItalianoBracketOpeningSlot(undefined as never, 'quarterfinals', 3);
   expect(quarter[8].songAId).toBe(3);
 });
 
