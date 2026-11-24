@@ -371,3 +371,26 @@ it('cancels the song motion in flight when it unmounts', () => {
   leaving.unmount();
   expect(vi.getTimerCount()).toBe(0);
 });
+
+// gaulatti/giorgia#74: no audio bus, and the inline layout with no song card.
+it('runs without a program audio bus', () => {
+  const view = render(<ModoItalianoClock programId='p' songArtist='Mina' />);
+  step(400);
+  expect(screen.getByText('Mina')).toBeInTheDocument();
+  expect(wrapper(view.container)).toBeTruthy();
+});
+
+it('sizes the inline clock to its content while no song card is up', () => {
+  const view = render(<ModoItalianoClock programId='p' audioBus={audioBusSource} inline />);
+  expect(wrapper(view.container).style.width).toBe('fit-content');
+});
+
+it('drops the live track when the audio bus goes away', () => {
+  const view = render(<ModoItalianoClock programId='p' audioBus={audioBusSource} songArtist='Mina' />);
+  act(() => bus.publish(live('t1', { artist: 'Live artist', title: 'Live title' })));
+  step(400);
+  expect(screen.getByText('Live artist')).toBeInTheDocument();
+  view.rerender(<ModoItalianoClock programId='p' songArtist='Mina' />);
+  step(400);
+  expect(screen.queryByText('Live artist')).toBeNull();
+});

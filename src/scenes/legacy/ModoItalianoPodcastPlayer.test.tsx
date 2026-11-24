@@ -312,3 +312,11 @@ it('stops when hidden and builds a fresh audio graph for the element shown again
   const visualizer = container.querySelectorAll('canvas')[1];
   expect(contexts.get(visualizer)!.calls.filter((call) => call === 'fill').length).toBeGreaterThan(1);
 });
+
+// gaulatti/giorgia#74: a browser that gives back no animation-frame handle leaves nothing to cancel.
+it('cancels no animation frame when the browser returned no handle for it', () => {
+  vi.stubGlobal('requestAnimationFrame', () => null);
+  const { unmount } = render(<ModoItalianoPodcastPlayer audioUrl='/episode.mp3' />);
+  unmount();
+  expect(cancelled).toEqual([]);
+});

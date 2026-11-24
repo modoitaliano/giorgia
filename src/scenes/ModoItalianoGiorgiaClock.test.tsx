@@ -193,3 +193,105 @@ it('puts the header on its own navy plate for a chroma-key scene', () => {
   expect(header.querySelector('span')!.style.textShadow).toBe('none');
   expect((view.container.querySelector('.modoitaliano-giorgia-clock-hero') as HTMLElement).style.textShadow).toBe('none');
 });
+
+// gaulatti/giorgia#74: the layouts and gates the tests above leave out.
+
+const track = (token: string) => ({
+  ...bus.idle,
+  track: { token, audioUrl: `https://media.example.test/${token}.mp3`, artist: 'Live artist', title: 'Live title' },
+  isPlaying: true,
+});
+const onAir = (container: HTMLElement) => container.querySelector('.modoitaliano-giorgia-clock-on-air');
+const marks = (container: HTMLElement) => container.querySelectorAll('svg[aria-label="ModoItaliano"]').length;
+
+it('runs without a program audio bus', () => {
+  const view = render(<ModoItalianoGiorgiaClock programId='p' playingSong songArtist='Mina' songTitle='Uno' />);
+  step(500);
+  expect(headerText(view.container)).toBe('16:04 IT');
+  expect(onAir(view.container)).not.toBeNull();
+});
+
+it('ignores the live track while the program says no song is playing', () => {
+  const view = render(<ModoItalianoGiorgiaClock audioBus={source} programId='p' playingSong={false} />);
+  act(() => bus.publish(track('t1')));
+  step(500);
+  expect(onAir(view.container)).toBeNull();
+});
+
+it('renders nothing with the clocks, the bell and the logo all off', () => {
+  const view = render(
+    <ModoItalianoGiorgiaClock audioBus={source} programId='p' showWorldClocks={false} showLogo={false} showBellIcon={false} />,
+  );
+  expect(view.container.innerHTML).toBe('');
+});
+
+it('shows the clock without the logo, and the logo without the clock', () => {
+  const both = render(<ModoItalianoGiorgiaClock audioBus={source} programId='p' />);
+  expect(marks(both.container)).toBe(1);
+  expect(headerText(both.container)).toBe('16:04 IT');
+  cleanup();
+  const clockOnly = render(<ModoItalianoGiorgiaClock audioBus={source} programId='p' showLogo={false} />);
+  expect(marks(clockOnly.container)).toBe(0);
+  expect(headerText(clockOnly.container)).toBe('16:04 IT');
+  cleanup();
+  const logoOnly = render(<ModoItalianoGiorgiaClock audioBus={source} programId='p' showWorldClocks={false} />);
+  expect(marks(logoOnly.container)).toBe(1);
+  expect(headerText(logoOnly.container)).toBe('');
+});
+
+it('lays the on-air block in the flow when inline, and in the corner otherwise', () => {
+  const song = { playingSong: true, songArtist: 'Mina', songTitle: 'Uno' } as const;
+  const inline = render(<ModoItalianoGiorgiaClock audioBus={source} programId='p' inline {...song} />);
+  step(500);
+  expect((onAir(inline.container) as HTMLElement).style.position).toBe('relative');
+  cleanup();
+  const corner = render(<ModoItalianoGiorgiaClock audioBus={source} programId='p' {...song} />);
+  step(500);
+  expect((onAir(corner.container) as HTMLElement).style.position).toBe('absolute');
+});
+
+it('wraps a long artist and a long title instead of shrinking them past their floor', () => {
+  const view = render(
+    <ModoItalianoGiorgiaClock
+      audioBus={source}
+      programId='p'
+      playingSong
+      songArtist={'Orchestra Sinfonica Nazionale della Radiotelevisione'}
+      songTitle={'Concerto per pianoforte e orchestra in la minore, opera 54, primo movimento'}
+    />,
+  );
+  step(500);
+  const heroStyle = (view.container.querySelector('.modoitaliano-giorgia-clock-hero') as HTMLElement).style;
+  expect(heroStyle.fontSize).toBe('54px');
+  expect(heroStyle.overflowWrap).toBe('anywhere');
+  expect(heroStyle.whiteSpace).not.toBe('nowrap');
+  const support = Array.from(view.container.querySelectorAll<HTMLElement>('.modoitaliano-giorgia-clock-on-air div')).find(
+    (node) => node.textContent === 'CONCERTO PER PIANOFORTE E ORCHESTRA IN LA MINORE, OPERA 54, PRIMO MOVIMENTO',
+  )!;
+  expect(support.style.overflowWrap).toBe('anywhere');
+  expect(support.style.whiteSpace).not.toBe('nowrap');
+});
+
+it('keeps a short artist and title on one line', () => {
+  const view = render(<ModoItalianoGiorgiaClock audioBus={source} programId='p' playingSong songArtist='Mina' songTitle='Uno' />);
+  step(500);
+  expect((view.container.querySelector('.modoitaliano-giorgia-clock-hero') as HTMLElement).style.whiteSpace).toBe('nowrap');
+});
+
+it('hides the playback progress when the program turns it off', () => {
+  const song = { playingSong: true, songArtist: 'Mina', songTitle: 'Uno' } as const;
+  const on = render(<ModoItalianoGiorgiaClock audioBus={source} programId='p' {...song} />);
+  step(500);
+  expect(on.container.querySelector('.modoitaliano-giorgia-clock-progress')).not.toBeNull();
+  cleanup();
+  const off = render(<ModoItalianoGiorgiaClock audioBus={source} programId='p' showPlaybackProgress={false} {...song} />);
+  step(500);
+  expect(off.container.querySelector('.modoitaliano-giorgia-clock-progress')).toBeNull();
+});
+
+it('uses the zone time when the override cannot be read', () => {
+  const view = render(
+    <ModoItalianoGiorgiaClock audioBus={source} programId='p' timeOverride={{ startTime: 'noon', startedAt: '2026-11-17T15:02:00Z' }} />,
+  );
+  expect(headerText(view.container)).toBe('16:04 IT');
+});
