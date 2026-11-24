@@ -58,6 +58,8 @@ export function ModoItalianoGiorgiaPodcastPlayer({
 
   useEffect(() => {
     const audio = audioRef.current;
+    // Unreachable: the <audio> element is always rendered (it stays mounted across show/hide), so the ref is set before any effect runs.
+    /* v8 ignore next -- @preserve */
     if (!audio) return;
     audio.volume = Number.isFinite(masterGain) ? Math.max(0, Math.min(1, masterGain)) : 0;
     audio.muted = masterGain <= 0.0001;
@@ -65,6 +67,8 @@ export function ModoItalianoGiorgiaPodcastPlayer({
 
   useEffect(() => {
     const audio = audioRef.current;
+    // Unreachable: the <audio> element is always rendered (it stays mounted across show/hide), so the ref is set before any effect runs.
+    /* v8 ignore next -- @preserve */
     if (!audio) return;
     audio.pause();
     setCurrentTime(0);
@@ -148,7 +152,11 @@ export function ModoItalianoGiorgiaPodcastPlayer({
             <input aria-label='Episode progress' type='range' min={0} max={duration || 0} step={0.1}
               value={Math.min(currentTime, duration)} disabled={!duration}
               onFocus={() => setSeekingFocused(true)} onBlur={() => setSeekingFocused(false)}
-              onChange={(event) => { if (audioRef.current) audioRef.current.currentTime = Number(event.target.value); }}
+              onChange={(event) => {
+                // Unreachable: the slider sits beside the always-mounted <audio>, so the ref is set whenever it can change.
+                /* v8 ignore next -- @preserve */
+                if (audioRef.current) audioRef.current.currentTime = Number(event.target.value);
+              }}
               style={{ position: 'relative', width: '100%', height: '20px', margin: 0, opacity: 0, cursor: 'pointer' }} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '30px', fontVariantNumeric: 'tabular-nums', color: 'rgba(255,255,255,0.7)' }}>

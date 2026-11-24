@@ -181,3 +181,31 @@ it('reports a media error raised while starting, and ignores a ready event witho
   fireEvent.canPlay(audio);
   expect(audio.play).not.toHaveBeenCalled();
 });
+
+// gaulatti/giorgia#74: the blocked-autoplay button and a clock that reports no time.
+
+it('starts playback from the button after the browser blocked autoplay', async () => {
+  const play = vi.mocked(HTMLMediaElement.prototype.play);
+  play.mockRejectedValueOnce(new Error('blocked'));
+  const { container } = render(<ModoItalianoGiorgiaPodcastPlayer audioUrl='/episode.mp3' />);
+  fireEvent.canPlay(container.querySelector('audio')!);
+  const button = await screen.findByRole('button', { name: 'Start playback' });
+  play.mockResolvedValue();
+  fireEvent.click(button);
+  await waitFor(() => expect(screen.queryByRole('button', { name: 'Start playback' })).not.toBeInTheDocument());
+  expect(play).toHaveBeenCalledTimes(2);
+});
+
+it('shows 0:00 for a playback time the media element cannot report', () => {
+  const { container } = render(<ModoItalianoGiorgiaPodcastPlayer audioUrl='/episode.mp3' />);
+  const audio = container.querySelector('audio')!;
+  Object.defineProperty(audio, 'currentTime', { configurable: true, value: Number.NaN });
+  fireEvent.timeUpdate(audio);
+  expect(screen.getAllByText('0:00')).toHaveLength(2);
+});
+
+it('does not start playback when the audio is ready while the player is hidden', () => {
+  const { container } = render(<ModoItalianoGiorgiaPodcastPlayer audioUrl='/episode.mp3' show={false} />);
+  fireEvent.canPlay(container.querySelector('audio')!);
+  expect(HTMLMediaElement.prototype.play).not.toHaveBeenCalled();
+});
