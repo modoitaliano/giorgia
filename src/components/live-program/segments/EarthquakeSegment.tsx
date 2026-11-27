@@ -43,6 +43,8 @@ function formatTimeAgo(timestamp: number, language: SupportedLanguage = 'es'): s
   const diffDays = Math.floor(diffHours / 24);
 
   if (diffDays > 0) {
+    // Defensive: the feed is filtered to the last 24 hours, so a quake is never a day or more old here.
+    /* v8 ignore next */
     return diffDays === 1 ? t('earthquakes.timeAgo.dayAgo', language) : t('earthquakes.timeAgo.daysAgo', language, { count: diffDays });
   }
   if (diffHours > 0) {
@@ -167,9 +169,12 @@ function EarthquakeSlide({ earthquakes, progress, language }: { earthquakes: Ear
           {earthquakes.map((quake, index) => {
             const baseColor = getMagnitudeColor(quake.magnitude);
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(baseColor);
+            // Defensive: getMagnitudeColor always returns a hex colour, so the fallback colour is never used.
+            /* v8 ignore start */
             const rgb = result
               ? { r: Number.parseInt(result[1], 16), g: Number.parseInt(result[2], 16), b: Number.parseInt(result[3], 16) }
               : { r: 239, g: 68, b: 68 };
+            /* v8 ignore stop */
 
             let magnitudeIntensity;
             if (quake.magnitude < 5.0) {

@@ -775,6 +775,8 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
           songAudioRef.current = null;
         }
       } else if (data.type === 'program_reload') {
+        // Defensive: this message is handled in a browser, where window always exists.
+        /* v8 ignore next */
         if (typeof window === 'undefined') return;
         const reloadWithCacheBust = () => {
           const nextUrl = new URL(window.location.href);
@@ -914,14 +916,15 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
     onPlaylistLoop: handlePlaylistLoop
   });
 
+  // The audio element renders only once the data has loaded, so the load waits for it.
   useEffect(() => {
-    if (!audioRef.current || audioInitialized.current) {
+    if (!dataLoaded || !audioRef.current || audioInitialized.current) {
       return;
     }
 
     audioRef.current.load();
     audioInitialized.current = true;
-  }, []);
+  }, [dataLoaded]);
 
   useEffect(() => {
     if (!config.audioCueEnabled) {
