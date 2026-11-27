@@ -39,8 +39,6 @@ function ScrollingTimeline({ updates, language }: { updates: LiveEventUpdate[]; 
     }, 5000);
 
     return () => {
-      // Defensive: the interval is set on every path that registers this cleanup.
-      /* v8 ignore next */
       if (cycleRef.current) clearInterval(cycleRef.current);
     };
   }, [updates.length]);

@@ -775,8 +775,6 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
           songAudioRef.current = null;
         }
       } else if (data.type === 'program_reload') {
-        // Defensive: this message is handled in a browser, where window always exists.
-        /* v8 ignore next */
         if (typeof window === 'undefined') return;
         const reloadWithCacheBust = () => {
           const nextUrl = new URL(window.location.href);

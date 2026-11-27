@@ -54,8 +54,6 @@ export function useSSE({ url, onMessage, reconnectInterval = 3000, enabled = tru
     };
 
     const connect = async () => {
-      // Defensive: connect runs only from the effect and the reconnect timer, both cancelled on dispose.
-      /* v8 ignore next */
       if (disposed) return;
 
       try {
