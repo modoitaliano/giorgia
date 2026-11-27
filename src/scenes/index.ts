@@ -12,6 +12,9 @@ export {
   useElementHeight,
   useElementWidth,
 } from './giorgiaBroadcast.js';
+export { ModoItalianoGiorgiaBracket } from './ModoItalianoGiorgiaBracket.js';
+export type { ModoItalianoBracketProps, SongCatalogItem } from './ModoItalianoGiorgiaBracket.js';
+export * from './bracketModel.js';
 export { ModoItalianoGiorgiaPodcastPlayer } from './ModoItalianoGiorgiaPodcastPlayer.js';
 export type { ModoItalianoPodcastPlayerProps } from './ModoItalianoGiorgiaPodcastPlayer.js';
 export { ModoItalianoGiorgiaClock } from './ModoItalianoGiorgiaClock.js';

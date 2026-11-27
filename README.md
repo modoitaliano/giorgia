@@ -42,11 +42,30 @@ TypeScript declarations and declarative runtime validation use that same artifac
 - `@modoitaliano/giorgia/schemas/search-manifest.schema.json` and
   `@modoitaliano/giorgia/schemas/search-index.schema.json` -> static-search resource contract
 - `@modoitaliano/giorgia/partial-deps.json` -> partial-to-layout dependency map
+- `@modoitaliano/giorgia/scenes` -> the program scene renderers Alcántara places:
+  `ModoItalianoGiorgiaChyron`, `ModoItalianoGiorgiaClock`,
+  `ModoItalianoGiorgiaBracket` (with the `bracketModel` helpers) and
+  `ModoItalianoGiorgiaPodcastPlayer`, plus the shared `GIORGIA` tokens
+- `@modoitaliano/giorgia/scenes/legacy` -> only the legacy
+  `ModoItalianoPodcastPlayer`; the legacy chyron and clock are retired for the
+  Giorgia ones
 
 The root module retains local renderer exports for Storybook and compatibility,
 but those exports are not part of Cronkite's opt-in path. See
 [docs/cronkite-compatibility.md](docs/cronkite-compatibility.md) for ownership,
 validation, search, and asset-rendering details.
+
+### Bracket scene
+
+`ModoItalianoGiorgiaBracket` draws the eight-song bracket in the Giorgia look:
+square navy plates with hairlines, condensed type, the magenta rule on each
+winner and on the draw, voting and final panels, and no rounded or gradient
+styling. It keeps the props the stored scenes carry (`title`, `show`,
+`startRound`, `matches`, `drawCommand`, `voters`, `matchVotes`,
+`activeVotingMatchId`, `votingWinnerId`, `votingResultStartedAt` and
+`loadSongCatalog`), so a scene saved for the former legacy bracket renders
+unchanged. Covers and song names come from `loadSongCatalog`; nothing else
+reaches the network.
 
 ### Artist bumper
 

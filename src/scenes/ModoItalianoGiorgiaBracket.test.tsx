@@ -1,6 +1,6 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ModoItalianoBracket } from "./ModoItalianoBracket.js";
+import { ModoItalianoGiorgiaBracket as ModoItalianoBracket } from "./ModoItalianoGiorgiaBracket.js";
 
 const songsMock = vi.hoisted(() => ({ fetchSongCatalog: vi.fn() }));
 
@@ -36,7 +36,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("ModoItalianoBracket", () => {
+describe("ModoItalianoGiorgiaBracket", () => {
   it("renders nothing when hidden", async () => {
     const { container } = await mount({ show: false });
     expect(container).toBeEmptyDOMElement();
@@ -46,16 +46,16 @@ describe("ModoItalianoBracket", () => {
     const { container } = await mount();
     expect(screen.getAllByText("TBD").length).toBeGreaterThan(8);
     expect(screen.getByText("Gran Final")).toBeInTheDocument();
-    expect(screen.getByText("CAMPEÓN").parentElement).toHaveClass("opacity-30");
+    expect(container.querySelector("[data-giorgia-bracket-champion]")).toHaveAttribute("data-giorgia-bracket-champion", "open");
     expect(container.querySelectorAll("img")).toHaveLength(0);
   });
 
   it("starts at the quarterfinals without the first-round columns", async () => {
     const full = await mount({ startRound: "roundOf16" });
-    const fullCount = full.container.querySelectorAll(".flex-col.justify-around").length;
+    const fullCount = full.container.querySelectorAll("[data-giorgia-bracket-column]").length;
     cleanup();
     const qf = await mount({ startRound: "quarterfinals" });
-    expect(qf.container.querySelectorAll(".flex-col.justify-around").length).toBeLessThan(fullCount);
+    expect(qf.container.querySelectorAll("[data-giorgia-bracket-column]").length).toBeLessThan(fullCount);
   });
 
   it("shows songs with covers, marks winners, dims losers and crowns the champion", async () => {
@@ -73,10 +73,12 @@ describe("ModoItalianoBracket", () => {
     });
     expect(screen.getAllByText("Artist 1").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Title 5").length).toBeGreaterThan(0);
-    expect(container.querySelectorAll(".bg-red-600").length).toBe(6);
-    expect(container.querySelectorAll(".bg-\\[\\#e2a842\\]").length).toBe(1);
-    expect(container.querySelector('img[class*="border-[#e2a842]"]')).toHaveAttribute("src", "http://c/5.jpg");
-    expect(screen.getByText("CAMPEÓN").parentElement).not.toHaveClass("opacity-30");
+    // Six winners in the quarterfinals and semifinals, plus the final's: each hangs from the magenta rule.
+    expect(container.querySelectorAll('[data-giorgia-bracket-slot="winner"]').length).toBe(7);
+    expect(container.querySelectorAll('[data-giorgia-bracket-slot="winner"] [data-giorgia-rule]').length).toBe(7);
+    expect(container.querySelectorAll('[data-giorgia-bracket-slot="loser"]').length).toBe(7);
+    expect(container.querySelector("[data-giorgia-bracket-champion] img")).toHaveAttribute("src", "http://c/5.jpg");
+    expect(container.querySelector("[data-giorgia-bracket-champion]")).toHaveAttribute("data-giorgia-bracket-champion", "crowned");
   });
 
   it("crowns a champion without a cover without drawing an image", async () => {
@@ -92,8 +94,8 @@ describe("ModoItalianoBracket", () => {
         15: { winnerId: 3 },
       }),
     });
-    expect(container.querySelector('img[class*="border-[#e2a842]"]')).toBeNull();
-    expect(screen.getByText("CAMPEÓN").parentElement).not.toHaveClass("opacity-30");
+    expect(container.querySelector("[data-giorgia-bracket-champion] img")).toBeNull();
+    expect(container.querySelector("[data-giorgia-bracket-champion]")).toHaveAttribute("data-giorgia-bracket-champion", "crowned");
   });
 
   it("logs a failed catalogue fetch and still renders", async () => {
@@ -111,9 +113,9 @@ describe("draw overlay", () => {
   it("cycles through the drawn songs, advances progress and disappears when it ends", async () => {
     const { container } = await mount({ drawCommand });
     expect(screen.getByText("SORTEO")).toBeInTheDocument();
-    expect(container.querySelector(".modoitaliano-bracket-draw-cover")).not.toBeNull();
+    expect(container.querySelector("[data-giorgia-bracket-draw-cover]")).not.toBeNull();
     await act(async () => void vi.advanceTimersByTime(2500));
-    const bar = container.querySelector<HTMLElement>(".modoitaliano-bracket-draw-progress")!;
+    const bar = container.querySelector<HTMLElement>("[data-giorgia-bracket-draw-progress]")!;
     expect(parseFloat(bar.style.width)).toBeGreaterThan(40);
     await act(async () => void vi.advanceTimersByTime(3000));
     expect(screen.queryByText("SORTEO")).toBeNull();
@@ -128,7 +130,7 @@ describe("draw overlay", () => {
   it("shows a drawn song without a cover", async () => {
     const { container } = await mount({ drawCommand: { ...drawCommand, songIds: [3] } });
     expect(screen.getByText("Artist 3")).toBeInTheDocument();
-    expect(container.querySelector(".modoitaliano-bracket-draw-cover")).toBeNull();
+    expect(container.querySelector("[data-giorgia-bracket-draw-cover]")).toBeNull();
   });
 
   it("restarts for a new draw id and stops when the command is removed", async () => {
@@ -151,7 +153,7 @@ describe("voting overlay", () => {
     { id: "c", name: "Cleo" },
     { id: "bad", name: "  " },
   ] as any;
-  const names = (c: HTMLElement) => [...c.querySelectorAll(".modoitaliano-bracket-voting-name")].map((n) => n.textContent);
+  const names = (c: HTMLElement) => [...c.querySelectorAll("[data-giorgia-bracket-voter-name]")].map((n) => n.textContent);
   // Round of 16: match 9 is fed by the winners of 1 and 2.
   const feeder = (winner9: number | null = null) =>
     matches({
@@ -171,9 +173,9 @@ describe("voting overlay", () => {
     });
     expect(screen.getByText("VOTACIÓN")).toBeInTheDocument();
     expect(names(container)).toEqual(["Beto", "Cleo", "Ana"]);
-    expect(container.querySelectorAll(".modoitaliano-bracket-voting-cover-reveal")).toHaveLength(2);
-    expect(container.querySelector(".modoitaliano-bracket-voting-cover-reveal img")).not.toBeNull();
-    expect(container.querySelector(".modoitaliano-bracket-voting-grid")).toHaveStyle({ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" });
+    expect(container.querySelectorAll('[data-giorgia-bracket-vote="revealed"]')).toHaveLength(2);
+    expect(container.querySelector('[data-giorgia-bracket-vote="revealed"] img')).not.toBeNull();
+    expect(container.querySelector("[data-giorgia-bracket-voting-grid]")).toHaveStyle({ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" });
   });
 
   it("does not rotate for the first match of a round of 16", async () => {
@@ -211,7 +213,7 @@ describe("voting overlay", () => {
     });
     expect(screen.getByText("WINNER")).toBeInTheDocument();
     expect(screen.getByText("Artist 1 - Title 1")).toBeInTheDocument();
-    expect(container.querySelector(".modoitaliano-bracket-voting-winner img")).toHaveAttribute("src", "http://c/1.jpg");
+    expect(container.querySelector("[data-giorgia-bracket-voting-winner] img")).toHaveAttribute("src", "http://c/1.jpg");
     await act(async () => void vi.advanceTimersByTime(10_500));
     expect(screen.queryByText("WINNER")).toBeNull();
   });
@@ -220,7 +222,7 @@ describe("voting overlay", () => {
     const props = { matches: feeder(3), voters, activeVotingMatchId: 9, votingWinnerId: 3, votingResultStartedAt: Date.now() };
     const { container } = await mount(props);
     expect(screen.getByText("Artist 3 - Title 3")).toBeInTheDocument();
-    expect(container.querySelector(".modoitaliano-bracket-voting-winner img")).toBeNull();
+    expect(container.querySelector("[data-giorgia-bracket-voting-winner] img")).toBeNull();
     cleanup();
     songsMock.fetchSongCatalog.mockResolvedValue([]);
     await mount(props);
