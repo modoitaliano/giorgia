@@ -36,7 +36,7 @@ interface ApiEarthquake {
   datapoints: ApiDatapoint[];
 }
 
-function formatTimeAgo(timestamp: number, language: SupportedLanguage = 'es'): string {
+export function formatTimeAgo(timestamp: number, language: SupportedLanguage = 'es'): string {
   const now = Date.now();
   const diffMs = now - timestamp;
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));

@@ -46,9 +46,6 @@ TypeScript declarations and declarative runtime validation use that same artifac
   `ModoItalianoGiorgiaChyron`, `ModoItalianoGiorgiaClock`,
   `ModoItalianoGiorgiaBracket` (with the `bracketModel` helpers) and
   `ModoItalianoGiorgiaPodcastPlayer`, plus the shared `GIORGIA` tokens
-- `@modoitaliano/giorgia/scenes/legacy` -> only the legacy
-  `ModoItalianoPodcastPlayer`; the legacy chyron and clock are retired for the
-  Giorgia ones
 
 The root module retains local renderer exports for Storybook and compatibility,
 but those exports are not part of Cronkite's opt-in path. See
@@ -178,7 +175,7 @@ Page-local scripts that must run after a content swap use `data-swup-reload-scri
 
 | `componentType` | Component | Source of its values |
 | --- | --- | --- |
-| `modoitaliano-podcast-player` | `ModoItalianoPodcastPlayer` | Scene metadata for that type: `show`, `episodeTitle`, `showName`, `coverUrl`, `audioUrl` (and `masterGain` when given; full gain otherwise) |
+| `modoitaliano-podcast-player` | Not rendered by Giorgia; Alcántara renders it from Bleecker's `PodcastPlayer` | Scene metadata for that type: `show`, `episodeTitle`, `showName`, `coverUrl`, `audioUrl` (and `masterGain` when given; full gain otherwise) |
 | `modoitaliano-giorgia-podcast-player` | `ModoItalianoGiorgiaPodcastPlayer` | Same as above |
 | `earone` | `Earone` | Rank and spins from the latest `song_playback_active` signal (`externalChartRank`, `externalChartSpins`), cleared by `song_off_air`; `label` from scene metadata |
 
