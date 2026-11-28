@@ -216,14 +216,30 @@ describe('LiveProgram gap coverage', () => {
     expect(song!.volume).toBe(1);
   });
 
-  it('falls back to the first language when the rotation shrinks past the one on air', async () => {
-    const view = await mount({ sceneMetadata: content({ ...FAST, ...ONLY_ARTICLES, languageRotation: ['en', 'es'] }) });
-    await advance(3000);
+  it('stays on the Spanish feed when a rotation that looped shrinks past the language on air', async () => {
+    // Spanish is the only supported language, so a two-entry rotation repeats it.
+    const view = await mount({ sceneMetadata: content({ ...FAST, ...ONLY_ARTICLES, showMarkets: true, languageRotation: ['es', 'es'] }) });
+    let sawMarkets = false;
+    let backOnArticles = false;
+    for (let step = 0; step < 60 && !backOnArticles; step += 1) {
+      await advance(250);
+      const text = document.body.textContent ?? '';
+      if (text.includes('AAPL')) sawMarkets = true;
+      else if (sawMarkets && headings().includes('Headline A')) backOnArticles = true;
+    }
+    // Articles, markets, then articles again: the playlist looped onto the second entry.
+    expect(backOnArticles).toBe(true);
     await act(async () => {
-      view.rerender(h(LiveProgram, { sceneMetadata: content({ ...FAST, ...ONLY_ARTICLES, languageRotation: ['en'] }) } as never));
+      view.rerender(h(LiveProgram, { sceneMetadata: content({ ...FAST, ...ONLY_ARTICLES, showMarkets: true, languageRotation: ['es'] }) } as never));
     });
-    await flush();
-    expect(document.body.textContent).toBeTruthy();
+    for (let step = 0; step < 60 && !headings().includes('Headline A'); step += 1) {
+      await advance(250);
+    }
+    expect(headings()).toContain('Headline A');
+    // The articles kept coming from the Spanish feed throughout; no other feed was asked for.
+    const feeds = fetched.filter((url) => url.includes('homepage-current-'));
+    expect(feeds.length).toBeGreaterThan(0);
+    expect(feeds.every((url) => url.includes('homepage-current-es.json'))).toBe(true);
   });
 
 });
