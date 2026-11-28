@@ -521,6 +521,19 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
       .catch((err) => console.error('Failed to fetch ModoItaliano program state:', err));
   }, [controlledBySceneRenderer, resolvedApiBaseUrl]);
 
+  // fetchEvents is the only source that throws. A failed request is logged and leaves the cached events as they were
+  // (or none), so it can neither stop the other sources from loading nor reject unhandled (modoitaliano/giorgia#87).
+  const loadEvents = useCallback(async () => {
+    try {
+      await fetchEvents({
+        language: currentLanguage,
+        allowedLanguages: [currentLanguage]
+      });
+    } catch (error) {
+      console.error('[LiveProgram] Failed to fetch events:', error);
+    }
+  }, [currentLanguage]);
+
   const refreshAllData = useCallback(async () => {
     const [articlesData, weatherDataResult, earthquakesData, marketsData, liveEventData] = await Promise.all([
       fetchArticles(currentLanguage),
@@ -528,10 +541,7 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
       fetchEarthquakes(currentLanguage),
       fetchMarketData(),
       fetchLiveEvent(currentLanguage),
-      fetchEvents({
-        language: currentLanguage,
-        allowedLanguages: [currentLanguage]
-      })
+      loadEvents()
     ]);
 
     setArticles(articlesData);
@@ -547,7 +557,7 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
     }
 
     setDataLoaded(true);
-  }, [currentLanguage]);
+  }, [currentLanguage, loadEvents]);
 
   useEffect(() => {
     void refreshAllData();
@@ -793,10 +803,7 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
   });
 
   const refreshEvents = useCallback(async () => {
-    await fetchEvents({
-      language: currentLanguage,
-      allowedLanguages: [currentLanguage]
-    });
+    await loadEvents();
     const cachedEvents = getCachedEvents();
     if (!cachedEvents) {
       return;
@@ -807,7 +814,7 @@ export default function LiveProgram({ programId = 'main', embedded = false, scen
       const nextJson = JSON.stringify(cachedEvents);
       return prevJson === nextJson ? prevStage : cachedEvents;
     });
-  }, [currentLanguage]);
+  }, [loadEvents]);
 
   useEffect(() => {
     if (stageEvents.length > 0 && programEvents.length > 0 && hasEventChanges(programEvents, stageEvents) && !showCurtain && !updatePending) {
