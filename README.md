@@ -44,13 +44,29 @@ TypeScript declarations and declarative runtime validation use that same artifac
 - `@modoitaliano/giorgia/partial-deps.json` -> partial-to-layout dependency map
 - `@modoitaliano/giorgia/scenes` -> the program scene renderers Alcántara places:
   `ModoItalianoGiorgiaChyron`, `ModoItalianoGiorgiaClock`,
-  `ModoItalianoGiorgiaBracket` (with the `bracketModel` helpers) and
-  `ModoItalianoGiorgiaPodcastPlayer`, plus the shared `GIORGIA` tokens
+  `ModoItalianoGiorgiaProgramRow`, `ModoItalianoGiorgiaBracket` (with the
+  `bracketModel` helpers) and `ModoItalianoGiorgiaPodcastPlayer`, plus the
+  shared `GIORGIA` tokens
 
 The root module retains local renderer exports for Storybook and compatibility,
 but those exports are not part of Cronkite's opt-in path. See
 [docs/cronkite-compatibility.md](docs/cronkite-compatibility.md) for ownership,
 validation, search, and asset-rendering details.
+
+### Program row
+
+`ModoItalianoGiorgiaProgramRow` is the bottom row a scene draws when it lists
+both the Giorgia clock and the Giorgia chyron. The clock's header sits top-left
+by itself; the chyron and the clock's on-air block sit side by side between
+`GIORGIA.safeX` and `GIORGIA.safeBottom` (z-index 950), the chyron slot keeping
+at least half the row and disappearing while the chyron is hidden. Props:
+`programId`, `audioBus`, optional `timeOverride` and `songSequence`, and the two
+scenes' stored settings as `clockProps` (`showWorldClocks`, `showLogo`,
+`showPlaybackProgress`, all on by default, and `keySafe`) and `chyronProps`
+(`show`, on by default, `textSequence`, `ctaSequence` and `keySafe`). Settings
+are read the way Alcántara reads them (booleans, non-zero numbers, and
+`true`/`1`/`yes`/`on`); `keySafe` on either one keys the whole row. The clock
+runs in Spanish at 220 px with 300 ms transitions, no city shuffle and no bell.
 
 ### Bracket scene
 
