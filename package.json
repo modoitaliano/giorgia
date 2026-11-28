@@ -1,7 +1,7 @@
 {
   "name": "@modoitaliano/giorgia",
   "description": "Server-side Handlebars renderer and templates for ModoItaliano pages.",
-  "version": "0.1.125",
+  "version": "0.1.126",
   "publishConfig": {
     "access": "public"
   },
