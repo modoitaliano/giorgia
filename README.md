@@ -239,6 +239,8 @@ The TV graphics draw after the radio components, in the scene's list order, insi
 
 The podcast players never read song signals. A scene that lists a radio component or one of these TV graphics draws only the Modo Italiano layers it also lists (`modoitaliano-content`, `modoitaliano-marquee`); every other scene draws what it drew before. Nothing in the radio components or the TV mapping makes a network call.
 
+The live program loads its sources (articles, weather, earthquakes, markets, the live event and the events) together, and a source that fails does not stop the others. Each failed request is logged with its source name. A failed events request leaves the events already on air as they were (none before the first load), and the program still starts.
+
 The TV graphics read their text and song sequences through the shared `./scenes` program sequence module (`tv/programSequence.ts` only re-exports it), so a stored sequence resolves on TV the same way as in the program window: the same song ids, shuffle order and rotation state.
 
 The top-right corner (world clocks and the red bell box) follows Alcantara's own program renderer (`gaulatti/alcantara` `frontend/app/routes/program.tsx` at `8bca10b`) on radio and TV graphics scenes only:

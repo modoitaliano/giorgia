@@ -532,6 +532,67 @@ describe('marquee', () => {
   });
 });
 
+// modoitaliano/giorgia#87: a failing events request is logged and leaves the cached events (or none) in place; it no
+// longer stops the other sources from loading or rejects unhandled. Vitest fails a run on an unhandled rejection.
+describe('a failing events request', () => {
+  const marqueeScene = () => ({
+    ...content({ ...FAST, ...ONLY_ARTICLES }),
+    'modoitaliano-marquee': { showMarquee: true },
+  });
+  const loggedEventFailures = (spy: { mock: { calls: unknown[][] } }) =>
+    spy.mock.calls.filter((call) => call[0] === '[LiveProgram] Failed to fetch events:').length;
+
+  it('still loads the articles when the events answer with an error', async () => {
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+    routes['/events'] = undefined;
+    const { container } = await mount({ sceneMetadata: marqueeScene() });
+    expect(container.textContent).not.toContain('This is fifthbell.');
+    expect(headings()).toEqual(['Headline A']);
+    expect(loggedEventFailures(errors)).toBeGreaterThan(0);
+  });
+
+  it('still loads the articles when the events request fails on the network', async () => {
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const routed = globalThis.fetch;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: string) => {
+        if (String(input).includes('/events')) throw new TypeError('network down');
+        return routed(input);
+      })
+    );
+    await mount({ sceneMetadata: marqueeScene() });
+    expect(headings()).toEqual(['Headline A']);
+    expect(loggedEventFailures(errors)).toBeGreaterThan(0);
+  });
+
+  it('keeps the events on air when a later refresh fails', async () => {
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+    routes['/events'] = { events: [event('abc', 'First story')] };
+    // Two articles: the articles segment refreshes the events each time it moves to the next one.
+    routes['homepage-current-es.json'] = { articles: [article(1, 'Headline A'), article(2, 'Headline B')] };
+    await mount({ sceneMetadata: marqueeScene() });
+    expect(screen.getByText('First story')).toBeTruthy();
+    routes['/events'] = undefined;
+    const before = fetched.filter((url) => url.includes('/events')).length;
+    // Step the clock so each article change renders, which refreshes the events.
+    for (let step = 0; step < 6; step += 1) await advance(500);
+    // The articles segment refreshed the events, and the refresh failed.
+    expect(fetched.filter((url) => url.includes('/events')).length).toBeGreaterThan(before);
+    expect(loggedEventFailures(errors)).toBeGreaterThan(0);
+    expect(screen.getByText('First story')).toBeTruthy();
+  });
+
+  it('reaches the program with every source failing, each segment empty', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    for (const key of Object.keys(routes)) if (key !== '/state') routes[key] = undefined;
+    const { container } = await mount({ sceneMetadata: content({ ...FAST }) });
+    expect(container.textContent).not.toContain('This is fifthbell.');
+    expect(headings()).toEqual([]);
+  });
+});
+
 describe('callsign take', () => {
   const callsign = () => document.body.textContent?.includes('This is fifthbell.');
 
