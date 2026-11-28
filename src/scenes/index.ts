@@ -19,6 +19,12 @@ export { ModoItalianoGiorgiaPodcastPlayer } from './ModoItalianoGiorgiaPodcastPl
 export type { ModoItalianoPodcastPlayerProps } from './ModoItalianoGiorgiaPodcastPlayer.js';
 export { ModoItalianoGiorgiaClock } from './ModoItalianoGiorgiaClock.js';
 export type { ModoItalianoGiorgiaClockProps } from './ModoItalianoGiorgiaClock.js';
+export { ModoItalianoGiorgiaProgramRow } from './ModoItalianoGiorgiaProgramRow.js';
+export type {
+  ModoItalianoGiorgiaProgramRowProps,
+  ModoItalianoGiorgiaProgramRowClockProps,
+  ModoItalianoGiorgiaProgramRowChyronProps,
+} from './ModoItalianoGiorgiaProgramRow.js';
 export {
   EMPTY_AUDIO_BUS_SNAPSHOT,
   type ProgramAudioBusSnapshot,
