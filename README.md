@@ -84,6 +84,18 @@ When the same id-less song appears again in a sequence, the repeat gets an
 occurrence suffix (`_2`, `_3`, ...), and the first keeps the id it has alone.
 The ids match Alcántara's (gaulatti/alcantara#378).
 
+### Shuffle order and rotation state
+
+`shuffleProgramSongSequence` no longer reorders the operator's rows: it stores
+the order shuffle plays as `shuffleOrder` (the song on air first) and leaves
+`items` as they were, so Manual plays the rows again. `programSongPlayOrder`
+returns the items in the order that plays (in shuffle, `shuffleOrder`, with
+any item added since after it), and the selection walks that order.
+`rowsAsPlayOrder` turns the shuffle back into rows for a backend that does not
+play `shuffleOrder` (gaulatti/alcantara#834). A normalised song sequence keeps
+the engine's `endedAt` (a rotation without loop ran out) and `cuedItemId` (the
+item it left the cursor on without airing it).
+
 ### Bracket scene
 
 `ModoItalianoGiorgiaBracket` draws the eight-song bracket in the Giorgia look:

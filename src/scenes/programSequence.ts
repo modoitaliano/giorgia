@@ -13,6 +13,8 @@ interface BaseSequence<TItem extends BaseSequenceItem> {
   intervalMs?: number;
   loop?: boolean;
   startedAt?: number;
+  /** Songs only: the item ids in the order shuffle plays them. `items` stays the operator's own order. */
+  shuffleOrder?: string[];
 }
 
 type RecordValue = Record<string, unknown>;
@@ -73,7 +75,17 @@ export type ProgramSongSequenceItem =
   | ProgramSongSequenceLeafItem
   | ProgramSongSequenceNestedItem;
 
-export type ProgramSongSequence = BaseSequence<ProgramSongSequenceItem>;
+export type ProgramSongSequence = BaseSequence<ProgramSongSequenceItem> & {
+  /** When a rotation that does not loop ran out; the engine turned it manual then. Absent otherwise. */
+  endedAt?: number;
+  /** The item the engine left the cursor on without airing it (a Stop, a rotation that ran out). */
+  cuedItemId?: string;
+};
+
+/**
+ * Shuffle on: a new order to play, the song on air first. The rows (`items`) are not touched, so going back to Manual
+ * plays the operator's order.
+ */
 
 export function shuffleProgramSongSequence(
   sequence: ProgramSongSequence,
@@ -95,16 +107,38 @@ export function shuffleProgramSongSequence(
   }
 
   const nextItems = anchoredItem ? [anchoredItem, ...shuffledItems] : shuffledItems;
+  // A shuffle that came out as the rows' own order is turned by one, so Shuffle always changes what plays.
   if (!nextItems.some((item, index) => item.id !== sequence.items[index]?.id) && shuffledItems.length > 1) {
     shuffledItems.push(shuffledItems.shift()!);
   }
+  const order = anchoredItem ? [anchoredItem, ...shuffledItems] : shuffledItems;
 
   return {
     ...sequence,
     mode: 'shuffle',
-    items: anchoredItem ? [anchoredItem, ...shuffledItems] : shuffledItems,
-    activeItemId: anchoredItem?.id ?? sequence.activeItemId ?? nextItems[0].id
+    shuffleOrder: order.map((item) => item.id),
+    activeItemId: anchoredItem?.id ?? sequence.activeItemId ?? order[0].id
   };
+}
+
+/**
+ * The items in the order the rotation plays them (as Alcántara's engine walks them): in shuffle, the stored shuffled
+ * order, an item added since after it; otherwise the rows' order.
+ */
+export function programSongPlayOrder(sequence: ProgramSongSequence): ProgramSongSequenceItem[] {
+  const order = sequence.shuffleOrder;
+  if (sequence.mode !== 'shuffle' || !order?.length) return sequence.items;
+  const rank = new Map(order.map((id, index) => [id, index]));
+  return [...sequence.items].sort((a, b) => (rank.get(a.id) ?? order.length) - (rank.get(b.id) ?? order.length));
+}
+
+/**
+ * The sequence for a backend that does not play `shuffleOrder`: in shuffle the rows take the shuffled order, as that
+ * backend expects, so the desk never shows a shuffle it does not play (gaulatti/alcantara#834).
+ */
+export function rowsAsPlayOrder(sequence: ProgramSongSequence): ProgramSongSequence {
+  const { shuffleOrder, ...rest } = sequence;
+  return shuffleOrder ? { ...rest, items: programSongPlayOrder(sequence) } : sequence;
 }
 
 export interface ProgramResolvedSongLeaf {
@@ -275,7 +309,10 @@ function withNormalizedSequenceShape<TItem extends BaseSequenceItem>(
     startedAt:
       typeof record.startedAt === 'number' && Number.isFinite(record.startedAt)
         ? record.startedAt
-        : Date.now()
+        : Date.now(),
+    ...(Array.isArray(record.shuffleOrder)
+      ? { shuffleOrder: record.shuffleOrder.filter((id): id is string => typeof id === 'string') }
+      : {}),
   };
 }
 
@@ -425,9 +462,11 @@ export function songIndexInCycle(durations: Array<number | null>, baseIndex: num
 }
 
 function getSelectedSongItem(
-  sequence: ProgramSongSequence,
+  stored: ProgramSongSequence,
   nowMs: number
 ): ProgramSongSequenceItem | null {
+  // Every walk below is along the order that plays.
+  const sequence = { ...stored, items: programSongPlayOrder(stored) };
   if (sequence.items.length === 0) {
     return null;
   }
@@ -589,7 +628,12 @@ export function normalizeProgramSongSequence(
     items.push({ ...item, id });
   }
 
-  return withNormalizedSequenceShape(record, items, 'autoplay');
+  const sequence: ProgramSongSequence = withNormalizedSequenceShape(record, items, 'autoplay');
+  // Kept through every save (a Loop toggle among them), so the rotation stays ended until the engine starts it.
+  if (typeof record.endedAt === 'number' && Number.isFinite(record.endedAt) && record.endedAt > 0)
+    sequence.endedAt = record.endedAt;
+  if (typeof record.cuedItemId === 'string' && record.cuedItemId) sequence.cuedItemId = record.cuedItemId;
+  return sequence;
 }
 
 export function createProgramTextSequenceItem(
