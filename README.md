@@ -211,6 +211,8 @@ The TV graphics draw after the radio components, in the scene's list order, insi
 
 The podcast players never read song signals. A scene that lists a radio component or one of these TV graphics draws only the Modo Italiano layers it also lists (`modoitaliano-content`, `modoitaliano-marquee`); every other scene draws what it drew before. Nothing in the radio components or the TV mapping makes a network call.
 
+The TV graphics read their text and song sequences through the shared `./scenes` program sequence module (`tv/programSequence.ts` only re-exports it), so a stored sequence resolves on TV the same way as in the program window: the same song ids, shuffle order and rotation state.
+
 The top-right corner (world clocks and the red bell box) follows Alcantara's own program renderer (`gaulatti/alcantara` `frontend/app/routes/program.tsx` at `8bca10b`) on radio and TV graphics scenes only:
 
 - **World clocks** draw on such a scene only when its list also names a clock type: `clock-widget` (`:2291`), `reloj-clock`, `reloj-digital-loop-clock` (`:2362-2366`), `toni-clock`, `fifthbell-clock`, `fifthbell-corner` (`:2401`) or `modoitaliano-clock` (`:2426`). The scene's `showWorldClocks` setting still applies on top. `reloj-loop-clock` and `modoitaliano-giorgia-clock` are not clock types for the corner: those scenes draw their own `RelojLoopClock` or Giorgia clock.
