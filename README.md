@@ -68,6 +68,22 @@ are read the way Alcántara reads them (booleans, non-zero numbers, and
 `true`/`1`/`yes`/`on`); `keySafe` on either one keys the whole row. The clock
 runs in Spanish at 220 px with 300 ms transitions, no city shuffle and no bell.
 
+`resolveProgramRow(components)` makes the scene's decision: given the scene's
+component types (retired ids already mapped to their Giorgia replacements), it
+returns the plan (`clockType`, `chyronType` and the `ownedTypes` the row draws,
+which must not also draw standalone) when both Giorgia types are listed, and
+`null` otherwise.
+
+### Song sequence ids
+
+`normalizeProgramSongSequence` keeps a song's id stable. A song with a string
+id keeps it. A song without one gets an id derived from its content (song id,
+audio URL, title, artist and length), so normalising the same sequence again,
+as each audio-bus update does, gives the same id and the song is not restarted.
+When the same id-less song appears again in a sequence, the repeat gets an
+occurrence suffix (`_2`, `_3`, ...), and the first keeps the id it has alone.
+The ids match Alcántara's (gaulatti/alcantara#378).
+
 ### Bracket scene
 
 `ModoItalianoGiorgiaBracket` draws the eight-song bracket in the Giorgia look:
