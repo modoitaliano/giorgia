@@ -25,6 +25,8 @@ export type {
   ModoItalianoGiorgiaProgramRowClockProps,
   ModoItalianoGiorgiaProgramRowChyronProps,
 } from './ModoItalianoGiorgiaProgramRow.js';
+export { resolveProgramRow } from './programRow.js';
+export type { ProgramRowPlan, ProgramRowClockType, ProgramRowChyronType } from './programRow.js';
 export {
   EMPTY_AUDIO_BUS_SNAPSHOT,
   type ProgramAudioBusSnapshot,
